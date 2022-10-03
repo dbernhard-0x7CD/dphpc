@@ -5,13 +5,27 @@
 #include <ostream>
 #include <iostream>
 
+
+// comment out to disable LSB
+#define USE_LSB
+
+#ifdef USE_LSB
+
 // :( This is nowhere documented that we need to set HAVE_MPI_H
 // Does not compile without as else MPI_Comm is an alias to void*
 #define HAVE_MPI_H
 #include <liblsb.h>
 
+#endif
+
+#define ITERATION_N 10
+
 int main(int argc, char** argv) {
     MPI_Init(&argc, &argv);
+
+#ifdef USE_LSB
+    LSB_Init("test_reduce", 0);
+#endif
 
     int rank, size;
 
@@ -20,19 +34,41 @@ int main(int argc, char** argv) {
 
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+#ifdef USE_LSB
+    LSB_Set_Rparam_int("rank", rank);
+    LSB_Set_Rparam_int("runs", 1);
+#endif
     
     int myValue = rank + 1;
     
     if (rank == 0) {
-        std::cout << "Starting" << std::endl;
+        std::cout << "Starting main" << std::endl;
     }
 
+    //warmup
     MPI_Reduce(&myValue, &sum, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+    
+    for (int i = 0; i < ITERATION_N; i++) {
+        sum = 0;
+#ifdef USE_LSB
+        LSB_Res();
+#endif
+
+        MPI_Reduce(&myValue, &sum, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+
+#ifdef USE_LSB
+        LSB_Rec(1);
+#endif
+    }
 
     if (rank == 0) {
         std::cout << "Sum from 1 to " << size << " is " << sum << std::endl; 
         std::cout << "Finished" << std::endl;
     }
     
+#ifdef USE_LSB
+    LSB_Finalize();
+#endif
     MPI_Finalize();
 }
