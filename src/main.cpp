@@ -10,12 +10,7 @@
 #define USE_LSB
 
 #ifdef USE_LSB
-
-// :( This is nowhere documented that we need to set HAVE_MPI_H
-// Does not compile without as else MPI_Comm is an alias to void*
-#define HAVE_MPI_H
 #include <liblsb.h>
-
 #endif
 
 #define ITERATION_N 10

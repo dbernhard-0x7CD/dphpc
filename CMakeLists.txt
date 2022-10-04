@@ -13,22 +13,24 @@ find_package(MPI REQUIRED)
 include(ExternalProject)
 
 ExternalProject_Add(liblsb
-  SOURCE_DIR ${CMAKE_SOURCE_DIR}/liblsb/liblsb-0.2.2/
+  GIT_REPOSITORY https://github.com/spcl/liblsb.git
+  SOURCE_DIR liblsb
   BUILD_IN_SOURCE True
   UPDATE_COMMAND ""
-  INSTALL_COMMAND ""
-  CONFIGURE_COMMAND "autoreconf" "-f" "-i" && "./configure"
+  INSTALL_DIR "${CMAKE_BINARY_DIR}/install"
+  INSTALL_COMMAND "make" "install"
+  CONFIGURE_COMMAND "autoreconf" "-f" "-i" && "./configure" "--prefix=${CMAKE_BINARY_DIR}/install"
   BUILD_COMMAND "make"
 )
 
 # For the headers
-include_directories(liblsb/liblsb-0.2.2)
+include_directories(${CMAKE_BINARY_DIR}/liblsb/)
 include_directories(${MPI_INCLUDE_PATH})
 
 set(SOURCE_FILES, src/main.cpp)
 
 add_executable(main src/main.cpp)
-target_link_libraries(main ${MPI_LIBRARIES} ${CMAKE_SOURCE_DIR}/liblsb/liblsb-0.2.2/.libs/liblsb.a)
+target_link_libraries(main ${MPI_LIBRARIES} ${CMAKE_BINARY_DIR}/install/lib/liblsb.a)
 
 if(MPI_COMPILE_FLAGS)
   set_target_properties(main PROPERTIES COMPILE_FLAGS "${MPI_COMPILE_FLAGS}")
