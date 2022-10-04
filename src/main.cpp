@@ -1,13 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <mpi.h>
+#include <omp.h>
 
 #include <ostream>
 #include <iostream>
 
+#include "main.h"
 
 // comment out to disable LSB
-#define USE_LSB
+// #define USE_LSB
 
 #ifdef USE_LSB
 #include <liblsb.h>
@@ -22,6 +24,18 @@ int main(int argc, char** argv) {
     LSB_Init("test_reduce", 0);
 #endif
 
+    omp_reduction();
+    // mpi_reduction();
+
+    
+#ifdef USE_LSB
+    LSB_Finalize();
+#endif
+
+    MPI_Finalize();
+}
+
+void mpi_reduction() {
     int rank, size;
 
     // simply sums all ranks to the root
@@ -61,9 +75,15 @@ int main(int argc, char** argv) {
         std::cout << "Sum from 1 to " << size << " is " << sum << std::endl; 
         std::cout << "Finished" << std::endl;
     }
-    
-#ifdef USE_LSB
-    LSB_Finalize();
-#endif
-    MPI_Finalize();
+}
+
+void omp_reduction() {
+    std::cout << "starting" << std::endl;
+
+    int sum = 0;
+
+#pragma omp parallel reduction(+: sum)
+    sum = omp_get_thread_num() + 1;
+
+    std::cout << "Sum is " << sum << std::endl;
 }

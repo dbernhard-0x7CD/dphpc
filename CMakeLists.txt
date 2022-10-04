@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Libraries
 find_package(MPI REQUIRED)
+find_package(OpenMP REQUIRED)
 
 # Build LibSciBench
 # Used to build liblsb
@@ -30,7 +31,8 @@ include_directories(${MPI_INCLUDE_PATH})
 set(SOURCE_FILES, src/main.cpp)
 
 add_executable(main src/main.cpp)
-target_link_libraries(main ${MPI_LIBRARIES} ${CMAKE_BINARY_DIR}/install/lib/liblsb.a)
+
+target_link_libraries(main ${MPI_LIBRARIES} ${CMAKE_BINARY_DIR}/install/lib/liblsb.a OpenMP::OpenMP_CXX)
 
 if(MPI_COMPILE_FLAGS)
   set_target_properties(main PROPERTIES COMPILE_FLAGS "${MPI_COMPILE_FLAGS}")

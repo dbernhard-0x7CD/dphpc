@@ -19,9 +19,10 @@ or simply `cd build/ && cmake .. && cmake --build . && mpirun -n X ./main`
     * For performance measurements
 
 # TODO
-    * Link and build liblsb
     * Find a task
 
 # DONE
+    * Link and build with OpenMP
+    * Link and build liblsb
     * Link and build with OpenMPI
     * Created repo
