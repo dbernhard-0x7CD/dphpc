@@ -22,7 +22,7 @@ This makes the following aliases available:
 
 # Building
 
-```
+```bash
 cd build/
 cmake ..
 cmake --build .
