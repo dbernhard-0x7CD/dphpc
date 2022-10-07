@@ -1,0 +1,1 @@
+alias run='sh -c "cd build/ && cmake .. && cmake --build . && ./main"'
