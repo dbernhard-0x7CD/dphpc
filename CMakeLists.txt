@@ -36,7 +36,15 @@ else()
   message("NOT building with MPI")
 endif()
 
-set(SOURCE_FILES, src/main.cpp)
+if (USE_LSB)
+  add_definitions(-DUSE_LSB=1)
+  message("Building with LSB")
+else()
+  message("NOT building with LSB")
+endif()
+
+# Our sources
+set(SOURCE_FILES, src/main.cpp src/test.cpp)
 
 add_executable(main src/main.cpp)
 

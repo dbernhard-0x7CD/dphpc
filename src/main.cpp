@@ -8,12 +8,6 @@
 
 #include "main.hpp"
 
-// comment out to disable LSB
-// #define USE_LSB
-
-// comment out to disable MPI
-// #define USE_MPI
-
 #ifdef USE_LSB
 #include <liblsb.h>
 #endif

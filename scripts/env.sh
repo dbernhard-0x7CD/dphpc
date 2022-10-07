@@ -9,3 +9,9 @@ alias run='''sh -c "cd build/ &&
     cmake -DUSE_MPI=1 .. &&
     cmake --build . -- &&
     ./main"'''
+
+# Build with LibSciBench
+alias bm_run='''sh -c "cd build/ && 
+    cmake -DUSE_MPI=1 -DUSE_LSB=1 .. &&
+    cmake --build . -- &&
+    ./main"'''
