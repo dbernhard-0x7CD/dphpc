@@ -1,11 +1,24 @@
 
 # DPHPC - Lightning McQueens
 
+The goal of our project TODO.
+
 # Requirements
 * OpenMP
 * OpenMPI
 * CMake
 * gcc
+
+# Development Environment
+```bash
+source ./scripts/env.sh
+```
+This makes the following aliases available:
+* `run`: Compiles and runs with MPI
+* `run_raw`: Compiles and runs **without** MPI (used for development of single parts)
+
+* [Here may be added more aliases to run our application or do other stuff]
+
 
 # Building
 
