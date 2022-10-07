@@ -11,6 +11,9 @@
 // comment out to disable LSB
 // #define USE_LSB
 
+// comment out to disable MPI
+// #define USE_MPI
+
 #ifdef USE_LSB
 #include <liblsb.h>
 #endif
@@ -18,7 +21,9 @@
 #define ITERATION_N 10
 
 int main(int argc, char** argv) {
+#ifdef USE_MPI
     MPI_Init(&argc, &argv);
+#endif
 
 #ifdef USE_LSB
     LSB_Init("test_reduce", 0);
@@ -32,7 +37,9 @@ int main(int argc, char** argv) {
     LSB_Finalize();
 #endif
 
+#ifdef USE_MPI
     MPI_Finalize();
+#endif
 }
 
 void mpi_reduction() {
