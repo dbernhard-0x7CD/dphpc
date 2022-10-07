@@ -6,7 +6,7 @@
 #include <ostream>
 #include <iostream>
 
-#include "main.h"
+#include "main.hpp"
 
 // comment out to disable LSB
 // #define USE_LSB
