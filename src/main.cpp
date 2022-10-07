@@ -21,6 +21,17 @@
 #define ITERATION_N 10
 
 int main(int argc, char** argv) {
+    
+    cout << "Build configuration:\n";
+#ifdef USE_MPI
+    cout << "\t Using MPI" << std::endl;
+#endif
+#ifdef USE_LSB
+    cout << "\t Using MPI" << std::endl;
+#endif
+
+    cout << "End build configuration" << std::endl;
+
 #ifdef USE_MPI
     MPI_Init(&argc, &argv);
 #endif

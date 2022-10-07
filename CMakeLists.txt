@@ -28,6 +28,14 @@ ExternalProject_Add(liblsb
 include_directories(${CMAKE_BINARY_DIR}/liblsb/)
 include_directories(${MPI_INCLUDE_PATH})
 
+# Set macro variables accordingly
+if (USE_MPI)
+  add_definitions(-DUSE_MPI=1)
+  message("\nBuilding with MPI")
+else()
+  message("\nNOT building with MPI")
+endif()
+
 set(SOURCE_FILES, src/main.cpp)
 
 add_executable(main src/main.cpp)
