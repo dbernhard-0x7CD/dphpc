@@ -46,6 +46,7 @@ or simply `cd build/ && cmake .. && cmake --build . && mpirun -n X ./main`
         * We need to generate different types of graphs!
         * In which format are they generated?
             * Such that we can store them on disk and not have to regenerate them every run
+        * Graph generation: [anu.edu](http://users.cecs.anu.edu.au/~bdm/plantri/)
     * Serial implementation
         * Create a baseline (duration for given problems; confidence interval)
         * Verify correctness? Store result in some format to have a comparison for the results of the parallel algorithms
