@@ -1,29 +1,36 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <mpi.h>
 #include <omp.h>
 
+// CPP includes
 #include <ostream>
+#include <fstream>
 #include <iostream>
+#include <vector>
 
+// Our includes
 #include "main.hpp"
 
 #ifdef USE_LSB
 #include <liblsb.h>
 #endif
 
+#ifdef USE_MPI
+#include <mpi.h>
+#endif
+
 #define ITERATION_N 10
 
+using namespace std;
+
 int main(int argc, char** argv) {
-    
-    cout << "Build configuration:\n";
+    cout << "Build configuration:" << std::endl;
 #ifdef USE_MPI
     cout << "\t Using MPI" << std::endl;
 #endif
 #ifdef USE_LSB
-    cout << "\t Using MPI" << std::endl;
+    cout << "\t Using LSB" << std::endl;
 #endif
-
     cout << "End build configuration" << std::endl;
 
 #ifdef USE_MPI
@@ -47,6 +54,7 @@ int main(int argc, char** argv) {
 #endif
 }
 
+#ifdef USE_MPI
 void mpi_reduction() {
     int rank, size;
 
@@ -88,6 +96,7 @@ void mpi_reduction() {
         std::cout << "Finished" << std::endl;
     }
 }
+#endif
 
 void omp_reduction() {
     std::cout << "starting" << std::endl;

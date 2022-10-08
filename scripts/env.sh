@@ -1,16 +1,16 @@
 # Builds without MPI or LSB
 alias raw_build='''sh -c "cd build/ && 
-    cmake -DUSE_MPI=0 .. &&
+    cmake -DNO_MPI=1 -DNO_LSB=1 .. &&
     cmake --build ."'''
 
 # Builds with MPI
 alias build='''sh -c "cd build/ && 
-    cmake -DUSE_MPI=1 .. &&
+    cmake -DNO_MPI=0 -DNO_LSB=1 .. &&
     cmake --build ."'''
 
 # Builds with LibSciBench (and MPI)
 alias bm_build='''sh -c "cd build/ && 
-    cmake -DUSE_MPI=1 -DUSE_LSB=1 .. &&
+    cmake -DNO_MPI=0 -DNO_LSB=0 .. &&
     cmake --build ."'''
 
 # Runs without MPI or LSB

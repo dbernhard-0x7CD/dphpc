@@ -29,18 +29,18 @@ include_directories(${CMAKE_BINARY_DIR}/liblsb/)
 include_directories(${MPI_INCLUDE_PATH})
 
 # Set macro variables accordingly
-if (USE_MPI)
+if (NO_MPI)
+  message("NOT building with MPI")
+else()
   add_definitions(-DUSE_MPI=1)
   message("Building with MPI")
-else()
-  message("NOT building with MPI")
 endif()
 
-if (USE_LSB)
+if (NO_LSB)
+  message("NOT building with LSB")
+else()
   add_definitions(-DUSE_LSB=1)
   message("Building with LSB")
-else()
-  message("NOT building with LSB")
 endif()
 
 # Our sources
