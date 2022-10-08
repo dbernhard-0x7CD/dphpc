@@ -14,13 +14,13 @@ alias bm_build='''sh -c "cd build/ &&
     cmake --build ."'''
 
 # Runs without MPI or LSB
-alias raw_run='''raw_build && cd build/ && ./main'''
+alias raw_run='''raw_build && cd build/ && ./main && cd ..'''
 
 # Runs with MPI
-alias run='''build && cd build/ && ./main'''
+alias run='''build && cd build/ && ./main && cd ..'''
 
 # Runs with LibSciBench (and MPI)
-alias bm_run='''bm_build && cd build/ && ./main'''
+alias bm_run='''bm_build && cd build/ && ./main && cd ..'''
 
 # Init script for the environment in EULER
 alias euler_init="module load gcc/8.2.0 cmake openmpi boost"
