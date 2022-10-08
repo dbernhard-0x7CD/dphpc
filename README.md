@@ -8,15 +8,20 @@ The goal of our project TODO.
 * OpenMPI
 * CMake
 * gcc
+* boost library
 
 # Development Environment
 ```bash
 source ./scripts/env.sh
 ```
+
 This makes the following aliases available:
-* `run`: Compiles and runs with MPI
-* `raw_run`: Compiles and runs **without** MPI (used for development of single parts)
-* `bm_run`: Compiles as runs **with** MPI and LSB to measure the performance
+* `build`: Builds with MPI
+* `raw_build`: Buildss **without** MPI (used for development of single parts)
+* `bm_build`: Builds **with** MPI and LSB to measure the performance
+* `run`: Builds and runs with MPI
+* `raw_run`: Builds and runs **without** MPI (used for development of single parts)
+* `bm_run`: Builds and runs **with** MPI and LSB to measure the performance
 * `euler_init`: Loads all necessary modules on EULER
 
 * [Here may be added more aliases to run our application or do other stuff] 
