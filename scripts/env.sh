@@ -15,3 +15,6 @@ alias bm_run='''sh -c "cd build/ &&
     cmake -DUSE_MPI=1 -DUSE_LSB=1 .. &&
     cmake --build . -- &&
     ./main"'''
+
+# Init script for the environment in EULER
+alias euler_init="module load gcc/8.2.0 cmake openmpi boost"
