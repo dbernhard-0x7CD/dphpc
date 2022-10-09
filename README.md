@@ -12,6 +12,8 @@ The goal of our project TODO.
 * graphviz for rendering graphs
 
 # Development Environment
+You can load the aliases using:
+
 ```bash
 source ./scripts/env.sh
 ```
@@ -50,6 +52,11 @@ or simply `cd build/ && cmake .. && cmake --build . && mpirun -n X ./main`
     * For performance measurements
 * [boost](https://www.boost.org/)
 
+* Maybe: 
+    * https://arma.sourceforge.net/docs.html#Mat
+    * https://github.com/DrTimothyAldenDavis/GraphBLAS
+    * OpenMP alternative: https://cilk.mit.edu/
+
 # TODO
     * Find a task
     * Email to TA for approval
@@ -71,6 +78,7 @@ or simply `cd build/ && cmake .. && cmake --build . && mpirun -n X ./main`
 
 
 # DONE
+    * Link and build with boost
     * Link and build with OpenMP
     * Link and build liblsb
     * Link and build with OpenMPI
