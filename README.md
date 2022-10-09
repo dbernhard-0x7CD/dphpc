@@ -56,6 +56,7 @@ or simply `cd build/ && cmake .. && cmake --build . && mpirun -n X ./main`
     * https://arma.sourceforge.net/docs.html#Mat
     * https://github.com/DrTimothyAldenDavis/GraphBLAS
     * OpenMP alternative: https://cilk.mit.edu/
+    * https://github.com/dendisuhubdy/armadillo
 
 # TODO
     * Find a task
