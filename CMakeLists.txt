@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Libraries
 find_package(MPI REQUIRED)
 find_package(OpenMP REQUIRED)
+find_package(Boost REQUIRED COMPONENTS system graph)
 
 # Build LibSciBench
 # Used to build liblsb
@@ -44,11 +45,11 @@ else()
 endif()
 
 # Our sources
-set(SOURCE_FILES, src/main.cpp src/test.cpp)
+set(SOURCE_FILES, src/main.cpp src/test.cpp src/util.cpp)
 
-add_executable(main src/main.cpp)
+add_executable(main src/main.cpp src/test.cpp src/util.cpp)
 
-target_link_libraries(main ${MPI_LIBRARIES} ${CMAKE_BINARY_DIR}/install/lib/liblsb.a OpenMP::OpenMP_CXX)
+target_link_libraries(main ${MPI_LIBRARIES} ${CMAKE_BINARY_DIR}/install/lib/liblsb.a OpenMP::OpenMP_CXX Boost::boost Boost::graph)
 
 if(MPI_COMPILE_FLAGS)
   set_target_properties(main PROPERTIES COMPILE_FLAGS "${MPI_COMPILE_FLAGS}")

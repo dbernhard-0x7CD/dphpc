@@ -23,6 +23,6 @@ alias run='''build && cd build/ && ./main && cd ..'''
 alias bm_run='''bm_build && cd build/ && ./main && cd ..'''
 
 # Init script for the environment in EULER
-alias euler_init="module load gcc/8.2.0 cmake openmpi boost"
+alias euler_init="module load gcc/8.2.0 cmake openmpi boost graphviz"
 
 alias clean="rm -rf build/*"

@@ -10,6 +10,7 @@
 
 // Our includes
 #include "main.hpp"
+#include "test.hpp"
 
 #ifdef USE_LSB
 #include <liblsb.h>
@@ -41,10 +42,13 @@ int main(int argc, char** argv) {
     LSB_Init("test_reduce", 0);
 #endif
 
-    omp_reduction();
+    // omp_reduction();
     // mpi_reduction();
 
-    
+    string outfile = "./out.dot";
+    load_and_store();
+//    build_graph_and_store(outfile);
+
 #ifdef USE_LSB
     LSB_Finalize();
 #endif
@@ -107,4 +111,9 @@ void omp_reduction() {
     sum = omp_get_thread_num() + 1;
 
     std::cout << "Sum is " << sum << std::endl;
+}
+
+
+bool operator <(const Node& x, const Node& y) {
+    return x.id < y.id;
 }

@@ -9,6 +9,7 @@ The goal of our project TODO.
 * CMake
 * gcc
 * boost library
+* graphviz for rendering graphs
 
 # Development Environment
 ```bash
@@ -29,17 +30,25 @@ This makes the following aliases available:
 
 # Building
 
+Use the aliases from the development environment or alernatively:
+
 ```bash
 cd build/
 cmake ..
 cmake --build .
-./main
 ```
+
+**Running**:
+```bash
+mpirun -n 10 build./main
+```
+
 or simply `cd build/ && cmake .. && cmake --build . && mpirun -n X ./main`
 
 # Used Libraries
 * [LibSciBench](https://spcl.inf.ethz.ch/Research/Performance/LibLSB/)
     * For performance measurements
+* [boost](https://www.boost.org/)
 
 # TODO
     * Find a task
