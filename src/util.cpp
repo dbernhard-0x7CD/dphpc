@@ -53,7 +53,7 @@ vector<Edge> load_from_adjacency_list(string path) {
     return adj_list;
 }
 
-void store_adjacency_list(string path, vector<Edge> adj_list) {
+void store_adjacency_list(string path, vector<Edge> &adj_list) {
     ofstream os(path);
 
     for (Edge e : adj_list) {
@@ -62,7 +62,7 @@ void store_adjacency_list(string path, vector<Edge> adj_list) {
     os.close();
 }
 
-uGraph adjacency_list_to_ugraph(vector<Edge> adj_list) {
+uGraph adjacency_list_to_ugraph(vector<Edge> &adj_list) {
     size_t max = 0;
     for (auto const& e : adj_list) {
         if (e.u.id > max) {
