@@ -49,6 +49,9 @@ set(SOURCE_FILES, src/main.cpp src/test.cpp src/util.cpp)
 
 add_executable(main src/main.cpp src/test.cpp src/util.cpp)
 
+# To build liblsb before main (Needed if we build with more than 1 core)
+add_dependencies(main liblsb)
+
 target_link_libraries(main ${MPI_LIBRARIES} ${CMAKE_BINARY_DIR}/install/lib/liblsb.a OpenMP::OpenMP_CXX Boost::boost Boost::graph)
 
 if(MPI_COMPILE_FLAGS)
