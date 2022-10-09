@@ -26,11 +26,11 @@ vector<Edge> load_from_adjacency_list(string path);
  * 
  * WHY: To store edges in a file. (pendand to load_from_adjacency_list)
 */
-void store_adjacency_list(string path, vector<Edge> &adj_list);
+void store_adjacency_list(string path, const vector<Edge> &adj_list);
 
 /*
  * Converts the adjacency list into an uGraph.
  */
-uGraph adjacency_list_to_ugraph(vector<Edge> &adj_list);
+uGraph adjacency_list_to_ugraph(const vector<Edge> &adj_list);
 
 #endif

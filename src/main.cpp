@@ -46,8 +46,11 @@ int main(int argc, char** argv) {
     // mpi_reduction();
 
     string outfile = "./out.dot";
-    load_and_store();
+    test_combine();
+
 //    build_graph_and_store(outfile);
+
+//    load_and_store();
 
 #ifdef USE_LSB
     LSB_Finalize();
