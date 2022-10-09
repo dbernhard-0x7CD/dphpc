@@ -41,8 +41,8 @@ typedef adjacency_list<vecS, vecS, undirectedS, property<vertex_name_t, string>,
 
 /* An undirected edge between u and v. */
 struct Edge {
-    Node u;
-    Node v;
+    unsigned long u;
+    unsigned long v;
 };
 
 #endif

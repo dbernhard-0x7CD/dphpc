@@ -72,7 +72,7 @@ void store_ugraph_as_dot(string filename, uGraph &g) {
 
 void add_new_edges_ugraph(uGraph &g, ColorProperty &cp, const vector<Edge> &edges) {
     for (auto const& e : edges) {
-        add_edge(e.u.id, e.v.id, cp, g);
+        add_edge(e.u, e.v, cp, g);
     }
 }
 

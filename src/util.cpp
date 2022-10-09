@@ -45,7 +45,7 @@ vector<Edge> load_from_adjacency_list(string path) {
 
         Node u = { .id = stoul(u_str) };
         Node v = { .id = stoul(v_str) };
-        Edge e { .u = u, .v = v };
+        Edge e { .u = u.id, .v = v.id };
         
         adj_list.push_back(e);
     }
@@ -57,7 +57,7 @@ void store_adjacency_list(string path, const vector<Edge> &adj_list) {
     ofstream os(path);
 
     for (Edge e : adj_list) {
-        os << e.u.id << " " << e.v.id << ::endl;
+        os << e.u << " " << e.v << ::endl;
     }
     os.close();
 }
@@ -65,11 +65,11 @@ void store_adjacency_list(string path, const vector<Edge> &adj_list) {
 uGraph adjacency_list_to_ugraph(const vector<Edge> &adj_list) {
     size_t max = 0;
     for (auto const& e : adj_list) {
-        if (e.u.id > max) {
-            max = e.u.id;
+        if (e.u > max) {
+            max = e.u;
         }
-        if (e.v.id > max) {
-            max = e.v.id;
+        if (e.v > max) {
+            max = e.v;
         }
     }
     // as 0 is also a vertex
@@ -82,11 +82,14 @@ uGraph adjacency_list_to_ugraph(const vector<Edge> &adj_list) {
     uGraph g(max);
 
     for (auto const& e : adj_list) {
-        if (nodes.find(e.u) == nodes.end()) {
-            nodes.insert(e.u);
+        Node node_u { .id = e.u };
+        Node node_v { .id = e.v };
+
+        if (nodes.find(node_u) == nodes.end()) {
+            nodes.insert(node_u);
         }
-        if (nodes.find(e.v) == nodes.end()) {
-            nodes.insert(e.v);
+        if (nodes.find(node_v) == nodes.end()) {
+            nodes.insert(node_v);
         }
         
         // cout << "Edge " << e.u << " --- " << e.v << std::endl;
@@ -95,7 +98,7 @@ uGraph adjacency_list_to_ugraph(const vector<Edge> &adj_list) {
     cout << "Amount of nodes: " << nodes.size() << std::endl;
     
     for (auto const& e : adj_list) {
-        add_edge(e.u.id, e.v.id, g);
+        add_edge(e.u, e.v, g);
     }
 
     return g;
