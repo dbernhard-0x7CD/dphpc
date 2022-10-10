@@ -26,3 +26,5 @@ alias bm_run='''bm_build && cd build/ && ./main && cd ..'''
 alias euler_init="module load gcc/8.2.0 cmake openmpi boost graphviz"
 
 alias clean="rm -rf build/*"
+
+export CMAKE_BUILD_PARALLEL_LEVEL=`grep -c ^processor /proc/cpuinfo`
