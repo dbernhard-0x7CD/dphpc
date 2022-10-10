@@ -56,7 +56,15 @@ or simply `cd build/ && cmake .. && cmake --build . && mpirun -n X ./main`
     * https://arma.sourceforge.net/docs.html#Mat
     * https://github.com/DrTimothyAldenDavis/GraphBLAS
     * OpenMP alternative: https://cilk.mit.edu/
-    * https://github.com/dendisuhubdy/armadillo
+    * https://gitlab.com/conradsnicta/armadillo-code
+
+# Running on EULER
+
+This command is used to mount the EULER storage locally on `LOCAL_MOUNT_POINT`:
+```bash
+sshfs -o ssh_command="ssh -J ETHZ_USERNAME@jumphost.inf.ethz.ch" ETHZ_USERNAME@euler.ethz.ch: LOCAL_MOUNT_POINT
+```
+if outside of the ETH network, else the `ssh_command` can be omitted.
 
 # TODO
     * Find a task
