@@ -34,7 +34,8 @@ struct Node
 bool operator <(const Node& x, const Node& y);
 
 /*
- * Graph representation for storing an undirected graph.
+ * Graph representation for storing an undirected graph. Uses an adjacency list
+ * for internal storage.
  */
 typedef adjacency_list<vecS, vecS, undirectedS, property<vertex_name_t, string>, ColorProperty> uGraph;
 

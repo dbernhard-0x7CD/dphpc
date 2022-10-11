@@ -6,7 +6,7 @@
 #include "main.hpp"
 #include "util.hpp"
 
-vector<Edge> load_from_adjacency_list(string path) {
+vector<Edge> load_from_edge_list(string path) {
     vector<Edge> adj_list(100);
     adj_list.resize(0);
 
@@ -59,7 +59,7 @@ vector<Edge> load_from_adjacency_list(string path) {
     return adj_list;
 }
 
-void store_adjacency_list(string path, const vector<Edge> &adj_list) {
+void store_edge_list(string path, const vector<Edge> &adj_list) {
     ofstream os(path);
 
     for (auto const &e : adj_list) {
@@ -68,7 +68,7 @@ void store_adjacency_list(string path, const vector<Edge> &adj_list) {
     os.close();
 }
 
-uGraph adjacency_list_to_ugraph(const vector<Edge> &adj_list) {
+uGraph edge_list_to_ugraph(const vector<Edge> &adj_list) {
     // Find out what is the maximum node referenced
     size_t max = 0;
     for (auto const& e : adj_list) {
@@ -100,7 +100,7 @@ uGraph adjacency_list_to_ugraph(const vector<Edge> &adj_list) {
     return g;
 }
 
-wuGraph adjacency_list_to_wugraph(const vector<Edge> &adj_list) {
+wuGraph edge_list_to_wugraph(const vector<Edge> &adj_list) {
     // Find out what is the maximum node referenced
     size_t max = 0;
     for (auto const& e : adj_list) {

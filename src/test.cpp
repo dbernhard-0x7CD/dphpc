@@ -24,9 +24,9 @@ void load_and_store() {
     std::string filename = "../data/adj_list_small_graph.txt";
 
     // test_graph_read_write(filename);
-    vector<Edge> adj = load_from_adjacency_list(filename);
+    vector<Edge> adj = load_from_edge_list(filename);
 
-    uGraph g = adjacency_list_to_ugraph(adj);
+    uGraph g = edge_list_to_ugraph(adj);
 
     store_ugraph_as_dot("./out.dot", g);
 }
@@ -84,9 +84,9 @@ void test_combine() {
     std::string filename = "../data/adj_list_small_graph.txt";
 
     // test_graph_read_write(filename);
-    vector<Edge> adj = load_from_adjacency_list(filename);
+    vector<Edge> adj = load_from_edge_list(filename);
 
-    uGraph g = adjacency_list_to_ugraph(adj);
+    uGraph g = edge_list_to_ugraph(adj);
 
     cout << "Combining " << endl;
 

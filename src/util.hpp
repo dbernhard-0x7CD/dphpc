@@ -18,24 +18,24 @@ using namespace std;
  * WHY: To load edges from a library which generates graphs.
  * NOTE: This may not be fully optimized
  */
-vector<Edge> load_from_adjacency_list(string path);
+vector<Edge> load_from_edge_list(string path);
 
 /*
- * Stores the adjacency list in the file defined by `path`.
+ * Stores the edge list in the file defined by `path`.
  * Each edge will be on a line in the form "X Y"
  * 
- * WHY: To store edges in a file. (pendand to load_from_adjacency_list)
+ * WHY: To store edges in a file. (pendand to load_from_edge_list)
 */
-void store_adjacency_list(string path, const vector<Edge> &adj_list);
+void store_edge_list(string path, const vector<Edge> &adj_list);
 
 /*
- * Converts the adjacency list into an uGraph.
+ * Converts the edge list into an uGraph.
  */
-uGraph adjacency_list_to_ugraph(const vector<Edge> &adj_list);
+uGraph edge_list_to_ugraph(const vector<Edge> &adj_list);
 
 /*
- * Converts the adjacency list into an wuGraph (weighted undirected graph).
+ * Converts the edge list into an wuGraph (weighted undirected graph).
  */
-wuGraph adjacency_list_to_wugraph(const vector<Edge> &adj_list);
+wuGraph edge_list_to_wugraph(const vector<Edge> &adj_list);
 
 #endif
