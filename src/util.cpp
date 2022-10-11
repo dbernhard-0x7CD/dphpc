@@ -1,6 +1,7 @@
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/undirected_graph.hpp>
+#include <iostream>
 
 #include "main.hpp"
 #include "util.hpp"
@@ -12,6 +13,12 @@ vector<Edge> load_from_adjacency_list(string path) {
     ifstream is(path);
     string line;
     string u_str, v_str;
+
+    if (!is.good()) {
+        char err[64];
+        snprintf(err, 64, "File %s does not exist!", path.c_str()); 
+        throw runtime_error(err);
+    }
 
     int char_len = 0;
     int offset_v = 0;
