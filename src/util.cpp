@@ -22,7 +22,6 @@ vector<Edge> load_from_adjacency_list(string path) {
 
     int char_len = 0;
     int offset_v = 0;
-    long u, v;
     while(getline(is, line))
     {
         char_len = 0;
