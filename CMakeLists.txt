@@ -49,9 +49,9 @@ add_compile_options(-g3 -Wall -Wextra)
 
 
 # Our sources
-set(SOURCE_FILES, src/main.cpp src/test.cpp src/util.cpp)
+set(SOURCE_FILES, src/main.cpp src/test.cpp src/util.cpp src/generator.cpp)
 
-add_executable(main src/main.cpp src/test.cpp src/util.cpp)
+add_executable(main src/main.cpp src/test.cpp src/util.cpp src/generator.cpp)
 
 # To build liblsb before main (Needed if we build with more than 1 core)
 add_dependencies(main liblsb)
