@@ -33,4 +33,9 @@ void store_adjacency_list(string path, const vector<Edge> &adj_list);
  */
 uGraph adjacency_list_to_ugraph(const vector<Edge> &adj_list);
 
+/*
+ * Converts the adjacency list into an wuGraph (weighted undirected graph).
+ */
+wuGraph adjacency_list_to_wugraph(const vector<Edge> &adj_list);
+
 #endif

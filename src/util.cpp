@@ -62,13 +62,14 @@ vector<Edge> load_from_adjacency_list(string path) {
 void store_adjacency_list(string path, const vector<Edge> &adj_list) {
     ofstream os(path);
 
-    for (Edge e : adj_list) {
+    for (auto const &e : adj_list) {
         os << e.u << " " << e.v << ::endl;
     }
     os.close();
 }
 
 uGraph adjacency_list_to_ugraph(const vector<Edge> &adj_list) {
+    // Find out what is the maximum node referenced
     size_t max = 0;
     for (auto const& e : adj_list) {
         if (e.u > max) {
@@ -88,23 +89,44 @@ uGraph adjacency_list_to_ugraph(const vector<Edge> &adj_list) {
     uGraph g(max);
 
     for (auto const& e : adj_list) {
-        Node node_u { .id = e.u };
-        Node node_v { .id = e.v };
-
-        if (nodes.find(node_u) == nodes.end()) {
-            nodes.insert(node_u);
+        if (e.u == e.v) continue;
+        bool exists = edge(e.u, e.v, g).second;
+        if (!exists) {
+            add_edge(e.u, e.v, g);
+            // cout << "Adding edge " << e.u << " --- " << e.v << endl;
         }
-        if (nodes.find(node_v) == nodes.end()) {
-            nodes.insert(node_v);
-        }
-        
-        // cout << "Edge " << e.u << " --- " << e.v << std::endl;
     }
-    cout << "Amount of edges: " << adj_list.size() << std::endl;
-    cout << "Amount of nodes: " << nodes.size() << std::endl;
+
+    return g;
+}
+
+wuGraph adjacency_list_to_wugraph(const vector<Edge> &adj_list) {
+    // Find out what is the maximum node referenced
+    size_t max = 0;
+    for (auto const& e : adj_list) {
+        if (e.u > max) {
+            max = e.u;
+        }
+        if (e.v > max) {
+            max = e.v;
+        }
+    }
+    // as 0 is also a vertex
+    max++;
+
+    cout << "Creating graph with " << max << " vertices" << std::endl;
+    set<Node> nodes;
+    
+    // Actually not needed to have an accurate size when initializing
+    wuGraph g(max);
     
     for (auto const& e : adj_list) {
-        add_edge(e.u, e.v, g);
+        if (e.u == e.v) continue;
+        bool exists = edge(e.u, e.v, g).second;
+        if (!exists) {
+            // cout << "Adding edge " << e.u << " --- " << e.v << endl;
+            add_edge(e.u, e.v, 1, g);
+        }
     }
 
     return g;

@@ -34,10 +34,16 @@ struct Node
 bool operator <(const Node& x, const Node& y);
 
 /*
- * Graph representation for storing. Undirected Graph.
+ * Graph representation for storing an undirected graph.
  */
 typedef adjacency_list<vecS, vecS, undirectedS, property<vertex_name_t, string>, ColorProperty> uGraph;
 
+/*
+ * Weighted undirected graph. Used for calculating the MST.
+ */
+typedef adjacency_list<vecS, vecS, undirectedS, property<vertex_name_t, string>, property<edge_weight_t, int>> wuGraph;
+
+typedef graph_traits< uGraph >::vertex_descriptor Vertex;
 
 /* An undirected edge between u and v. */
 struct Edge {
