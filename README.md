@@ -19,11 +19,11 @@ source ./scripts/env.sh
 ```
 
 This makes the following aliases available:
-* `build`: Builds with MPI
 * `raw_build`: Buildss **without** MPI (used for development of single parts)
+* `build`: Builds with MPI
 * `bm_build`: Builds **with** MPI and LSB to measure the performance
-* `run`: Builds and runs with MPI
 * `raw_run`: Builds and runs **without** MPI (used for development of single parts)
+* `run`: Builds and runs with MPI
 * `bm_run`: Builds and runs **with** MPI and LSB to measure the performance
 * `euler_init`: Loads all necessary modules on EULER
 
