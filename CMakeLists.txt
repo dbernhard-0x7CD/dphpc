@@ -44,6 +44,10 @@ else()
   message("Building with LSB")
 endif()
 
+# Parameters for compilation
+add_compile_options(-g3 -Wall -Wextra)
+
+
 # Our sources
 set(SOURCE_FILES, src/main.cpp src/test.cpp src/util.cpp)
 
