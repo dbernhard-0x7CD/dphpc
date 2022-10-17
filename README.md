@@ -19,7 +19,11 @@ First we need to clone the snitch repo:
 git submodule update --init
 ```
 
-After installing everthing you can souce env.sh: `source ./scripts/env.sh` (This must be done in the project root).
+After installing everthing you can souce env.sh: 
+```
+source ./scripts/env.sh
+```
+ * This must be done in the project root.
 
 This sets the following variables and aliases:
 * `sim` to simulate an application for the snitch
@@ -35,11 +39,20 @@ docker run -it -v `pwd`:/repo -w /repo ghcr.io/pulp-platform/snitch
 
 Creates a new docker container with this project mounted at `/repo`.
 
-**Afterwards** you can run `docker exec -it CONTAINER_NAME /bin/bash` to restart the container.
+**Afterwards** you can run
+```bash
+docker start CONTAINER_NAME
+docker exec -it CONTAINER_NAME /bin/bash
+```
+
+to restart the container.
 
 ### Building the simulator
+
+This needs only to be done once.
+
 ```
-cd snich/hw/system/snitch_cluster/
+cd snitch/hw/system/snitch_cluster/
 make bin/snitch_cluster.vlt
 ```
 
