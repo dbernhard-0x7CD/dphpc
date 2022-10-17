@@ -1,0 +1,3 @@
+[submodule "snitch"]
+	path = snitch
+	url = https://github.com/pulp-platform/snitch.git
