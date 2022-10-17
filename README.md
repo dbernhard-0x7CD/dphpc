@@ -19,6 +19,7 @@ First we need to clone the snitch repo:
 git submodule update --init
 ```
 
+## Load aliases
 After installing everthing you can source env.sh inside the **project root directory**: 
 ```
 source ./scripts/env.sh
@@ -46,9 +47,10 @@ docker exec -it CONTAINER_NAME /bin/bash
 
 to restart the container.
 
-### Building the simulator
+## Building the simulator
+Make sure to not forget [sourcing env.sh](#load-aliases).
 
-This needs only to be done once.
+This needs only to be done once:
 
 ```
 cd snitch/hw/system/snitch_cluster/
@@ -69,6 +71,7 @@ for file in riscv64-*; do ln -s $file $(echo "$file" | sed 's/^riscv64/riscv32/g
 
 # Building
 
+This builds all applications by us:
 ```
 cd build
 cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE ../
@@ -87,6 +90,7 @@ sim ./hello_world
 
 # TODO
 * setup building
+* Have a command to output assembly
 
 # DONE
 * Find project and TA
