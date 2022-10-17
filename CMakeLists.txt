@@ -22,3 +22,4 @@ add_subdirectory(${SNITCH_SOFTWARE_DIR}/benchmark benchmark)
 include_directories(${SNRUNTIME_INCLUDE_DIRS})
 
 add_snitch_executable(hello_world ./src/hello_world/main.c)
+add_snitch_executable(debug-multicore ./src/debug-multicore/main.c)
