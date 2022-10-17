@@ -14,6 +14,11 @@ The goal of our project is to develop optimized operators (from the ONNX standar
 
 # Setup - Development Environment
 
+First we need to clone the snitch repo:
+```
+git submodule update --init
+```
+
 After installing everthing you can souce env.sh: `source ./scripts/env.sh` (This must be done in the project root).
 
 This sets the following variables and aliases:
