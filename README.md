@@ -32,6 +32,11 @@ Creates a new docker container with this project mounted at `/repo`.
 
 **Afterwards** you can run `docker exec -it CONTAINER_NAME /bin/bash` to restart the container.
 
+### Building the simulator
+```
+cd snich/hw/system/snitch_cluster/
+make bin/snitch_cluster.vlt
+```
 
 ## Install riscv compiler (if you install the environment yourself)
 
@@ -48,7 +53,6 @@ for file in riscv64-*; do ln -s $file $(echo "$file" | sed 's/^riscv64/riscv32/g
 # Building
 
 ```
-mkdir build
 cd build
 cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE ../
 ```
