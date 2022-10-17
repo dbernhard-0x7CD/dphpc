@@ -19,11 +19,10 @@ First we need to clone the snitch repo:
 git submodule update --init
 ```
 
-After installing everthing you can souce env.sh: 
+After installing everthing you can source env.sh inside the **project root directory**: 
 ```
 source ./scripts/env.sh
 ```
- * This must be done in the project root.
 
 This sets the following variables and aliases:
 * `sim` to simulate an application for the snitch
