@@ -1,0 +1,1 @@
+cd $1 && cmake .. -DCMAKE_TOOLCHAIN_FILE=toolchain-llvm && cmake --build . -j
