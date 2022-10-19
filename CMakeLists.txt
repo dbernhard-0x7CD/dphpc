@@ -12,7 +12,8 @@ set(TARGET_LINKER_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/snitch/hw/system/snicth_cl
 project(snitch_cluster LANGUAGES C ASM)
 include(SnitchUtilities)
 
-add_compile_options(-O3 -g -ffunction-sections)
+# By default we compile with no compiler optimizations. TODO: State this in the report.
+add_compile_options(-O0 -g -ffunction-sections)
 
 # enable_testing()
 add_subdirectory(${SNITCH_SOFTWARE_DIR}/snRuntime snRuntime)
@@ -21,5 +22,19 @@ add_subdirectory(${SNITCH_SOFTWARE_DIR}/benchmark benchmark)
 
 include_directories(${SNRUNTIME_INCLUDE_DIRS})
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/onnx)
+
 add_snitch_executable(hello_world ./src/hello_world/main.c)
 add_snitch_executable(debug-multicore ./src/debug-multicore/main.c)
+
+# Compile 'sum' library and its corresponding benchmark
+add_library(summation src/onnx/sum_baseline.c src/onnx/sum_baseline_O3.c)
+
+# Add compile parameters for O3 optimization
+set_source_files_properties(src/onnx/sum_baseline_O3.c PROPERTIES COMPILE_FLAGS -O3)
+
+add_snitch_executable(benchmark_sum ./src/benchmark/benchmark_sum.c)
+target_link_libraries(benchmark_sum summation)
+
+
