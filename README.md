@@ -48,6 +48,7 @@ docker exec -it CONTAINER_NAME /bin/bash
 to restart the container.
 
 ## Building the simulator
+ * Only if you are not using `banshee`
 Make sure to not forget [sourcing env.sh](#load-aliases).
 
 This needs only to be done once:
@@ -70,8 +71,11 @@ for file in riscv64-*; do ln -s $file $(echo "$file" | sed 's/^riscv64/riscv32/g
 ```
 
 # Building
+* First run `source ./scripts/env.sh`
 
 This builds all applications by us:
+
+Execute in the project root:
 ```
 cd build
 cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE ../
