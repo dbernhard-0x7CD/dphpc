@@ -89,9 +89,14 @@ sim ./hello_world
 * Maybe?
 
 # TODO
-* setup building
+* banshee
 * Have a command to output assembly
+    * can be done if compiled as executable. sufficient?
+* ask if we need to accept n dimensional input
+* should we do it for all datatypes (uint8, uint16, float32, ...)?
+* 
 
 # DONE
+* setup building
 * Find project and TA
 * Created repo
