@@ -22,7 +22,7 @@ int main() {
     result = sum_baseline(x, 100);
     size_t end = read_csr(mcycle);
 
-    printf("sum_baseline took %d cycles and result is %f\n", end - start, result);
+    printf("sum_baseline_O0 took %d cycles and result is %f\n", end - start, result);
  
     start = read_csr(mcycle);
     result = sum_baseline_O3(x, 100);
