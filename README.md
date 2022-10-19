@@ -26,26 +26,11 @@ source ./scripts/env.sh
 ```
 
 This sets the following variables and aliases:
-* `sim` to simulate an application for the snitch
-* ``
-
-## docker - Once
-
-Only needed if developing with docker.
-Run this in the root of the project folder:
-```
-docker run -it -v `pwd`:/repo -w /repo ghcr.io/pulp-platform/snitch
-```
-
-Creates a new docker container with this project mounted at `/repo`.
-
-**Afterwards** you can run
-```bash
-docker start CONTAINER_NAME
-docker exec -it CONTAINER_NAME /bin/bash
-```
-
-to restart the container.
+* `proot` to switch to the project root
+* `dbuild` to build using **docker**
+* `pbuild` to build using **podman**
+* `build` to build locally
+* `run` to run using banshee (which must be on your *PATH*)
 
 ## Building the simulator
  * Only if you are not using `banshee`
@@ -72,21 +57,16 @@ for file in riscv64-*; do ln -s $file $(echo "$file" | sed 's/^riscv64/riscv32/g
 
 # Building
 * First run `source ./scripts/env.sh`
-
-This builds all applications by us:
-
-Execute in the project root:
-```
-cd build
-cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE ../
-```
+* `dbuild` for docker
+    * The build files should then be in `./build`
 
 Now you can simulate the built applications with:
 ```
-sim ./hello_world
+run ./build/hello_world
 ```
 
 # Used Libraries
+* [snitch](https://github.com/pulp-platform/snitch.git)
 
 
 # Running on EULER
