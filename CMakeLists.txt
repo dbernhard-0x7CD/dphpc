@@ -38,7 +38,7 @@ add_snitch_executable(hello_world ./src/hello_world/main.c)
 add_snitch_executable(debug-multicore ./src/debug-multicore/main.c)
 
 # Compile 'sum' library and its corresponding benchmark
-add_library(summation src/onnx/sum_baseline_O0.c src/onnx/sum_baseline_O3.c)
+add_library(summation src/onnx/sum_baseline_O0.c src/onnx/sum_baseline_O3.c src/onnx/sum_optimized.c)
 
 set_source_files_properties(src/onnx/sum_baseline_O3.c PROPERTIES COMPILE_FLAGS -O3)
 set_source_files_properties(src/onnx/sum_baseline_O0.c PROPERTIES COMPILE_FLAGS -O0)

@@ -29,6 +29,13 @@ int main() {
     end = read_csr(mcycle);
 
     printf("sum_baseline_O3 took %d cycles and result is %f\n", end - start, result);
+
+    start = read_csr(mcycle);
+    result = sum_optimized(x, 100);
+    end = read_csr(mcycle);
+
+    printf("sum_optimized took %d cycles and result is %f\n", end - start, result);
+
     return 0;
 }
 
