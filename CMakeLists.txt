@@ -11,24 +11,10 @@ add_compile_options(-O3 -g -ffunction-sections)
 
 # Build the runtime
 add_subdirectory(${SNITCH_SOFTWARE_DIR}snRuntime snRuntime)
+add_subdirectory(${SNITCH_SOFTWARE_DIR}benchmark benchmark)
 
-# Compile the snitch benchmark (matrix multiplication)
-include_directories(${SNITCH_SOFTWARE_DIR}benchmark/include)
+
 include_directories(${SNRUNTIME_INCLUDE_DIRS})
-
-add_library(benchmark ${SNITCH_SOFTWARE_DIR}benchmark/src/benchmark.c)
-
-add_library(benchmark-matmul snitch/sw/benchmark/src/matmul/matmul.c snitch/sw/benchmark/src/matmul/data.S)
-add_snitch_executable(benchmark-matmul-baseline snitch/sw/benchmark/src/matmul/main_baseline.c)
-add_snitch_executable(benchmark-matmul-ssr snitch/sw/benchmark/src/matmul/main_ssr.c)
-add_snitch_executable(benchmark-matmul-ssr_frep snitch/sw/benchmark/src/matmul/main_ssr_frep.c)
-add_snitch_executable(benchmark-matmul-all snitch/sw/benchmark/src/matmul/main_all.c)
-
-target_link_libraries(benchmark-matmul benchmark ${SNITCH_RUNTIME})
-target_link_libraries(benchmark-matmul-baseline benchmark-matmul)
-target_link_libraries(benchmark-matmul-ssr benchmark-matmul)
-target_link_libraries(benchmark-matmul-ssr_frep benchmark-matmul)
-target_link_libraries(benchmark-matmul-all benchmark-matmul)
 
 # LMQ includes
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/include)
