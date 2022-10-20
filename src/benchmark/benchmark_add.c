@@ -55,6 +55,14 @@ int main() {
     add_ssr(x, y, size, result);
     end = read_csr(mcycle);
     printf("add_ssr took %lu cycles\n", end - start);
+
+    verify(result, result_ref, size);
+
+    start = read_csr(mcycle);
+    add_ssr_frep(x, y, size, result);
+    end = read_csr(mcycle);
+    printf("add_ssr_frep took %lu cycles\n", end - start);
+
     verify(result, result_ref, size);
  
     return 0;
