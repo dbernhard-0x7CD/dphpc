@@ -68,6 +68,9 @@ run ./build/hello_world
 # Used Libraries
 * [snitch](https://github.com/pulp-platform/snitch.git)
 
+# Helpful Links
+* [gcc inline assembly](https://www.felixcloutier.com/documents/gcc-asm.html)
+
 
 # Running on EULER
 * Maybe?
