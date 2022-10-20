@@ -44,6 +44,6 @@ add_snitch_executable(benchmark_sum ./src/benchmark/benchmark_sum.c)
 target_link_libraries(benchmark_sum summation)
 
 # Compile 'add'
-add_library(add src/onnx/add_baseline.c)
+add_library(add src/onnx/add.c)
 add_snitch_executable(benchmark_add ./src/benchmark/benchmark_add.c)
 target_link_libraries(benchmark_add add)
