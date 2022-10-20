@@ -65,11 +65,13 @@ Now you can simulate the built applications with:
 run ./build/hello_world
 ```
 
-# Used Libraries
-* [snitch](https://github.com/pulp-platform/snitch.git)
-
 # Helpful Links
 * [gcc inline assembly](https://www.felixcloutier.com/documents/gcc-asm.html)
+* [onnx operators](https://github.com/onnx/onnx/blob/main/docs/Operators.md#aionnx-default)
+* [llvm fork](https://github.com/pulp-platform/llvm-project#ssr)
+* [ssr papter](https://arxiv.org/pdf/1911.08356.pdf)
+* [snitch paper](https://arxiv.org/pdf/2002.10143.pdf )
+* [snitch getting started](https://pulp-platform.github.io/snitch/ug/getting_started/)
 
 
 # Running on EULER
