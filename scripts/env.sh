@@ -2,7 +2,7 @@
 
 # sets some important variables for developing
 
-export PROOT=`pwd`
+export PROOT=`pwd`/
 
 # Only allow if we're in the project root
 # NOTE: actually you could be in the project root with ../PROJ_ROOT/scripts/env.sh but this is not supported
@@ -39,3 +39,5 @@ alias dbuild='docker run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.
 
 # Builds using podman
 alias pbuild='podman run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.io/pulp-platform/snitch /bin/bash ./container_build.sh build'
+
+alias clean='rm -r "$PROOT"build/*'
