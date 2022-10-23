@@ -56,7 +56,7 @@ int add_ssr_frep(float *a, float* b, const size_t n, float* result) {
     register volatile float ft0 asm("ft0");
     register volatile float ft1 asm("ft1");
     register volatile float ft2 asm("ft2");
-    asm volatile("" : "=f"(ft0), "=f"(ft1), "=f"(ft2));
+    asm volatile("" : "=f"(ft0), "=f"(ft1));
 
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*a));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
