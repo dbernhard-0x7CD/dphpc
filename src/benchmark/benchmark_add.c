@@ -20,21 +20,6 @@ int main() {
 
     const int size = 500;
 
-    // sum from 1 to 100 (inclusive)
-    // float *ptr = snrt_cluster_memory().start;
-    // float *x = ptr;
-    // ptr += size + 1;
-
-    // float *y = ptr;
-    // ptr += size + 1;
-
-    // float *result = ptr;
-    // ptr += size + 1;
-
-    // float *result_ref = ptr;
-    // ptr += size + 1;
-
-
     float* x = snrt_l1alloc(size * sizeof(float));
     float* y = snrt_l1alloc(size * sizeof(float));
     float* result_ref = snrt_l1alloc(size * sizeof(float));
