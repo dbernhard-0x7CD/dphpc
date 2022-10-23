@@ -79,7 +79,7 @@ int add_ssr_frep(float *a, float* b, const size_t n, float* result) {
     );
 
     snrt_ssr_disable();
-    asm volatile("" :: "f"(ft0), "f"(ft1), "f"(ft2));
+    asm volatile("" :: "f"(ft2));
 
     return 0;
 }
