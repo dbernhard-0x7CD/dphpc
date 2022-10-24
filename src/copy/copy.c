@@ -52,9 +52,8 @@ int copy_ssr(const float* source, const size_t n, float* target) {
 __attribute__((noinline))
 int copy_ssr_frep(const float* source, const size_t n, float* target) {
     register volatile float ft0 asm("ft0");
-    register volatile float ft1 asm("ft1");
     register volatile float ft2 asm("ft2");
-    ft1 = 0.0;
+    const float added = 0.0;
     
     // input is ft0; TODO: Why is this needed?
     asm volatile("" : "=f"(ft0));
@@ -63,6 +62,10 @@ int copy_ssr_frep(const float* source, const size_t n, float* target) {
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*source));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, source);
+
+    snrt_ssr_loop_1d(SNRT_SSR_DM1, 1, sizeof(float));
+    snrt_ssr_repeat(SNRT_SSR_DM1, n);
+    snrt_ssr_read(SNRT_SSR_DM1, SNRT_SSR_1D, &added);
 
     // stream from register ft2 into result
     snrt_ssr_loop_1d(SNRT_SSR_DM2, n, sizeof(*target));
