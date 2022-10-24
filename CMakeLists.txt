@@ -33,3 +33,9 @@ target_link_libraries(benchmark_sum summation)
 add_library(add src/onnx/add.c)
 add_snitch_executable(benchmark_add ./src/benchmark/benchmark_add.c)
 target_link_libraries(benchmark_add add)
+
+#Compile 'copy'
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/copy)
+add_library(copy src/copy/copy.c)
+add_snitch_executable(benchmark_copy ./src/benchmark/benchmark_copy.c)
+target_link_libraries(benchmark_copy copy)
