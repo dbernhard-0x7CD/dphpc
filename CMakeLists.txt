@@ -4,7 +4,17 @@ set(SNITCH_SOFTWARE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/snitch/sw/)
 list(APPEND CMAKE_MODULE_PATH ${SNITCH_SOFTWARE_DIR}/cmake)
 set(CMAKE_TOOLCHAIN_FILE toolchain-llvm CACHE STRING "Toolchain to use")
 
-project(Benchmarks LANGUAGES C ASM)
+project(snitch-onnx LANGUAGES C ASM)
+if (CLUSTER_SIM)
+    message("Linking against snRuntime-cluster. Use snitch_cluster.vlt to simulate")
+    set(SNITCH_SIMULATOR ${CMAKE_CURRENT_SOURCE_DIR}/snitch/hw/system/snitch_cluster/bin/snitch_cluster.vlt CACHE PATH "")
+    set(TARGET_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/snitch/hw/system/snitch_cluster/generated/link.ld CACHE PATH "")
+    set(SNITCH_RUNTIME snRuntime-cluster CACHE STRING "")
+else()
+    message("Using banshee. Use banshee BINARY to simulate. (f.ex: --configuration $SNITCH_ROOT/sw/banshee/config/snitch_cluster.yaml -l")
+    set(SNITCH_RUNTIME snRuntime-banshee CACHE STRING "")
+endif()
+
 include(SnitchUtilities)
 
 add_compile_options(-O3 -g -ffunction-sections)

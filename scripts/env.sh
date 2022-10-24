@@ -34,6 +34,9 @@ alias run='banshee --configuration $SNITCH_ROOT/sw/banshee/config/snitch_cluster
 # Builds locally
 alias build='cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE .. && cmake --build . -j || cd ..'
 
+# Builds against the vlt simulator (clean before running this)
+alias build_cluster='cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE -DCLUSTER_SIM=1 .. && cmake --build . -j || cd ..'
+
 # Builds using docker
 alias dbuild='docker run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.io/pulp-platform/snitch /bin/bash ./container_build.sh build'
 
