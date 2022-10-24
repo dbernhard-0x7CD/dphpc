@@ -5,7 +5,7 @@ The goal of our project is to develop optimized operators (from the ONNX standar
 
 # Requirements
 * Either:
-    * docker
+    * docker/podman
 * or ("local")
     * bender
     * verilator
@@ -72,20 +72,22 @@ run ./build/hello_world
 * [ssr papter](https://arxiv.org/pdf/1911.08356.pdf)
 * [snitch paper](https://arxiv.org/pdf/2002.10143.pdf )
 * [snitch getting started](https://pulp-platform.github.io/snitch/ug/getting_started/)
+* [RISCV registers](https://en.wikichip.org/wiki/risc-v/registers)
 
 
 # Running on EULER
 * Maybe?
 
 # TODO
-* banshee
-* Have a command to output assembly
-    * can be done if compiled as executable. sufficient?
+* banshee build script?
+* Build for the simulator using a compile flag?
+* File where we store the benchmark results (to plot later in the report)
 * ask if we need to accept n dimensional input
 * should we do it for all datatypes (uint8, uint16, float32, ...)?
-* 
 
 # DONE
+* Have a command to output assembly
+    * can be done if compiled as executable. sufficient?
 * setup building
 * Find project and TA
 * Created repo
