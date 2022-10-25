@@ -29,6 +29,8 @@ include_directories(${SNRUNTIME_INCLUDE_DIRS})
 # LMQ includes
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/onnx)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/benchmark)
+
 
 add_snitch_executable(hello_world ./src/hello_world/main.c)
 add_snitch_executable(debug-multicore ./src/debug-multicore/main.c)
