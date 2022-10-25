@@ -7,7 +7,7 @@
  * Naive implementation of add. Adds a and b element wise into result.
  */
 __attribute__((noinline))
-int add_baseline(float *x,  const size_t n, float* result) {
+int fabs_baseline(float *x,  const size_t n, float* result) {
     for (size_t i = 0; i < n; i++) {
         if(x[i] > 0){
             result[i] = x[i];
@@ -22,7 +22,7 @@ int add_baseline(float *x,  const size_t n, float* result) {
 
 
 __attribute__((noinline))
-int add_ssr(float *x, const size_t n, float* result) {
+int fabs_ssr(float *x, const size_t n, float* result) {
 
     register volatile float ft0 asm("ft0");
     register volatile float ft1 asm("ft1");
@@ -52,7 +52,7 @@ int add_ssr(float *x, const size_t n, float* result) {
 }
 
 __attribute__((noinline))
-int add_ssr_frep(float *x, const size_t n, float* result) {
+int fabs_ssr_frep(float *x, const size_t n, float* result) {
 
     // register volatile float ft0 asm("ft0");
     // register volatile float ft1 asm("ft1");
@@ -83,5 +83,5 @@ int add_ssr_frep(float *x, const size_t n, float* result) {
     // asm volatile("" :: "f"(ft2));
 
     // return 0;
-    add_baseline(x, n, result);
+    fabs_baseline(x, n, result);
 }

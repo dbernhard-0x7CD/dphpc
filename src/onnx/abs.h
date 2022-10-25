@@ -3,8 +3,8 @@
 
 #include <snrt.h>
 
-float sum_baseline(float *arr, const size_t n);
-float sum_ssr(float *arr, const size_t n);
-float sum_ssr_frep(float *arr, const size_t n);
+float fabs_baseline(float *arr, const size_t n, float *result);
+float fabs_ssr(float *arr, const size_t n, float *result);
+float fabs_ssr_frep(float *arr, const size_t n, float *result);
 
 #endif
