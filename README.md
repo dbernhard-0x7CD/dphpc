@@ -73,6 +73,7 @@ run ./build/hello_world
 * [snitch paper](https://arxiv.org/pdf/2002.10143.pdf )
 * [snitch getting started](https://pulp-platform.github.io/snitch/ug/getting_started/)
 * [RISCV registers](https://en.wikichip.org/wiki/risc-v/registers)
+* [RISCV spec](https://github.com/riscv/riscv-isa-manual/releases/download/Ratified-IMAFDQC/riscv-spec-20191213.pdf)
 
 
 # Running on EULER
