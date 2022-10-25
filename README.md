@@ -84,12 +84,13 @@ run ./build/hello_world
 
 # TODO
 * banshee build script?
-* Build for the simulator using a compile flag?
 * File where we store the benchmark results (to plot later in the report)
 * ask if we need to accept n dimensional input
 * should we do it for all datatypes (uint8, uint16, float32, ...)?
 
 # DONE
+* Build for the simulator using a compile flag?
+    * use `-DCLUSTER_SIM=1` when calling `cmake ..` or simply use the alias `build_cluster`
 * Have a command to output assembly
     * can be done if compiled as executable. sufficient?
 * setup building
