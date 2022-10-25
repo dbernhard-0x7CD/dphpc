@@ -7,12 +7,12 @@
  * Naive implementation of add. Adds a and b element wise into result.
  */
 __attribute__((noinline))
-int relu_baseline(float *x,  const size_t n, float* result) {
+int leakyrelu_baseline(float *x,  const size_t n, float alpha, float* result) {
     for (size_t i = 0; i < n; i++) {
         if(x[i] > 0){
             result[i] = x[i];
         } else {
-            result[i] = 0;
+            result[i] = alpha * x[i];
         }
     }
     return 0;
@@ -20,7 +20,7 @@ int relu_baseline(float *x,  const size_t n, float* result) {
 
 
 __attribute__((noinline))
-int relu_ssr(float *x, const size_t n, float* result) {
+int leakyrelu_ssr(float *x, const size_t n, float alpha, float* result) {
 
     register volatile float ft0 asm("ft0");
     register volatile float ft1 asm("ft1");
@@ -37,17 +37,15 @@ int relu_ssr(float *x, const size_t n, float* result) {
     snrt_ssr_enable();
 
     for (size_t i = 0; i < n; i++) {
-        float val;
         asm volatile(
-            "fmv.s %[tmp], ft0 \n"
-            : [tmp] "=r"(val) :: "ft0"
-        );
-        if (val < 0) {
-            val = 0;
-        }
-        asm volatile(
-            "fmv.s ft1, %[tmp] \n"
-            :: [tmp] "r"(val) : "ft1"
+            "fmv.s ft2, ft0 \n"
+            "fmv.w.x ft3, zero \n"
+            "flt.s t0, ft2, ft3 \n"
+            "beqz t0, 1f \n"
+            "fmv.s ft2, ft3 \n"
+            "1: \n"
+            "fmv.s ft1, ft2 \n"
+            ::: "ft0", "ft1", "ft2", "ft3", "t0"
         );
     }
 
@@ -58,7 +56,7 @@ int relu_ssr(float *x, const size_t n, float* result) {
 }
 
 __attribute__((noinline))
-int relu_ssr_frep(float *x, const size_t n, float* result) {
+int leakyrelu_ssr_frep(float *x, const size_t n, float alpha, float* result) {
 
     // register volatile float ft0 asm("ft0");
     // register volatile float ft1 asm("ft1");
@@ -89,5 +87,5 @@ int relu_ssr_frep(float *x, const size_t n, float* result) {
     // asm volatile("" :: "f"(ft2));
 
     // return 0;
-    relu_baseline(x, n, result);
+    return leakyrelu_baseline(x, n, alpha, result);
 }

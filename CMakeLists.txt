@@ -54,3 +54,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/copy)
 add_library(copy src/copy/copy.c)
 add_snitch_executable(benchmark_copy ./src/benchmark/benchmark_copy.c)
 target_link_libraries(benchmark_copy copy)
+
+# Compile 'relu'
+add_library(relu src/onnx/relu.c)
+add_snitch_executable(benchmark_relu ./src/benchmark/benchmark_relu.c)
+target_link_libraries(benchmark_relu relu)
