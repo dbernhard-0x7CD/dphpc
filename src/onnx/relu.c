@@ -36,18 +36,21 @@ int leakyrelu_ssr(float *x, const size_t n, float alpha, float* result) {
 
     snrt_ssr_enable();
 
-    for (size_t i = 0; i < n; i++) {
-        asm volatile(
-            "fmv.s ft2, ft0 \n"
-            "fmv.w.x ft3, zero \n"
-            "flt.s t0, ft2, ft3 \n"
-            "beqz t0, 1f \n"
-            "fmv.s ft2, ft3 \n"
-            "1: \n"
-            "fmv.s ft1, ft2 \n"
-            ::: "ft0", "ft1", "ft2", "ft3", "t0"
-        );
-    }
+    asm volatile(
+        "beqz %[n_rep], 3f \n"
+        "fmv.w.x ft3, zero \n"
+        "2: \n"
+        "fmv.s ft2, ft0 \n"
+        "flt.s t0, ft2, ft3 \n"
+        "beqz t0, 1f \n"
+        "fmul.s ft2, ft2, %[alpha] \n"
+        "1: \n"
+        "fmv.s ft1, ft2 \n"
+        "addi %[n_rep], %[n_rep], -1 \n"
+        "bgtz %[n_rep], 2b \n"
+        "3: \n"
+        :: [n_rep] "r"(n), [alpha] "f"(alpha) : "ft0", "ft1", "ft2", "ft3", "t0"
+    );
 
     snrt_ssr_disable();
     asm volatile("" :: "f"(ft1));
