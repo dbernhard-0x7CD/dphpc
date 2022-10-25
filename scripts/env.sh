@@ -9,7 +9,7 @@ export PROOT=`pwd`/
 if [[ $0 != ./scripts/env.sh ]]
 then
     echo "Source must be done in the project root. I'm the executable at $0"
-    return 0
+    # return 0
 fi
 
 echo "Setting aliases and variables"

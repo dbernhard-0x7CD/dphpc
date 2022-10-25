@@ -46,6 +46,11 @@ add_library(add src/onnx/add.c)
 add_snitch_executable(benchmark_add ./src/benchmark/benchmark_add.c)
 target_link_libraries(benchmark_add add)
 
+# Compile 'div'
+add_library(div src/onnx/div.c)
+add_snitch_executable(benchmark_div ./src/benchmark/benchmark_div.c)
+target_link_libraries(benchmark_div div)
+
 # Compile 'abs'
 add_library(abs src/onnx/abs.c)
 add_snitch_executable(benchmark_abs ./src/benchmark/benchmark_abs.c)
