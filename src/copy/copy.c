@@ -1,12 +1,11 @@
 
 #include "copy.h"
 
+#include <snrt.h>
 
 __attribute__((noinline))
 int copy_baseline(const float* source, const size_t n, float* target) {
-    for (size_t i = 0; i < n; i++) {
-        target[i] = source[i];
-    }
+    snrt_memcpy(target, source, n * sizeof(float));
 
     return 0;
 }
