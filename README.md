@@ -26,10 +26,13 @@ source ./scripts/env.sh
 ```
 
 This sets the following variables and aliases:
-* `proot` to switch to the project root
-* `dbuild` to build using **docker**
-* `pbuild` to build using **podman**
-* `build` to build locally
+* `proot` to change the directory to the project root
+* `dbuild` to build for banshee using **docker**
+* `pbuild` to build for banshee using **podman**
+* `build` to build for banshee locally
+* `build_cluster` to build for the simulator locally
+    * Run `clean` before switching from a banshee build and vice versa!
+* `clean` to remove all temporary build files
 * `run` to run using banshee (which must be on your *PATH*)
 
 ## Building the simulator

@@ -29,6 +29,8 @@ include_directories(${SNRUNTIME_INCLUDE_DIRS})
 # LMQ includes
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/onnx)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/benchmark)
+
 
 add_snitch_executable(hello_world ./src/hello_world/main.c)
 add_snitch_executable(debug-multicore ./src/debug-multicore/main.c)
@@ -43,6 +45,11 @@ target_link_libraries(benchmark_sum summation)
 add_library(add src/onnx/add.c)
 add_snitch_executable(benchmark_add ./src/benchmark/benchmark_add.c)
 target_link_libraries(benchmark_add add)
+
+# Compile 'div'
+add_library(div src/onnx/div.c)
+add_snitch_executable(benchmark_div ./src/benchmark/benchmark_div.c)
+target_link_libraries(benchmark_div div)
 
 # Compile 'abs'
 add_library(abs src/onnx/abs.c)
