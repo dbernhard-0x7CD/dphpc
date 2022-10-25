@@ -44,6 +44,11 @@ add_library(add src/onnx/add.c)
 add_snitch_executable(benchmark_add ./src/benchmark/benchmark_add.c)
 target_link_libraries(benchmark_add add)
 
+# Compile 'abs'
+add_library(abs src/onnx/abs.c)
+add_snitch_executable(benchmark_abs ./src/benchmark/benchmark_abs.c)
+target_link_libraries(benchmark_abs abs)
+
 #Compile 'copy'
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/copy)
 add_library(copy src/copy/copy.c)
