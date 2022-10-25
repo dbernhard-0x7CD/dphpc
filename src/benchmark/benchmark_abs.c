@@ -3,22 +3,13 @@
 
 #include "lmq.h"
 #include "abs.h"
-
-void verify(float* value, float* reference, size_t n) {
-    for (size_t i = 0; i < n; ++i) {
-        if (value[i] != reference[i]) {
-            printf("expected %f, but got %f\n", reference[i], value[i]);
-        }
-    }
-}
+#include "benchmark.h"
 
 int main() {
     uint32_t core_idx = snrt_global_core_idx();
 
     // only run on 1 core
     if (core_idx != 0) return 1;
-
-    const int size = 500;
 
     float* x = snrt_l1alloc(size * sizeof(float));
     float* result_ref = snrt_l1alloc(size * sizeof(float));
@@ -27,26 +18,16 @@ int main() {
     for (int i = 0; i < size; i++) {
         x[i] = (float)i;
     }
+
+    BENCH_VO(fabs_baseline, x, size, result_ref);
     
-    size_t start = read_csr(mcycle);
-    fabs_baseline(x, size, result_ref);
-    size_t end = read_csr(mcycle);
+    BENCH_VO(fabs_ssr, x, size, result);
+    verify_vector(result, result_ref, size);
+    clear_vector(result, size);
 
-    printf("abs_baseline took %lu cycles\n", end - start);
-
-    start = read_csr(mcycle);
-    fabs_ssr(x, size, result);
-    end = read_csr(mcycle);
-    printf("abs_ssr took %lu cycles\n", end - start);
-
-    verify(result, result_ref, size);
-
-    start = read_csr(mcycle);
-    fabs_ssr_frep(x, size, result);
-    end = read_csr(mcycle);
-    printf("abs_ssr_frep took %lu cycles\n", end - start);
-
-    verify(result, result_ref, size);
+    BENCH_VO(fabs_ssr_frep, x, size, result);
+    verify_vector(result, result_ref, size);
+    clear_vector(result, size);
  
     return 0;
 }
