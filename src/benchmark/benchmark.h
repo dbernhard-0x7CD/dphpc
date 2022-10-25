@@ -45,7 +45,7 @@ static inline void verify_vector(const float* value, const float* reference, con
  * Sets all elements in the vector (of size n) to 0.0;
  */
 static inline void clear_vector(float* arr, const size_t n) {
-    for (size_t i = 0; i < size; i++) {
+    for (size_t i = 0; i < n; i++) {
         arr[i] = 0.0;
     }
 }
