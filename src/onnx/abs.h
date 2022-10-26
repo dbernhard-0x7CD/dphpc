@@ -1,5 +1,5 @@
-#ifndef LMQ_SUM_H
-#define LMQ_SUM_H
+#ifndef LMQ_ABS_H
+#define LMQ_ABS_H
 
 #include <snrt.h>
 

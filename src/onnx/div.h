@@ -1,6 +1,6 @@
 
-#ifndef LMQ_SUM_H
-#define LMQ_SUM_H
+#ifndef LMQ_DIV_H
+#define LMQ_DIV_H
 
 #include <snrt.h>
 
