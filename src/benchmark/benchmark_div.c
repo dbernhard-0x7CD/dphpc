@@ -27,6 +27,7 @@ int main() {
 
     BENCH_VO(div_ssr, x, y, size, result);
     verify_vector(result, result_ref, size);
+    clear_vector(result, size);
 
     BENCH_VO(div_ssr_frep, x, y, size, result);
     verify_vector(result, result_ref, size);
