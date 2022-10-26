@@ -15,19 +15,13 @@ int copy_ssr(const float* source, const size_t n, float* target) {
     register volatile float ft0 asm("ft0");
     register volatile float ft2 asm("ft2");
 
-    const float added = 0.0;
-
     // input is ft0
     asm volatile("" : "=f"(ft0));
 
     // stream into ft0
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*source));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
-    snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, source);
-
-    snrt_ssr_loop_1d(SNRT_SSR_DM1, 1, sizeof(float));
-    snrt_ssr_repeat(SNRT_SSR_DM1, n);
-    snrt_ssr_read(SNRT_SSR_DM1, SNRT_SSR_1D, &added);
+    snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, (float *)source);
 
     // stream from ft1 into result
     snrt_ssr_loop_1d(SNRT_SSR_DM2, n, sizeof(*target));
@@ -38,8 +32,8 @@ int copy_ssr(const float* source, const size_t n, float* target) {
 
     for (size_t i = 0; i < n; i++) {
         asm volatile(
-           "fadd.s ft2, ft1, ft0"
-           ::: "ft0", "ft1", "ft2"
+           "fmv.s ft2, ft0 \n"
+           ::: "ft0", "ft2"
         );
     }
     snrt_ssr_disable();
@@ -52,7 +46,6 @@ __attribute__((noinline))
 int copy_ssr_frep(const float* source, const size_t n, float* target) {
     register volatile float ft0 asm("ft0");
     register volatile float ft2 asm("ft2");
-    const float added = 0.0;
     
     // input is ft0; TODO: Why is this needed?
     asm volatile("" : "=f"(ft0));
@@ -61,10 +54,6 @@ int copy_ssr_frep(const float* source, const size_t n, float* target) {
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*source));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, source);
-
-    snrt_ssr_loop_1d(SNRT_SSR_DM1, 1, sizeof(float));
-    snrt_ssr_repeat(SNRT_SSR_DM1, n);
-    snrt_ssr_read(SNRT_SSR_DM1, SNRT_SSR_1D, &added);
 
     // stream from register ft2 into result
     snrt_ssr_loop_1d(SNRT_SSR_DM2, n, sizeof(*target));
@@ -75,8 +64,8 @@ int copy_ssr_frep(const float* source, const size_t n, float* target) {
 
     asm (
         "frep.o %[n_frep], 1, 0, 0 \n"
-        "fadd.s ft2, ft0, ft1 \n"
-        :: [n_frep] "r"(n - 1) : "ft0", "ft1", "ft2"
+        "fmv.s ft2, ft0 \n"
+        :: [n_frep] "r"(n - 1) : "ft0", "ft2"
     );
     
     snrt_ssr_disable();
