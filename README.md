@@ -34,6 +34,7 @@ This sets the following variables and aliases:
     * Run `clean` before switching from a banshee build and vice versa!
 * `clean` to remove all temporary build files
 * `run` to run using banshee (which must be on your *PATH*)
+* `bench` to run **all** benchmarks (all binaries inside build/ that start with `benchmark_`)
 
 ## Building the simulator
  * Only if you are not using `banshee`

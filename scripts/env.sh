@@ -44,3 +44,14 @@ alias dbuild='docker run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.
 alias pbuild='podman run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.io/pulp-platform/snitch /bin/bash ./container_build.sh build'
 
 alias clean='rm -r "$PROOT"build/*'
+
+# Runns all benchmarks (binary must start with benchmark_ and lie in the builds/ directory)
+alias bench='''
+for x in $PROOT/build/benchmark_*;
+do
+    if [[ $x != *.s ]]; then
+        echo "Running $x"
+        banshee --configuration $SNITCH_ROOT/sw/banshee/config/snitch_cluster.yaml -l $x
+    fi
+done
+'''
