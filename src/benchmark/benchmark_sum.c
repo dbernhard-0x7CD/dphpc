@@ -12,7 +12,7 @@ int main() {
 
     printf("Running benchmark_sum\n");
 
-    // sum from 1 to 100 (inclusive)
+    // sum from 1 to size (inclusive)
     float* x = snrt_l1alloc(size * sizeof(float));
     for (size_t i = 0; i < size; i++) {
         x[i] = 1 + i;
