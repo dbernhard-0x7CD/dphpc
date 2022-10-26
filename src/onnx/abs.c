@@ -1,6 +1,7 @@
 #include "printf.h"
 #include <snrt.h>
 
+#include <math.h>
 #include "lmq.h"
 
 /*
@@ -9,13 +10,7 @@
 __attribute__((noinline))
 int fabs_baseline(float *x,  const size_t n, float* result) {
     for (size_t i = 0; i < n; i++) {
-        if(x[i] > 0){
-            result[i] = x[i];
-        }
-        else
-        {
-            result[i] = -x[i];
-        }
+        result[i] = fabsf(x[i]);
     }
     return 0;
 }
