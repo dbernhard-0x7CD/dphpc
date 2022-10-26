@@ -66,3 +66,8 @@ target_link_libraries(benchmark_copy copy)
 add_library(relu src/onnx/relu.c)
 add_snitch_executable(benchmark_relu ./src/benchmark/benchmark_relu.c)
 target_link_libraries(benchmark_relu relu)
+
+# Compile 'scatter'
+add_library(scatter src/onnx/scatter.c)
+add_snitch_executable(benchmark_scatter ./src/benchmark/benchmark_scatter.c)
+target_link_libraries(benchmark_scatter scatter)
