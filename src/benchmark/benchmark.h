@@ -36,7 +36,7 @@ const size_t size = 500;
 static inline void verify_vector(const float* value, const float* reference, const size_t n) {
     for (size_t i = 0; i < n; ++i) {
         if (value[i] != reference[i]) {
-            printf("expected %f, but got %f\n", reference[i], value[i]);
+            printf("At i=%d: expected %f, but got %f\n", i, reference[i], value[i]);
         }
     }
 };
