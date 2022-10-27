@@ -23,7 +23,7 @@ int copy_ssr(const float* source, const size_t n, float* target) {
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, (float *)source);
 
-    // stream from ft1 into result
+    // stream from ft2 into result
     snrt_ssr_loop_1d(SNRT_SSR_DM2, n, sizeof(*target));
     snrt_ssr_repeat(SNRT_SSR_DM2, 1);
     snrt_ssr_write(SNRT_SSR_DM2, SNRT_SSR_1D, target);
