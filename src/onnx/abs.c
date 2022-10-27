@@ -78,5 +78,5 @@ int fabs_ssr_frep(float *x, const size_t n, float* result) {
     // asm volatile("" :: "f"(ft2));
 
     // return 0;
-    fabs_baseline(x, n, result);
+    return fabs_baseline(x, n, result);
 }
