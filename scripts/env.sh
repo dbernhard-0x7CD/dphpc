@@ -55,3 +55,13 @@ do
     fi
 done
 '''
+
+alias bench_sim='''
+for x in $PROOT/build/benchmark_*;
+do
+    if [[ $x != *.s ]]; then
+        echo "Running $x"
+        $SIM $x
+    fi
+done
+'''
