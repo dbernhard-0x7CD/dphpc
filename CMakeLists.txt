@@ -71,3 +71,8 @@ target_link_libraries(benchmark_relu relu)
 add_library(acos src/onnx/acos.c)
 add_snitch_executable(benchmark_acos ./src/benchmark/benchmark_acos.c)
 target_link_libraries(benchmark_acos acos)
+
+# Compile 'sigmoid'
+add_library(sigmoid src/onnx/sigmoid.c)
+add_snitch_executable(benchmark_sigmoid ./src/benchmark/benchmark_sigmoid.c)
+target_link_libraries(benchmark_sigmoid sigmoid)
