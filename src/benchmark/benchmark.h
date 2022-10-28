@@ -30,6 +30,11 @@ const size_t size = 500;
         printf(#func_name": %lu cycles. Return code: %d\n", end - start, rc); \
     } while(0);
 
+#define VERIFY_INT(value, reference, ...)           \
+    do { if (value != reference) {                  \
+        printf(__VA_ARGS__);                        \
+    } } while(0);
+
 /*
  * Compares the vector starting at value element wise with the vector at reference.
     Prints if they do not match.
