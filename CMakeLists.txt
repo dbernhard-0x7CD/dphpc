@@ -66,3 +66,8 @@ target_link_libraries(benchmark_copy copy)
 add_library(relu src/onnx/relu.c)
 add_snitch_executable(benchmark_relu ./src/benchmark/benchmark_relu.c)
 target_link_libraries(benchmark_relu relu)
+
+# Compile 'acos'
+add_library(acos src/onnx/acos.c)
+add_snitch_executable(benchmark_acos ./src/benchmark/benchmark_acos.c)
+target_link_libraries(benchmark_acos acos)
