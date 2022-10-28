@@ -37,7 +37,7 @@ int main() {
 
     BENCH_VO(argmax_ssr_frep, x, size, &result);
     VERIFY_INT(result, result_ref, "Mismatch: expected %d but got %d\n", result_ref, result);
-    // This is WIP. TODO
+    // This is expected as no FREP implementation exists (for now)
 
     return 0;
 }

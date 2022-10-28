@@ -72,10 +72,11 @@ int argmax_ssr(const float* arr, const size_t n, int* result) {
 
 __attribute__((noinline))
 int argmax_ssr_frep(const float* arr, const size_t n, int* result) {
-    //
-    //
-    // WIP by David
-    //
-    //
+
+    /**
+     * Using FREP we would need the same code repeated, but argmax
+     * needs a branch each iteration this is not possible.
+     * This branch makes pipelining impossible.
+    */
     return 0;
 }
