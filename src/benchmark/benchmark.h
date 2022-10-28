@@ -3,6 +3,7 @@
 #define LMQ_BENCHMARK_H
 
 #include <snrt.h>
+#include "printf.h"
 
 const size_t size = 500;
 
