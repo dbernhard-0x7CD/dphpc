@@ -86,6 +86,7 @@ run ./build/hello_world
 
 # TODO
 * banshee build script?
+* Use memory start pointer instead of l1?
 * File where we store the benchmark results (to plot later in the report)
 
 # DONE
