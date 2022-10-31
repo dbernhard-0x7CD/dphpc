@@ -12,22 +12,23 @@ const size_t size = 500;
  */
 #define BENCH(func_name, ...)                           \
     do {                                                \
-        unsigned long start = read_csr(mcycle);         \
-        float result = func_name(__VA_ARGS__);          \
-        unsigned long end = read_csr(mcycle);           \
+        unsigned long _start_ = read_csr(mcycle);       \
+        float _result_ = func_name(__VA_ARGS__);        \
+        unsigned long _end_ = read_csr(mcycle);         \
         printf(#func_name": %lu cycles, result: %f\n",  \
-            end - start, result);                       \
+            _end_ - _start_, _result_);                 \
     } while(0);
 
 /*
  * Benchmarks a vector operation which has no single result.
  */
-#define BENCH_VO(func_name, ...) \
-    do { \
-        size_t start = read_csr(mcycle); \
-        int rc = func_name(__VA_ARGS__); \
-        size_t end = read_csr(mcycle); \
-        printf(#func_name": %lu cycles. Return code: %d\n", end - start, rc); \
+#define BENCH_VO(func_name, ...)                        \
+    do {                                                \
+        size_t _start_ = read_csr(mcycle);              \
+        int _result_code_ = func_name(__VA_ARGS__);     \
+        size_t _end_ = read_csr(mcycle);                \
+        printf(#func_name": %lu cycles. Return code: %d\n", \
+                _end_ - _start_, _result_code_);        \
     } while(0);
 
 #define VERIFY_INT(value, reference, ...)           \
