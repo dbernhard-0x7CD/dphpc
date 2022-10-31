@@ -10,15 +10,7 @@ const size_t size = 500;
 /*
  * Benchmarks a function with a single float output and prints the result.
  */
-#define BENCH(func_name, ...)                           \
-    do {                                                \
-        unsigned long _start_ = read_csr(mcycle);       \
-        float _result_ = func_name(__VA_ARGS__);        \
-        unsigned long _end_ = read_csr(mcycle);         \
-        printf(#func_name": %lu cycles, result: %f\n",  \
-            _end_ - _start_, _result_);                 \
-    } while(0);
-
+#define BENCH(func_name, ...) BENCH_VO(func_name, __VA_ARGS__)
 /*
  * Benchmarks a vector operation which has no single result.
  */
