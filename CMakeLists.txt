@@ -81,3 +81,8 @@ target_link_libraries(benchmark_sigmoid sigmoid)
 add_library(argmax src/onnx/argmax.c)
 add_snitch_executable(benchmark_argmax ./src/benchmark/benchmark_argmax.c)
 target_link_libraries(benchmark_argmax argmax)
+
+# Compile 'max'
+add_library(max src/onnx/max.c)
+add_snitch_executable(benchmark_max ./src/benchmark/benchmark_max.c)
+target_link_libraries(benchmark_max max)
