@@ -25,9 +25,9 @@ int main() {
     }
 
     // For debugging purposes
-    for (size_t i = 0; i < size; i++) {
-        printf("Input at index %d is %f\n", i, x[i]);
-    }
+    // for (size_t i = 0; i < size; i++) {
+    //     printf("Input at index %d is %f\n", i, x[i]);
+    // }
 
     BENCH(max_baseline, x, size, &result_ref);
     // printf("Result is: %f\n", result_ref);
