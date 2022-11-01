@@ -27,7 +27,7 @@ add_subdirectory(${SNITCH_SOFTWARE_DIR}benchmark benchmark)
 include_directories(${SNRUNTIME_INCLUDE_DIRS})
 
 # LMQ includes
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/lmq)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/onnx)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/benchmark)
 
@@ -59,7 +59,9 @@ target_link_libraries(benchmark_abs abs)
 #Compile 'copy'
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/copy)
 add_library(copy src/copy/copy.c)
-add_snitch_executable(benchmark_copy ./src/benchmark/benchmark_copy.c)
+add_snitch_executable(benchmark_copy
+                      ./src/benchmark/benchmark_copy.c
+                      ./src/lmq/lmq.c)
 target_link_libraries(benchmark_copy copy)
 
 # Compile 'relu'
