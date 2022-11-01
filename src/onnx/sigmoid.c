@@ -4,7 +4,7 @@
 #include <math.h>
 
 /*
- * Naive implementation of acos. Calculates the acos of n elements starting at arr.
+ * Naive implementation of sigmoid. Calculates the sigmoid of n elements starting at arr.
  */
 __attribute__((noinline))
 int sigmoid_baseline(const float* arr, const size_t n, float* result) {
