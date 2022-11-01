@@ -3,8 +3,8 @@
 
 #include <snrt.h>
 
-float sigmoid_baseline(float *arr, const size_t n, float *result);
-float sigmoid_ssr(float *arr, const size_t n,float *result);
-float sigmoid_ssr_frep(float *arr, const size_t n, float *result);
+int sigmoid_baseline(float *arr, const size_t n, float *result);
+int sigmoid_ssr(float *arr, const size_t n,float *result);
+int sigmoid_ssr_frep(float *arr, const size_t n, float *result);
 
 #endif
