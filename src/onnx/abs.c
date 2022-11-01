@@ -5,13 +5,14 @@
 #include "lmq.h"
 
 /*
- * Naive implementation of add. Adds a and b element wise into result.
+ * Naive implementation of abs. Calculates for each element in x its absolute value and stores it in result
  */
 __attribute__((noinline))
 int fabs_baseline(float *x,  const size_t n, float* result) {
     for (size_t i = 0; i < n; i++) {
         result[i] = fabsf(x[i]);
     }
+
     return 0;
 }
 
