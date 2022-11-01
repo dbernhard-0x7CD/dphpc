@@ -85,9 +85,17 @@ run ./build/hello_world
 * Maybe?
 
 # TODO
-* banshee build script?
 * Use memory start pointer instead of l1?
 * File where we store the benchmark results (to plot later in the report)
+* batchnorm
+* maxpool
+* avgpool
+* dropout
+* conv?
+* transpose?
+* scatter/gather
+* gemm
+* rnn?
 
 # DONE
 * should we do it for all datatypes (uint8, uint16, float32, ...)?
