@@ -15,7 +15,7 @@ int main() {
     printf("Running benchmark_max\n");
 
     // x is input; result is output of the optimized functions
-    float *x = snrt_cluster_memory().start;
+    float *x = allocate(size * sizeof(float));
     float result_ref;
     float result;
 

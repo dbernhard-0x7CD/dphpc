@@ -15,12 +15,9 @@ int main() {
     printf("Running benchmark_sigmoid\n");
 
     // x is input; result is output of the optimized functions
-    float *ptr = snrt_cluster_memory().start;
-    float *x = ptr;
-    ptr += size + 1;
-    float *result_ref = ptr;
-    ptr += size + 1;
-    float *result = ptr;
+    float* x = allocate(size * sizeof(float));
+    float* result_ref = allocate(size * sizeof(float));
+    float* result = allocate(size * sizeof(float));
 
     srandom(2);
     x[0] = 0.0; // sigmoid(0.0) is 0.5
