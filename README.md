@@ -85,7 +85,6 @@ run ./build/hello_world
 * Maybe?
 
 # TODO
-* Use memory start pointer instead of l1?
 * File where we store the benchmark results (to plot later in the report)
 * batchnorm
 * maxpool
@@ -98,6 +97,8 @@ run ./build/hello_world
 * rnn?
 
 # DONE
+* Use memory start pointer instead of l1?
+    * Use start pointer; implemented in lmq.c
 * should we do it for all datatypes (uint8, uint16, float32, ...)?
     * for `float` for now
 * ask if we need to accept n dimensional input
