@@ -37,8 +37,8 @@ int main() {
     // printf("Result is: %f\n", result);
     result = -1;
 
-    BENCH(max_ssr_frep, x, size, &result);
-    VERIFY_INT(result, result_ref, "Mismatch: expected %d but got %d\n", result_ref, result);
+    // BENCH(max_ssr_frep, x, size, &result);
+    // VERIFY_INT(result, result_ref, "Mismatch: expected %d but got %d\n", result_ref, result);
     // printf("Result is: %f\n", result);
 
     return 0;
