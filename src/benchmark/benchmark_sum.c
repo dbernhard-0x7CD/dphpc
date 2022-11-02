@@ -26,6 +26,7 @@ int main() {
 
     BENCH(sum_ssr, x, size, &result);
     VERIFY_INT(result, result_ref, "Expected %f but got %f\n", result_ref, result);
+    result = -1.0;
 
     BENCH(sum_ssr_frep, x, size, &result);
     VERIFY_INT(result, result_ref, "Expected %f but got %f\n", result_ref, result);
