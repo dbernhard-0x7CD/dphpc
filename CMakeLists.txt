@@ -113,3 +113,10 @@ add_snitch_executable(benchmark_max
                       ./src/benchmark/benchmark_max.c
                       ./src/lmq/lmq.c)
 target_link_libraries(benchmark_max max)
+
+# Compile 'batchnorm'
+add_library(batchnorm src/onnx/batchnorm.c)
+add_snitch_executable(benchmark_batchnorm
+                      ./src/benchmark/benchmark_batchnorm.c
+                      ./src/lmq/lmq.c)
+target_link_libraries(benchmark_batchnorm batchnorm)
