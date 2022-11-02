@@ -13,7 +13,7 @@ int main() {
     printf("Running benchmark_sum\n");
 
     // sum from 1 to size (inclusive)
-    float *x = allocate(size * sizeof(float));
+    float *x = allocate(size, sizeof(float));
 
     for (size_t i = 0; i < size; i++) {
         x[i] = 1 + i;

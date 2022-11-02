@@ -15,7 +15,7 @@ int main() {
     printf("Running benchmark_argmax\n");
 
     // x is input; result is output of the optimized functions
-    float *x = allocate(size * sizeof(float));
+    float *x = allocate(size, sizeof(float));
     int result_ref;
     int result;
 

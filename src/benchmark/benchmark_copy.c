@@ -12,9 +12,9 @@ int main() {
 
     printf("Running benchmark_copy\n");
     
-    float *x = allocate(size * sizeof(float));
-    float *result_ref = allocate(size * sizeof(float));
-    float *result = allocate(size * sizeof(float));
+    float *x = allocate(size, sizeof(float));
+    float *result_ref = allocate(size, sizeof(float));
+    float *result = allocate(size, sizeof(float));
 
     // Random initialized array
     for (size_t i = 0; i < size; i++) {
