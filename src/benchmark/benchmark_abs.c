@@ -16,7 +16,7 @@ int main() {
     float* result = allocate(size * sizeof(float));
 
     for (int i = 0; i < size; i++) {
-        x[i] = (float)i;
+        x[i] = (float)i - 20.0;
     }
 
     BENCH_VO(fabs_baseline, x, size, result_ref);
