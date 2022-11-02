@@ -15,9 +15,9 @@ extern int mcycle;
 extern void* cur_memory;
 
 /*
- * Allocates n bytes of memory
+ * Allocates n * element_size bytes of memory.
  */
-void* allocate(const size_t n);
+void* allocate(const size_t n, const size_t element_size);
 
 
 #endif

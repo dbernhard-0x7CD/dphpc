@@ -15,9 +15,9 @@ int main() {
     printf("Running benchmark_acosh\n");
 
     // x is input; result is output of the optimized functions
-    float *x = allocate(size * sizeof(float));
-    float *result_ref = allocate(size * sizeof(float));
-    float *result  = allocate(size * sizeof(float));
+    float *x = allocate(size, sizeof(float));
+    float *result_ref = allocate(size, sizeof(float));
+    float *result  = allocate(size, sizeof(float));
 
     srandom(2);
     x[0] = 1.0; // acosh(1.0) is 0

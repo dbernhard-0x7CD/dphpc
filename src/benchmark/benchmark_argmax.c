@@ -15,7 +15,7 @@ int main() {
     printf("Running benchmark_argmax\n");
 
     // x is input; result is output of the optimized functions
-    float *x = allocate(size * sizeof(float));
+    float *x = allocate(size, sizeof(float));
     int result_ref;
     int result;
 
@@ -35,8 +35,8 @@ int main() {
     VERIFY_INT(result, result_ref, "Mismatch: expected %d but got %d\n", result_ref, result);
     result = -1;
 
-    BENCH_VO(argmax_ssr_frep, x, size, &result);
-    VERIFY_INT(result, result_ref, "Mismatch: expected %d but got %d\n", result_ref, result);
+    // BENCH_VO(argmax_ssr_frep, x, size, &result);
+    // VERIFY_INT(result, result_ref, "Mismatch: expected %d but got %d\n", result_ref, result);
     // This is expected as no FREP implementation exists (for now)
 
     return 0;

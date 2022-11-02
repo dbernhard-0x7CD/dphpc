@@ -15,9 +15,9 @@ int main() {
     printf("Running benchmark_sigmoid\n");
 
     // x is input; result is output of the optimized functions
-    float* x = allocate(size * sizeof(float));
-    float* result_ref = allocate(size * sizeof(float));
-    float* result = allocate(size * sizeof(float));
+    float* x = allocate(size, sizeof(float));
+    float* result_ref = allocate(size, sizeof(float));
+    float* result = allocate(size, sizeof(float));
 
     srandom(2);
     x[0] = 0.0; // sigmoid(0.0) is 0.5

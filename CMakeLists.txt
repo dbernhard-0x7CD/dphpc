@@ -120,3 +120,10 @@ add_snitch_executable(benchmark_batchnorm
                       ./src/benchmark/benchmark_batchnorm.c
                       ./src/lmq/lmq.c)
 target_link_libraries(benchmark_batchnorm batchnorm)
+
+# Compile 'cumsum'
+add_library(cumsum src/onnx/cumsum.c)
+add_snitch_executable(benchmark_cumsum
+                      ./src/benchmark/benchmark_cumsum.c
+                      ./src/lmq/lmq.c)
+target_link_libraries(benchmark_cumsum cumsum)

@@ -15,7 +15,7 @@ int main() {
     printf("Running benchmark_max\n");
 
     // x is input; result is output of the optimized functions
-    float *x = allocate(size * sizeof(float));
+    float *x = allocate(size, sizeof(float));
     float result_ref;
     float result;
 
@@ -37,8 +37,8 @@ int main() {
     // printf("Result is: %f\n", result);
     result = -1;
 
-    BENCH(max_ssr_frep, x, size, &result);
-    VERIFY_INT(result, result_ref, "Mismatch: expected %d but got %d\n", result_ref, result);
+    // BENCH(max_ssr_frep, x, size, &result);
+    // VERIFY_INT(result, result_ref, "Mismatch: expected %d but got %d\n", result_ref, result);
     // printf("Result is: %f\n", result);
 
     return 0;
