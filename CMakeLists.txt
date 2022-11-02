@@ -113,3 +113,10 @@ add_snitch_executable(benchmark_max
                       ./src/benchmark/benchmark_max.c
                       ./src/lmq/lmq.c)
 target_link_libraries(benchmark_max max)
+
+# Compile 'cumsum'
+add_library(cumsum src/onnx/cumsum.c)
+add_snitch_executable(benchmark_cumsum
+                      ./src/benchmark/benchmark_cumsum.c
+                      ./src/lmq/lmq.c)
+target_link_libraries(benchmark_cumsum cumsum)
