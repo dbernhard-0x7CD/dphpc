@@ -29,6 +29,7 @@ include_directories(${SNRUNTIME_INCLUDE_DIRS})
 # LMQ includes
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/lmq)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/onnx)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/dot)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/benchmark)
 
 add_snitch_executable(hello_world
@@ -127,3 +128,10 @@ add_snitch_executable(benchmark_cumsum
                       ./src/benchmark/benchmark_cumsum.c
                       ./src/lmq/lmq.c)
 target_link_libraries(benchmark_cumsum cumsum)
+
+# Compile 'dot'
+add_library(dot src/dot/dot.c)
+add_snitch_executable(benchmark_dot
+                      ./src/benchmark/benchmark_dot.c
+                      ./src/lmq/lmq.c)
+target_link_libraries(benchmark_dot dot)
