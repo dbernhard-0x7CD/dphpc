@@ -34,7 +34,6 @@ int main() {
         y[i] = (float)i + 1.0;
         xd[i] = (double)i + 1.0;
         yd[i] = (double)i + 1.0;
-        printf("Input at index %d is %f\n", i, x[i]);
     }
 
     BENCH_VO(dot_baseline, x, y, size, &result_ref);
