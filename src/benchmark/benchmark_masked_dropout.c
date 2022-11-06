@@ -50,9 +50,9 @@ int main() {
     clear_vector(result, size);
 
     // TODO: check how to write and read in a register with frep
-    // BENCH(masked_dropout_ssr_frep, x, mask, size, ratio, result);
-    // verify_vector(result, result_ref, size);
-    // clear_vector(result, size);
+    BENCH(masked_dropout_ssr_frep, x, mask, size, ratio, result);
+    verify_vector(result, result_ref, size);
+    clear_vector(result, size);
 
     return 0;
 }

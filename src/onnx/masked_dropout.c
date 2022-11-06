@@ -87,7 +87,7 @@ int masked_dropout_ssr_frep(const float* arr, const float* mask, const size_t n,
     register volatile float fa0 = 1.; // Register containing one
     // TODO: Figure out how we can ue a register (i.e. fa1) to read nd write from when we re doing frep
     asm volatile(
-        "frep.o %[n_frep], 1, 0, 0 \n"
+        "frep.o %[n_frep], 4, 0, 0 \n"
         "fsub.s fa1, %[fa0], %[ratio]\n" // fa1 <- 1. - ratio
         "fdiv.s fa1, %[fa0], fa1\n" // fa1 <- 1. / fa1
         "fmul.s fa1, ft0, fa1\n" // fa1 <- arr[i] * fa1
