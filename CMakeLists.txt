@@ -127,3 +127,17 @@ add_snitch_executable(benchmark_cumsum
                       ./src/benchmark/benchmark_cumsum.c
                       ./src/lmq/lmq.c)
 target_link_libraries(benchmark_cumsum cumsum)
+
+# Compile 'dropout'
+add_library(dropout src/onnx/dropout.c)
+add_snitch_executable(benchmark_dropout
+                      ./src/benchmark/benchmark_dropout.c
+                      ./src/lmq/lmq.c)
+target_link_libraries(benchmark_dropout dropout)
+
+# Compile 'masked_dropout'
+add_library(masked_dropout src/onnx/masked_dropout.c)
+add_snitch_executable(benchmark_masked_dropout
+                      ./src/benchmark/benchmark_masked_dropout.c
+                      ./src/lmq/lmq.c)
+target_link_libraries(benchmark_masked_dropout masked_dropout)
