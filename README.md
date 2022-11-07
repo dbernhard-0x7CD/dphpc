@@ -89,14 +89,14 @@ run ./build/hello_world
 * batchnorm
 * maxpool
 * avgpool
-* dropout
 * conv?
-* transpose?
+* transpose
 * scatter/gather
 * gemm
 * rnn?
 
 # DONE
+* dropout
 * Use memory start pointer instead of l1?
     * Use start pointer; implemented in lmq.c
 * should we do it for all datatypes (uint8, uint16, float32, ...)?
