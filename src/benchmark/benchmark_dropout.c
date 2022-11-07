@@ -14,7 +14,6 @@ int main() {
 
     printf("Running benchmark_dropout\n");
 
-
     // x is input; result is output of the optimized functions
     float* x = allocate(size, sizeof(float));
     float* result_ref = allocate(size, sizeof(float));
@@ -32,21 +31,27 @@ int main() {
     //     printf("Input at index %d is %f\n", i, x[i]);
     // }
 
+    srandom(4);
     BENCH(dropout_baseline, x, size, ratio, result_ref);
-
-
-    BENCH(dropout_ssr, x, size, ratio, result);
-    // For debugging purposes
-    // for (size_t i = 0; i < 40; i++) {
-    //    printf("Input at index %i is %f, dropout_besline %f, dropout_ssr %f\n", i, x[i], result_ref[i], result[i]);
+    // debugging purposes:
+    // for (size_t i = 0; i < size; i++) {
+    //     printf("Reference output at index %d is %f\n", i, result_ref[i]);
     // }
 
-    // verify_vector(result, result_ref, size);
+    // reset the seed
+    srandom(4);
+    BENCH(dropout_ssr, x, size, ratio, result);
+    verify_vector(result, result_ref, size);
+    // for (size_t i = 0; i < size; i++) {
+    //     printf("Output at index %d is %f\n", i, result[i]);
+    // }
     clear_vector(result, size);
 
-    // BENCH(dropout_ssr_frep, x, size, &result);
-    // VERIFY_INT(result, result_ref, "Mismatch: expected %d but got %d\n", result_ref, result);
-    // printf("Result is: %f\n", result);
+    // reset the seed
+    srandom(4);
+    BENCH(dropout_ssr_frep, x, size, ratio, result);
+    verify_vector(result, result_ref, size);
+    clear_vector(result, size);
 
     return 0;
 }
