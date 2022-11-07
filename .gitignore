@@ -1,3 +1,1 @@
-build/*
-temp/*
-output/*
+.vscode/settings.json
