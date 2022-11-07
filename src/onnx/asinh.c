@@ -41,20 +41,8 @@ int asinh_ssr(const float* arr, const size_t n, float* result) {
             ::: "fa0", "ft0"
         );
 
-        /*
-         * We disable SSR as every read to 'ft0' will fetch the
-         * next element from the defined stream. And any called function
-         * may use the ft0 register (as it is caller saved)
-         */
         __builtin_ssr_disable();
 
-        /*
-         * As this is a function call we MUST have "ra" in the clobber.
-         * Else the compiler does not know that this function needs to 
-         * store 'ra' on the stack (or in some caller saved register) as it
-         * may get modified in the call.
-         * Same for all other caller saved registers below (in the clobber).
-        */
         asm volatile(
             "call %[add_one]\n"
             :: [add_one] "i"(asinhf)
@@ -81,10 +69,8 @@ int asinh_ssr(const float* arr, const size_t n, float* result) {
 
 __attribute__((noinline))
 int asinh_ssr_frep(const float* arr, const size_t n, float* result) {
-    /*
-     * I do not think we can optimize anything with FREP.
-     * As we have a call to another function which consists of many more
-     * assembly instructions.
-     */
+    // asinh does not benefit from frep
+    // fall back to ssr
+    asinh_ssr(arr, n, result);
     return 0;
 }

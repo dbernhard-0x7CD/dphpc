@@ -22,7 +22,7 @@ int main() {
     srandom(2);
     x[0] = 0; // asinh(0) is 0
     x[1] = 1.0; // asinh(1.0) is 0.881
-    x[2] = -2.0 // asinh(-2.0) is -1.444
+    x[2] = -2.0; // asinh(-2.0) is -1.444
     for (size_t i = 3; i < size; i++) {
         x[i] = 1.0 + 1.0 * random() / __LONG_MAX__;
     }
