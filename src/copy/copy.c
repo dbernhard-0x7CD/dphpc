@@ -30,6 +30,19 @@ int copy_ssr(const float* source, const size_t n, float* target) {
 
     snrt_ssr_enable();
 
+  //  asm volatile(
+  //      "addi a0, zero, 0\n"            // a0 <- 0; a0 is the index
+  //      "j 1f\n"
+  //      "bge a0, %[n], 2f\n"
+  //      "1:\n"
+  //          "addi a0, a0, 1\n"
+  //          "fmv.s ft2, ft0\n"
+  //      "bne a0, %[n], 1b\n"
+  //      "2:\n"
+  //      : 
+  //      : [n] "r"(n) 
+  //      : "ft0", "ft2", "a0"
+  //  );
     for (size_t i = 0; i < n; i++) {
         asm volatile(
            "fmv.s ft2, ft0 \n"

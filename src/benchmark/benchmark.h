@@ -3,31 +3,30 @@
 #define LMQ_BENCHMARK_H
 
 #include <snrt.h>
+#include "printf.h"
 
 const size_t size = 500;
 
 /*
  * Benchmarks a function with a single float output and prints the result.
  */
-#define BENCH(func_name, ...)                           \
-    do {                                                \
-        unsigned long start = read_csr(mcycle);         \
-        float result = func_name(__VA_ARGS__);          \
-        unsigned long end = read_csr(mcycle);           \
-        printf(#func_name": %lu cycles, result: %f\n",  \
-            end - start, result);                       \
-    } while(0);
-
+#define BENCH(func_name, ...) BENCH_VO(func_name, __VA_ARGS__)
 /*
  * Benchmarks a vector operation which has no single result.
  */
-#define BENCH_VO(func_name, ...) \
-    do { \
-        size_t start = read_csr(mcycle); \
-        int rc = func_name(__VA_ARGS__); \
-        size_t end = read_csr(mcycle); \
-        printf(#func_name": %lu cycles. Return code: %d\n", end - start, rc); \
+#define BENCH_VO(func_name, ...)                        \
+    do {                                                \
+        size_t _start_ = read_csr(mcycle);              \
+        int _result_code_ = func_name(__VA_ARGS__);     \
+        size_t _end_ = read_csr(mcycle);                \
+        printf(#func_name": %lu cycles. Return code: %d\n", \
+                _end_ - _start_, _result_code_);        \
     } while(0);
+
+#define VERIFY_INT(value, reference, ...)           \
+    do { if (value != reference) {                  \
+        printf(__VA_ARGS__);                        \
+    } } while(0);
 
 /*
  * Compares the vector starting at value element wise with the vector at reference.
@@ -36,7 +35,7 @@ const size_t size = 500;
 static inline void verify_vector(const float* value, const float* reference, const size_t n) {
     for (size_t i = 0; i < n; ++i) {
         if (value[i] != reference[i]) {
-            printf("At i=%d: expected %f, but got %f\n", i, reference[i], value[i]);
+            printf("At i=%d: expected %.10f, but got %.10f\n", i, reference[i], value[i]);
         }
     }
 };

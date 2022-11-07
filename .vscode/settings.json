@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "printf.h": "c",
+        "random": "c"
+    }
+}

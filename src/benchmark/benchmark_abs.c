@@ -11,12 +11,12 @@ int main() {
     // only run on 1 core
     if (core_idx != 0) return 1;
 
-    float* x = snrt_l1alloc(size * sizeof(float));
-    float* result_ref = snrt_l1alloc(size * sizeof(float));
-    float* result = snrt_l1alloc(size * sizeof(float));
+    float* x = allocate(size, sizeof(float));
+    float* result_ref = allocate(size, sizeof(float));
+    float* result = allocate(size, sizeof(float));
 
     for (int i = 0; i < size; i++) {
-        x[i] = (float)i;
+        x[i] = (float)i - 20.0;
     }
 
     BENCH_VO(fabs_baseline, x, size, result_ref);

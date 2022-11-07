@@ -13,10 +13,10 @@ int main() {
     if (core_idx != 0) return 1;
 
     // Initialize the input data
-    float* x = snrt_l1alloc(size * sizeof(float));
-    float* y = snrt_l1alloc(size * sizeof(float));
-    float* result_ref = snrt_l1alloc(size * sizeof(float));
-    float* result = snrt_l1alloc(size * sizeof(float));
+    float* x = allocate(size, sizeof(float));
+    float* y = allocate(size, sizeof(float));
+    float* result_ref = allocate(size, sizeof(float));
+    float* result = allocate(size, sizeof(float));
 
     for (int i = 0; i < size; i++) {
         x[i] = (float)i;
