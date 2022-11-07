@@ -94,24 +94,12 @@ int sin_ssr(const float* arr, const size_t n, float* result) {
 __attribute__((noinline)) 
 int sin_ssr_frep(const float* arr, const size_t n, float* result) {
 
-    register volatile float ft0 asm("ft0");
-    register volatile float ft1 asm("ft1");
-    asm volatile("" : "=f"(ft0));
-
-    snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*arr));
-    snrt_ssr_repeat(SNRT_SSR_DM0, 1);
-    snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, arr);
-
-    snrt_ssr_loop_1d(SNRT_SSR_DM1, n, sizeof(*result));
-    snrt_ssr_repeat(SNRT_SSR_DM1, 1);
-    snrt_ssr_write(SNRT_SSR_DM1, SNRT_SSR_1D, result);
-
-    snrt_ssr_enable();
-
-    // tbd
-
-    snrt_ssr_disable();
-    asm volatile("" :: "f"(ft0));
+    /*
+     * I do not think we can optimize anything with FREP.
+     * As we have a call to another function which consists of many more
+     * assembly instructions.
+     */
+    sin_ssr(arr, n, result);
 
     return 0;
 }
