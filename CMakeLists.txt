@@ -101,6 +101,7 @@ add_snitch_executable(benchmark_asinh
                       ./src/lmq/lmq.c)
 target_link_libraries(benchmark_asinh asinh)
 
+
 # Compile 'sigmoid'
 add_library(sigmoid src/onnx/sigmoid.c)
 add_snitch_executable(benchmark_sigmoid
