@@ -41,11 +41,32 @@ static inline void verify_vector(const float* value, const float* reference, con
 };
 
 /*
+ * Compares the vector starting at value element wise with the vector at reference.
+    Prints if they do not match.
+ */
+static inline void verify_vector_int(const int* value, const int* reference, const size_t n) {
+    for (size_t i = 0; i < n; ++i) {
+        if (value[i] != reference[i]) {
+            printf("At i=%d: expected %.10i, but got %.10i\n", i, reference[i], value[i]);
+        }
+    }
+};
+
+/*
  * Sets all elements in the vector (of size n) to 0.0;
  */
 static inline void clear_vector(float* arr, const size_t n) {
     for (size_t i = 0; i < n; i++) {
         arr[i] = 0.0;
+    }
+}
+
+/*
+ * Sets all elements in the vector (of size n) to 0.0;
+ */
+static inline void clear_vector_int(short* arr, const size_t n) {
+    for (size_t i = 0; i < n; i++) {
+        arr[i] = 0;
     }
 }
 
