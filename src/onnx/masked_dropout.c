@@ -41,16 +41,14 @@ int masked_dropout_ssr(const float* arr, const float* mask, const size_t n, cons
     snrt_ssr_write(SNRT_SSR_DM2, SNRT_SSR_1D, result);
 
     snrt_ssr_enable();
-    register volatile float fa0 = 1.; // Register containing one
+    register float fa0 = 1.0 / (1. - ratio); // register containing the factor  
+
     for (size_t i = 0; i < n; i++) {
         asm volatile(
-            // "fmul.s ft2, ft0, ft1\n" // ft2 <- mask[i] * arr[i]
-            "fsub.s fa1, %[fa0], %[ratio]\n" // fa1 <- 1. - ratio
-            "fdiv.s fa1, %[fa0], fa1\n" // fa1 <- 1. / fa1
-            "fmul.s fa1, ft0, fa1\n" // fa1 <- arr[i] * fa1
-            "fmul.s ft2, ft1, fa1\n" // ft2 <- mask[i] * fa1
+            "fmul.s fa1, ft0, %[fa0]\n" // fa1 <- arr[i] * fa0
+            "fmul.s ft2, ft1, fa1\n" // fa1 <- mask[i] * fa1
             :
-            : [ fa0 ] "f"(fa0), [ratio] "f"(ratio)
+            : [fa0] "f"(fa0)
             : "ft0", "ft1", "ft2", "fa1"
         );
     }
@@ -84,20 +82,19 @@ int masked_dropout_ssr_frep(const float* arr, const float* mask, const size_t n,
     snrt_ssr_write(SNRT_SSR_DM2, SNRT_SSR_1D, result);
 
     snrt_ssr_enable();
-    register volatile float fa0 = 1.; // Register containing one
+    register float fa0 = 1.0 / (1. - ratio); // register containing the factor  
     // TODO: Figure out how we can ue a register (i.e. fa1) to read nd write from when we re doing frep
     asm volatile(
-        "frep.o %[n_frep], 4, 0, 0 \n"
-        "fsub.s fa1, %[fa0], %[ratio]\n" // fa1 <- 1. - ratio
-        "fdiv.s fa1, %[fa0], fa1\n" // fa1 <- 1. / fa1
-        "fmul.s fa1, ft0, fa1\n" // fa1 <- arr[i] * fa1
-        "fmul.s ft2, ft1, fa1\n" // ft2 <- mask[i] * fa1
+        "frep.o %[n_frep], 2, 0, 0\n"
+        "fmul.s fa1, ft0, %[fa0]\n" // fa1 <- arr[i] * fa0
+        "fmul.s ft2, ft1, fa1\n" // fa1 <- mask[i] * fa1
         :
-        : [n_frep] "r"(n - 1), [ fa0 ] "f"(fa0), [ratio] "f"(ratio)
+        : [n_frep] "r"(n - 1), [ fa0 ] "f"(fa0)
         : "ft0", "ft1", "ft2", "fa1"
     );
 
     snrt_ssr_disable();
     asm volatile("" :: "f"(ft2));
+
     return 0;
 }
