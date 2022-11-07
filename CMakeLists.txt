@@ -94,6 +94,13 @@ add_snitch_executable(benchmark_acosh
                       ./src/lmq/lmq.c)
 target_link_libraries(benchmark_acosh acosh)
 
+# Compile 'asinh'
+add_library(asinh src/onnx/asinh.c)
+add_snitch_executable(benchmark_asinh
+                      ./src/benchmark/benchmark_asinh.c
+                      ./src/lmq/lmq.c)
+target_link_libraries(benchmark_asinh asinh)
+
 # Compile 'sigmoid'
 add_library(sigmoid src/onnx/sigmoid.c)
 add_snitch_executable(benchmark_sigmoid
