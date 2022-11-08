@@ -86,6 +86,7 @@ run ./build/hello_world
 
 # TODO
 * File where we store the benchmark results (to plot later in the report)
+* Use multiple cores (f.ex in sum, cumsum (advanced), one compute heavy element-wise fctn, one bandwidth heavy computation, ... )
 * batchnorm
 * maxpool
 * avgpool
