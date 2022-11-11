@@ -17,3 +17,27 @@ void* allocate(const size_t n, const size_t element_size) {
 
     return now;
 }
+
+/*
+ * Prints a matrix which is in the form [rows x columns] and row major inside arr.
+ */
+void print_matrix(const float* arr, const size_t rows, const size_t cols) {
+    for (size_t i = 0; i < rows; i++) {
+        for (size_t j = 0; j < cols; j++) {
+            printf("%0.02f,\t", arr[i * cols + j]);
+        }
+        printf("\n");
+    }
+}
+
+/*
+ * Calculates an approximation of the square root of a.
+ * Needed as the fsqrt instruction is not implemented on the snitch. 
+ */
+float sqrt_approx(float a) {
+    float x = 1.f;
+    for (int i = 0; i < 5; ++i) {
+        x = 0.5f * (x + a / x);
+    }
+    return x;
+}

@@ -3,14 +3,6 @@
 
 #include "lmq.h"
 
-float sqrt_approx(float a) {
-    float x = 1.f;
-    for (int i = 0; i < 5; ++i) {
-        x = 0.5f * (x + a / x);
-    }
-    return x;
-}
-
 __attribute__((noinline))
 int batchnorm_baseline(float *a, const size_t n, float* result) {
     float sum = 0;

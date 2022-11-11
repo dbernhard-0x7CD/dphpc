@@ -136,6 +136,13 @@ add_snitch_executable(benchmark_dropout
                       ./src/lmq/lmq.c)
 target_link_libraries(benchmark_dropout dropout)
 
+# Compile 'transpose'
+add_library(transpose src/onnx/transpose.c)
+add_snitch_executable(benchmark_transpose
+                      ./src/benchmark/benchmark_transpose.c
+                      ./src/lmq/lmq.c)
+target_link_libraries(benchmark_transpose transpose)
+
 # Compile 'masked_dropout'
 add_library(masked_dropout src/onnx/masked_dropout.c)
 add_snitch_executable(benchmark_masked_dropout
