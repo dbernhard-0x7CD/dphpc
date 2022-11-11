@@ -91,12 +91,12 @@ run ./build/hello_world
 * maxpool
 * avgpool
 * conv?
-* transpose
 * scatter/gather
 * gemm
 * rnn?
 
 # DONE
+* transpose
 * dropout
 * Use memory start pointer instead of l1?
     * Use start pointer; implemented in lmq.c
