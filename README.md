@@ -30,6 +30,9 @@ This sets the following variables and aliases:
 * `dbuild` to build for banshee using **docker**
 * `pbuild` to build for banshee using **podman**
 * `build` to build for banshee locally
+* `dbuild_size SIZE` to build for banshee using **docker** with given input size for the benchmark
+* `pbuild_size SIZE` to build for banshee using **podman** with given input size for the benchmark
+* `build_size SIZE` to build for banshee locally with given input size for the benchmark
 * `build_cluster` to build for the simulator locally
     * Run `clean` before switching from a banshee build and vice versa!
 * `clean` to remove all temporary build files

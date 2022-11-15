@@ -32,6 +32,14 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/onnx)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/dot)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/benchmark)
 
+# Define size for the benchmark
+if (LMQ_SIZE)
+    message("Setting size to ${LMQ_SIZE}")
+    add_compile_definitions(LMQ_SIZE=${LMQ_SIZE})
+else()
+    message("no size defined")
+endif()
+
 add_snitch_executable(hello_world
                       ./src/lmq/lmq.c
                       ./src/hello_world/main.c)

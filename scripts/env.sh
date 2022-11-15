@@ -43,6 +43,16 @@ alias dbuild='docker run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.
 # Builds using podman
 alias pbuild='podman run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.io/pulp-platform/snitch /bin/bash ./container_build.sh build'
 
+# Builds locally for given input size
+alias build_size='function fwrap(){ cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE -DLMQ_SIZE=$1 .. && cmake --build . -j || cd ..}; fwrap'
+
+# Builds using docker for given input size
+alias dbuild_size='function fwrap(){ docker run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.io/pulp-platform/snitch /bin/bash ./container_build.sh build $1 && cd build }; fwrap'
+
+# Builds using podman for given input size
+alias pbuild_size='function fwrap(){ podman run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.io/pulp-platform/snitch /bin/bash ./container_build.sh build $1 && cd build }; fwrap'
+
+# Remove all built files
 alias clean='rm -r "$PROOT"build/*'
 
 # Runns all benchmarks (binary must start with benchmark_ and lie in the builds/ directory)

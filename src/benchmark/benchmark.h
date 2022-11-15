@@ -5,7 +5,11 @@
 #include <snrt.h>
 #include "printf.h"
 
-const size_t size = 500;
+#ifndef LMQ_SIZE
+#define LMQ_SIZE 100
+#endif
+
+const volatile size_t size = LMQ_SIZE;
 
 /*
  * Benchmarks a function with a single float output and prints the result.
@@ -19,8 +23,8 @@ const size_t size = 500;
         size_t _start_ = read_csr(mcycle);              \
         int _result_code_ = func_name(__VA_ARGS__);     \
         size_t _end_ = read_csr(mcycle);                \
-        printf(#func_name": %lu cycles. Return code: %d\n", \
-                _end_ - _start_, _result_code_);        \
+        printf(#func_name", size: %d: %lu cycles. Return code: %d\n", \
+                size, _end_ - _start_, _result_code_);        \
     } while(0);
 
 #define VERIFY_INT(value, reference, ...)           \
