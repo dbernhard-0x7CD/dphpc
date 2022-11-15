@@ -84,6 +84,11 @@ run ./build/hello_world
 # Running on EULER
 * Maybe?
 
+# Report notes
+* Publish repository and add link to it in the report
+* Say why we have no error bars
+* Bar plot of speedup
+
 # TODO
 * File where we store the benchmark results (to plot later in the report)
 * Use multiple cores (f.ex in sum, cumsum (advanced), one compute heavy element-wise fctn, one bandwidth heavy computation, ... )
