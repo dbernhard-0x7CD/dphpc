@@ -173,6 +173,10 @@ add_snitch_executable(benchmark_dot
                       ./src/lmq/lmq.c)
 target_link_libraries(benchmark_dot dot)
 
+# Compile memory test
+add_snitch_executable(benchmark_mem_versus_l1
+                      ./src/benchmark/benchmark_mem_versus_l1.c
+                      ./src/lmq/lmq.c)
 # Compile 'sin'
 add_library(sin src/onnx/sin.c)
 add_snitch_executable(benchmark_sin ./src/benchmark/benchmark_sin.c)
