@@ -14,14 +14,15 @@ The goal of our project is to develop optimized operators (from the ONNX standar
 
 # Setup - Development Environment
 
-First we need to clone the snitch repo:
-```
+## Clone the snitch repo
+Execute in the project root directory:
+```bash
 git submodule update --init
 ```
 
 ## Load aliases
 After installing everthing you can source env.sh inside the **project root directory**: 
-```
+```bash
 source ./scripts/env.sh
 ```
 
@@ -50,7 +51,7 @@ cd snitch/hw/system/snitch_cluster/
 make bin/snitch_cluster.vlt
 ```
 
-## Install riscv compiler (if you install the environment yourself)
+## Install riscv compiler (if you install the environment yourself and do not want to use docker)
 
 First define `$RISCV` to point to the directory you want to have the toolchain installed to.
 
