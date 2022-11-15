@@ -2,6 +2,10 @@
 #include <math.h>
 #include "sin.h"
 
+#ifndef M_PI
+#   define M_PI 3.14159265358979323846
+#endif
+
 /*
  * Naive implementation of sin. Computes the element-wise sine and stores it in result.
  */
@@ -101,5 +105,52 @@ int sin_ssr_frep(const float* arr, const size_t n, float* result) {
      */
     sin_ssr(arr, n, result);
 
+    return 0;
+}
+
+/*
+ * Naive implementation of sin using a lookup table. Looks up the element-wise sine and stores it in result.
+ */
+__attribute__((noinline)) 
+int sin_baseline_lookup_table(const float* arr, const size_t n, float* result, const float* lookup_table, const size_t lookup_table_size) {
+    for (size_t i = 0; i < n; i++) {
+        result[i] = lookup_table[(int)(arr[i] * lookup_table_size / M_PI * 2)];
+    }
+    return 0;
+}
+
+__attribute__((noinline)) 
+int sin_ssr_lookup_table(const float* arr, const size_t n, float* result, const float* lookup_table, const size_t lookup_table_size) {
+
+    // Adress pattern configuration
+    register volatile float ft0 asm("ft0");
+    register volatile float ft1 asm("ft1");
+    asm volatile("" : "=f"(ft0));
+
+    snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*arr));
+    snrt_ssr_repeat(SNRT_SSR_DM0, 1); // load every element only once
+    snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, arr); // read from arr
+
+    snrt_ssr_loop_1d(SNRT_SSR_DM1, n, sizeof(*result));
+    snrt_ssr_repeat(SNRT_SSR_DM1, 1); // load every element only once
+    snrt_ssr_write(SNRT_SSR_DM1, SNRT_SSR_1D, result); // write to result
+
+    // Enabling stream semantics
+    snrt_ssr_enable();
+
+    // Computation
+    for (size_t i = 0; i < n; i++) {
+        asm volatile(
+            "fmv.s fa0, ft0\n" // fa0 <- ft0
+            // "flw fa1, "
+            // WORK IN PROGRESS
+        );
+    }
+
+    // Disabling stream semantics
+    snrt_ssr_disable();
+
+    asm volatile("" :: "f"(ft1));
+    
     return 0;
 }
