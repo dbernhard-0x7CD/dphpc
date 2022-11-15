@@ -56,7 +56,7 @@ alias pbuild_size='function fwrap(){ podman run --rm -v $PROOT:/repo -w /repo --
 alias clean='rm -r "$PROOT"build/*'
 
 # Runns all benchmarks (binary must start with benchmark_ and lie in the builds/ directory)
-alias bench='''
+bench_cmd='''
 for x in $PROOT/build/benchmark_*;
 do
     if [[ $x != *.s ]]; then
@@ -65,6 +65,7 @@ do
     fi
 done
 '''
+alias bench='''echo $bench_cmd | bash 2>&1'''
 
 alias bench_sim='''
 for x in $PROOT/build/benchmark_*;
