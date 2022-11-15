@@ -52,8 +52,12 @@ int transpose_ssr_frep(const float* arr, const size_t r, const size_t s, float* 
     // stream arr into ft0
 
     // arr is in row major form
+    // args:
+    // r: #iterations the inner loop
+    // r*s: #iterations total
+    // sizeof(float) * s: inner loop jump size
+    // sizeof(float): size of one element
     snrt_ssr_loop_2d(SNRT_SSR_DM0, r, s * r, sizeof(*arr) * s, sizeof(*arr));
-    snrt_ssr_repeat(SNRT_SSR_DM0, 1);
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_2D, arr);
 
     snrt_ssr_loop_1d(SNRT_SSR_DM1, r * s, sizeof(*result));
