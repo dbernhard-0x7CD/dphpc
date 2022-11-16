@@ -133,10 +133,14 @@ target_link_libraries(benchmark_max max)
 
 # Compile 'batchnorm'
 add_library(batchnorm src/onnx/batchnorm.c)
-add_snitch_executable(benchmark_batchnorm
-                      ./src/benchmark/benchmark_batchnorm.c
+add_snitch_executable(benchmark_batchnorm_ssr
+                      ./src/benchmark/benchmark_batchnorm_ssr.c
                       ./src/lmq/lmq.c)
-target_link_libraries(benchmark_batchnorm batchnorm)
+add_snitch_executable(benchmark_batchnorm_frep
+                      ./src/benchmark/benchmark_batchnorm_frep.c
+                      ./src/lmq/lmq.c)
+target_link_libraries(benchmark_batchnorm_ssr batchnorm)
+target_link_libraries(benchmark_batchnorm_frep batchnorm)
 
 # Compile 'cumsum'
 add_library(cumsum src/onnx/cumsum.c)
