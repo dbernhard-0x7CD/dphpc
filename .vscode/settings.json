@@ -1,6 +1,13 @@
 {
     "files.associations": {
         "printf.h": "c",
-        "random": "c"
+        "random": "c",
+        "lmq.h": "c",
+        "*.tcc": "c",
+        "memory_resource": "c",
+        "sstream": "c",
+        "benchmark.h": "c",
+        "utils.h": "c",
+        "add.h": "c"
     }
 }

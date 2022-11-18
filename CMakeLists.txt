@@ -177,3 +177,8 @@ target_link_libraries(benchmark_dot dot)
 add_library(sin src/onnx/sin.c)
 add_snitch_executable(benchmark_sin ./src/benchmark/benchmark_sin.c)
 target_link_libraries(benchmark_sin sin)
+
+# Compile 'benchmark_parallel_add'
+add_library(parallel_add src/onnx/parallel_add.c)
+add_snitch_executable(benchmark_parallel_add ./src/benchmark/benchmark_parallel_add.c)
+target_link_libraries(benchmark_parallel_add parallel_add)
