@@ -45,6 +45,10 @@ add_snitch_executable(hello_world
                       ./src/hello_world/main.c)
 add_snitch_executable(debug-multicore ./src/debug-multicore/main.c)
 
+add_snitch_executable(ssr_anomaly
+                      ./src/lmq/lmq.c
+                      ./src/hello_world/ssr_anomaly.c)
+
 # Compile 'sum' library and its corresponding benchmark
 add_library(summation src/onnx/sum.c)
 add_snitch_executable(benchmark_sum
