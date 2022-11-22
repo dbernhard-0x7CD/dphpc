@@ -34,7 +34,9 @@ This sets the following variables and aliases:
 * `dbuild_size SIZE` to build for banshee using **docker** with given input size for the benchmark
 * `pbuild_size SIZE` to build for banshee using **podman** with given input size for the benchmark
 * `build_size SIZE` to build for banshee locally with given input size for the benchmark
-* `build_cluster` to build for the simulator locally
+* `build_sim` to build for the simulator locally
+    * Run `clean` before switching from a banshee build and vice versa!
+* `build_sim_size` to build for the simulator locally with given input size for the benchmark
     * Run `clean` before switching from a banshee build and vice versa!
 * `clean` to remove all temporary build files
 * `run` to run using banshee (which must be on your *PATH*)
@@ -114,7 +116,7 @@ run ./build/hello_world
 * ask if we need to accept n dimensional input
     * Answer: Use vectors where possible
 * Build for the simulator using a compile flag?
-    * use `-DCLUSTER_SIM=1` when calling `cmake ..` or simply use the alias `build_cluster`
+    * use `-DCLUSTER_SIM=1` when calling `cmake ..` or simply use the alias `build_sim`
 * Have a command to output assembly
     * can be done if compiled as executable. sufficient?
 * setup building
