@@ -47,7 +47,7 @@ oauthlib==3.2.0
 olefile==0.46
 packaging==21.3
 pexpect==4.8.0
-Pillow==9.0.1
+Pillow==9.3.0
 pip-autoremove==0.10.0
 Pivy==0.6.5
 ply==3.11
