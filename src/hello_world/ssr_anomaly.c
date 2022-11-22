@@ -14,7 +14,10 @@ int main() {
 
     printf("Demonstrating the SSR anomaly\n");
 
-    // x is input; result is output of the optimized functions
+    // x is input, each element has the value of its index;
+    // We then write up to index 'write_up_to' (exclusive) zeroes.
+    // What we actually observe is that at index 'write_up_to'
+    // we have a value of -inf which somehow was also written.
     const size_t size = 10;
     const size_t write_up_to = 3;
     float* x = allocate(size, sizeof(float));
@@ -23,7 +26,6 @@ int main() {
         x[i] = i;
     }
 
-    // TODO
     register volatile float ft0 asm("ft0");
     asm volatile("" : "=f"(ft0));
 
