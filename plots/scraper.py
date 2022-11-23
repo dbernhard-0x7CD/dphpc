@@ -3,8 +3,13 @@ from collections import defaultdict
 import re
 import csv
 import os
+import sys
 
 input_sizes = [32, 48, 64, 96, 128, 192, 256, 384, 512]
+
+if ".git" not in os.listdir(os.getcwd()):
+    print("please run this script from the project root")
+    sys.exit()
 
 # finds all relevant benchmark names
 benchmarks = []
@@ -14,7 +19,7 @@ for filename in os.listdir(fullpath):
         benchmarks.append(filename.replace("benchmark_", ""))
 
 # TODO: speed up implementation by spawning processes in parallel instead of sequentially
-print("[INFO]   simulating the operators: "+ benchmarks)
+print("[INFO]   simulating the operators: ", benchmarks)
 for i, benchmark in enumerate(benchmarks):
     filename = "plots/data/" + benchmark + "_runtime.csv"
 
