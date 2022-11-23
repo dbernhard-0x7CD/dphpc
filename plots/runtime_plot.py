@@ -25,14 +25,16 @@ parser.add_argument("-save", type=str, nargs="?", dest="save", const="plot.png",
 args = parser.parse_args()
 
 print("[ INFO   ]use $ python runtime_plot.py -h   for help")
-
 # open csv readers for all csv files in the directory
-for filename in os.listdir(os.getcwd() + "/" + relpath):
+fullpath = os.path.dirname(__file__) + "/" + relpath
+
+for filename in os.listdir(fullpath):
     if filename.endswith(".csv"):
         try:
-            csv_files = csv_files + [csv.reader(open(relpath + filename), delimiter=",")]
+            csv_files = csv_files + [csv.reader(open(fullpath + filename), delimiter=",")]
         except:
             pass
+
 
 # read data from all csv files and dump into arrays
 func_names = []
@@ -95,7 +97,7 @@ plotstyle()
 fig, ax = plt.subplots(figsize=(6.4, 4.8))
 
 for i in range(n_functions):
-    ax.plot(xaxis, yaxes[i], label=func_names[i], marker=".")
+    ax.plot(xaxis[:len(yaxes[i])], yaxes[i], label=func_names[i], marker=".")
 
 plt.xlabel("Input size [number of entries]")
 plt.ylabel("Runtime [cycles]")
@@ -103,7 +105,7 @@ plt.ylabel("Runtime [cycles]")
 ax.set_xscale('log', base=2)
 ax.set_yscale('log', base=2)
 
-labelLines(align=True, yoffsets=130)
+labelLines(align=True)
 
 try:
     plt.title(args.include[0] + " Runtime Plot (1 CPU)")

@@ -6,11 +6,11 @@ export PROOT=`pwd`/
 
 # Only allow if we're in the project root
 # NOTE: actually you could be in the project root with ../PROJ_ROOT/scripts/env.sh but this is not supported
-if [[ $0 != ./scripts/env.sh ]]
-then
-    echo "Source must be done in the project root. I'm the executable at $0"
-    # return 0
-fi
+# if [[ $0 != ./scripts/env.sh ]]
+# then
+#     echo "Source must be done in the project root. I'm the executable at $0"
+#     # return 0
+# fi
 
 echo "Setting aliases and variables"
 
