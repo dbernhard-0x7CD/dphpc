@@ -45,6 +45,10 @@ add_snitch_executable(hello_world
                       ./src/hello_world/main.c)
 add_snitch_executable(debug-multicore ./src/debug-multicore/main.c)
 
+add_snitch_executable(ssr_anomaly
+                      ./src/lmq/lmq.c
+                      ./src/hello_world/ssr_anomaly.c)
+
 # Compile 'sum' library and its corresponding benchmark
 add_library(summation src/onnx/sum.c)
 add_snitch_executable(benchmark_sum
@@ -133,10 +137,14 @@ target_link_libraries(benchmark_max max)
 
 # Compile 'batchnorm'
 add_library(batchnorm src/onnx/batchnorm.c)
-add_snitch_executable(benchmark_batchnorm
-                      ./src/benchmark/benchmark_batchnorm.c
+add_snitch_executable(benchmark_batchnorm_ssr
+                      ./src/benchmark/benchmark_batchnorm_ssr.c
                       ./src/lmq/lmq.c)
-target_link_libraries(benchmark_batchnorm batchnorm)
+add_snitch_executable(benchmark_batchnorm_frep
+                      ./src/benchmark/benchmark_batchnorm_frep.c
+                      ./src/lmq/lmq.c)
+target_link_libraries(benchmark_batchnorm_ssr batchnorm)
+target_link_libraries(benchmark_batchnorm_frep batchnorm)
 
 # Compile 'cumsum'
 add_library(cumsum src/onnx/cumsum.c)
@@ -173,6 +181,10 @@ add_snitch_executable(benchmark_dot
                       ./src/lmq/lmq.c)
 target_link_libraries(benchmark_dot dot)
 
+# Compile memory test
+add_snitch_executable(benchmark_mem_versus_l1
+                      ./src/benchmark/benchmark_mem_versus_l1.c
+                      ./src/lmq/lmq.c)
 # Compile 'sin'
 add_library(sin src/onnx/sin.c)
 add_snitch_executable(benchmark_sin ./src/benchmark/benchmark_sin.c)
