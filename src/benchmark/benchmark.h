@@ -6,7 +6,7 @@
 #include "printf.h"
 
 #ifndef LMQ_SIZE
-#define LMQ_SIZE 100
+#define LMQ_SIZE 10000
 #endif
 
 const volatile size_t size = LMQ_SIZE;

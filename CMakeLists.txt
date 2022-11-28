@@ -177,3 +177,8 @@ target_link_libraries(benchmark_dot dot)
 add_library(sin src/onnx/sin.c)
 add_snitch_executable(benchmark_sin ./src/benchmark/benchmark_sin.c)
 target_link_libraries(benchmark_sin sin)
+
+# Compile 'maxpool'
+add_library(maxpool src/onnx/maxpool.c)
+add_snitch_executable(benchmark_maxpool ./src/benchmark/benchmark_maxpool.c ./src/lmq/lmq.c)
+target_link_libraries(benchmark_maxpool maxpool)
