@@ -37,6 +37,7 @@ alias build='cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FIL
 # Builds against the vlt simulator (clean before running this)
 alias build_sim='cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE -DCLUSTER_SIM=1 .. && cmake --build . -j || cd ..'
 
+# Builds against the vlt simulator (clean before running this) with a given size for the benchmark
 alias build_sim_size='function fwrap(){ cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE -DCLUSTER_SIM=1 -DLMQ_SIZE=$1 .. && cmake --build . -j || cd ..}; fwrap'
 
 # Builds using docker
@@ -69,7 +70,7 @@ done
 '''
 alias bench='''echo $bench_cmd | bash 2>&1'''
 
-alias bench_sim='''
+bench_sim_cmd='''
 for x in $PROOT/build/benchmark_*;
 do
     if [[ $x != *.s ]]; then
@@ -78,3 +79,5 @@ do
     fi
 done
 '''
+
+alias bench_sim='''echo $bench_sim_cmd | bash 2>&1'''
