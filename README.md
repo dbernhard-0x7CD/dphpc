@@ -87,9 +87,6 @@ run ./build/hello_world
 * [Register saves](https://web.eecs.utk.edu/~smarz1/courses/ece356/notes/assembly/)
 
 
-# Running on EULER
-* Maybe?
-
 # Report notes
 * Publish repository and add link to it in the report
 * Say why we have no error bars
