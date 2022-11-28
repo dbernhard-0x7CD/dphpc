@@ -17,7 +17,7 @@ int main() {
     float* result_ref = allocate(size, sizeof(float));
     float* result = allocate(size, sizeof(float));
 
-    for (int i = 0; i < size; i++) {
+    for (unsigned i = 0; i < size; i++) {
         x[i] = (float)i;
         y[i] = (float)i;
     }
