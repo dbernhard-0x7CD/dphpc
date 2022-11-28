@@ -15,6 +15,7 @@ const volatile size_t size = LMQ_SIZE;
  * Benchmarks a function with a single float output and prints the result.
  */
 #define BENCH(func_name, ...) BENCH_VO(func_name, __VA_ARGS__)
+
 /*
  * Benchmarks a vector operation which has no single result.
  */
