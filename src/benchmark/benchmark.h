@@ -57,6 +57,7 @@ static inline void verify_vector_omp(const float* value, const float* reference,
         }
     }
 };
+
 /*
  * Compares the vector starting at value element wise with the vector at reference.
     Prints if they do not match.
