@@ -4,8 +4,12 @@
 
 #include <snrt.h>
 
-float add_baseline(float *x, float *y, const size_t n, float *result);
-float add_ssr(float *x, float *y, const size_t n, float *result);
-float add_ssr_frep(float *x, float *y, const size_t n, float *result);
+int add_baseline(float *a, float *b, const size_t n, float *result);
+int add_ssr(float *a, float *b, const size_t n, float *result);
+int add_ssr_frep(float *a, float *b, const size_t n, float *result);
+
+int add_baseline_omp(float *a, float *b, const size_t n, float *result);
+int add_ssr_omp(float *a, float *b, const size_t n, float *result);
+int add_ssr_frep_omp(float *a, float *b, const size_t n, float *result);
 
 #endif
