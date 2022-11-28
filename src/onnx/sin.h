@@ -15,4 +15,10 @@ int sin_ssr(const float* arr, const size_t n, float* result);
 
 int sin_ssr_frep(const float* arr, const size_t n, float* result);
 
+int sin_omp(float* arr, const size_t n, float* result);
+
+int sin_ssr_omp(const float* arr, const size_t n, float* result);
+
+int sin_ssr_frep_omp(const float* arr, const size_t n, float* result);
+
 #endif

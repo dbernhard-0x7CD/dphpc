@@ -1,6 +1,5 @@
 #include <snrt.h>
 #include "printf.h"
-#include "stdlib.h"
 
 #include "lmq.h"
 #include "sin.h"
@@ -11,20 +10,16 @@
 #endif
 
 int main() {
-    uint32_t core_idx = snrt_global_core_idx();
+    uint32_t core_idx = snrt_cluster_core_idx();
 
-    // only run on 1 core
-    if (core_idx != 0) return 1;
+    __snrt_omp_bootstrap(core_idx);
 
     printf("Running benchmark_sin\n");
 
     // x is input; result is output of the optimized functions
-    float *ptr = snrt_cluster_memory().start;
-    float *x = ptr;
-    ptr += size + 1;
-    float *result_ref = ptr;
-    ptr += size + 1;
-    float *result = ptr;
+    float* x = allocate(size, sizeof(float));
+    float* result_ref = allocate(size, sizeof(float));
+    float* result = allocate(size, sizeof(float));
 
     srandom(2);
     x[0] = 0.0; // sin(0.0) is 0.0
@@ -33,11 +28,35 @@ int main() {
         x[i] = 1.0 * random() / __LONG_MAX__;
     }
 
+    // for(unsigned i = 0; i < size; i++) {
+    //     printf("Input at %d is %f\n", i, x[i]);
+    // }
     BENCH_VO(sin_baseline, x, size, result_ref);
     
     BENCH_VO(sin_ssr, x, size, result);
     verify_vector(result, result_ref, size);
     clear_vector(result, size);
+
+    // Some overhead
+    unsigned core_num = snrt_cluster_core_num() - 1;
+    size_t chunk_size = size / core_num;
+    printf("Chunk size: %d\n", chunk_size);
+
+    BENCH_VO(sin_omp, x, size, result);
+    // for(unsigned i = 0; i < size; i++) {
+    //     printf("Value of result at %d is %f\n", i, result[i]);
+    // }
+    verify_vector_omp(result, result_ref, size, chunk_size);
+    clear_vector(result, size);
+
+    BENCH_VO(sin_ssr_omp, x, size, result);
+    // for(unsigned i = 0; i < size; i++) {
+    //     printf("Value of result at %d is %f\n", i, result[i]);
+    // }
+    verify_vector_omp(result, result_ref, size, chunk_size);
+    clear_vector(result, size);
+    
+    __snrt_omp_destroy(core_idx);
 
     return 0;
 }
