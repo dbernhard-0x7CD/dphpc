@@ -73,7 +73,7 @@ int add_ssr_frep(float *a, float* b, const size_t n, float* result) {
     return 0;
 }
 
-int add_baseline_omp(float *a, float *b, const size_t n, float *result) {
+int add_omp(float *a, float *b, const size_t n, float *result) {
 {
     #pragma omp parallel for schedule(static) // in the following line it's necessary to use 'signed'
     for (unsigned i = 0; i < n; i++) {
