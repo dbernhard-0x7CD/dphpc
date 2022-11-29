@@ -1,6 +1,9 @@
 {
     "files.associations": {
         "printf.h": "c",
-        "random": "c"
+        "random": "c",
+        "chrono": "c",
+        "limits": "c",
+        "algorithm": "c"
     }
 }
