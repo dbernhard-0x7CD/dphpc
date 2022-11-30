@@ -73,6 +73,7 @@ int add_ssr_frep(float *a, float* b, const size_t n, float* result) {
     return 0;
 }
 
+__attribute__((noinline))
 int add_parallel(float *a, float *b, const size_t n, float *result) {
     unsigned core_num = snrt_cluster_core_num();
     unsigned core_idx = snrt_cluster_core_idx();
@@ -96,6 +97,7 @@ int add_parallel(float *a, float *b, const size_t n, float *result) {
     return 0;
 }
 
+__attribute__((noinline))
 int add_ssr_parallel(float *a, float* b, const size_t n, float* result) {
 
     // The last thread is not used in OpenMP.
@@ -149,6 +151,7 @@ int add_ssr_parallel(float *a, float* b, const size_t n, float* result) {
     return 0;
 }
 
+__attribute__((noinline))
 int add_ssr_frep_parallel(float *a, float* b, const size_t n, float* result) {
 
     // The last thread is not used in OpenMP.
@@ -202,6 +205,7 @@ int add_ssr_frep_parallel(float *a, float* b, const size_t n, float* result) {
     return 0;
 }
 
+__attribute__((noinline)) 
 int add_omp(float *a, float *b, const size_t n, float *result) {
 {
     #pragma omp parallel for schedule(static) // in the following line it's necessary to use 'signed'
@@ -213,6 +217,7 @@ int add_omp(float *a, float *b, const size_t n, float *result) {
     return 0;
 }
 
+__attribute__((noinline)) 
 int add_ssr_omp(float *a, float *b, const size_t n, float *result) {
     // The last thread is not used in OpenMP.
     // This is probably the DM core.
@@ -267,6 +272,7 @@ int add_ssr_omp(float *a, float *b, const size_t n, float *result) {
     return 0;
 }
 
+__attribute__((noinline)) 
 int add_ssr_frep_omp(float *a, float *b, const size_t n, float *result) {
     // The last thread is not used in OpenMP.
     // I do not know why.
