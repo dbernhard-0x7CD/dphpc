@@ -13,13 +13,15 @@ int main() {
     // memory
     float* memory_x = allocate(size, sizeof(float));
     float* memory_target = allocate(size, sizeof(float));
-    float* memory_target_from_l1 = allocate(size, sizeof(float));
+    float* l1_x = snrt_l1alloc(size * sizeof(float));
+    float* l1_target = snrt_l1alloc(size * sizeof(float));
     
     for (int i = 0; i < size; i++) {
         memory_x[i] = (float)i - 20.0;
+        l1_x[i] = (float)i - 20.0;
     }
     
-    // copy
+    // copy mem -> mem
     size_t _start_ = read_csr(mcycle);
     for (size_t i = 0; i < size; i++) {
         memory_target[i] = memory_x[i];
@@ -28,17 +30,16 @@ int main() {
 
     printf("copy_memory_to_memory, size: %d: %lu cycles\n", size, _end_ - _start_);
 
-    float* memory_l1 = snrt_l1alloc(size * sizeof(float));
     size_t start_l1 = read_csr(mcycle);
     for (size_t i = 0; i < size; i++) {
-        memory_target_from_l1[i] = memory_x[i];
+        l1_target[i] = l1_x[i];
     }
     size_t end_l1  = read_csr(mcycle);
     
-    printf("copy_l1_to_memory, size: %d: %lu cycles\n", size, end_l1 - start_l1);
+    printf("copy_l1_to_l1, size: %d: %lu cycles\n", size, end_l1 - start_l1);
 
     verify_vector(memory_target, memory_x, size);
-    verify_vector(memory_target, memory_target_from_l1, size);
+    verify_vector(memory_target, l1_target, size);
  
     return 0;
 }
