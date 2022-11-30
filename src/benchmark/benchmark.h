@@ -10,6 +10,7 @@
 #endif
 
 const volatile size_t size = LMQ_SIZE;
+size_t* cycles_count;
 
 /*
  * Benchmarks a function with a single float output and prints the result.
@@ -32,6 +33,27 @@ const volatile size_t size = LMQ_SIZE;
     do { if (value != reference) {                  \
         printf(__VA_ARGS__);                        \
     } } while(0);
+
+/*
+ * Benchmarks a vector operation which has no single result.
+ */
+#define BENCH_VO_PARALLEL(func_name, ...)                        \
+    do {                                                \
+        size_t _start_ = read_csr(mcycle);              \
+        int _result_code_ = func_name(__VA_ARGS__);     \
+        size_t _end_ = read_csr(mcycle);                \
+        cycles_count[snrt_cluster_core_idx()] = _end_ - _start_;    \
+        snrt_global_barrier();                          \
+        if (snrt_cluster_core_idx() == 0){              \
+            size_t _max_cycles_ = 0;                    \
+            for (unsigned i = 0; i < snrt_cluster_core_num(); i++){    \
+                if (cycles_count[i] > _max_cycles_) {   \
+                    _max_cycles_ = cycles_count[i];     \
+                }                                       \
+            }                                           \
+            printf(#func_name", size: %d: %lu cycles. Return code: %d\n", \
+                    size, _max_cycles_, _result_code_);        \
+    }   } while(0);
 
 /*
  * Compares the vector starting at value element wise with the vector at reference.
