@@ -18,7 +18,6 @@ int add_baseline(float *a, float* b, const size_t n, float* result) {
 
 __attribute__((noinline))
 int add_ssr(float *a, float* b, const size_t n, float* result) {
-
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*a));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, a);
@@ -47,7 +46,6 @@ int add_ssr(float *a, float* b, const size_t n, float* result) {
 
 __attribute__((noinline))
 int add_ssr_frep(float *a, float* b, const size_t n, float* result) {
-
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*a));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, a);
@@ -99,16 +97,9 @@ int add_parallel(float *a, float *b, const size_t n, float *result) {
 
 __attribute__((noinline))
 int add_ssr_parallel(float *a, float* b, const size_t n, float* result) {
-
     // The last thread is not used in OpenMP.
     // This is probably the DM core.
     unsigned core_num = snrt_cluster_core_num() ;
-    register volatile float ft0 asm("ft0");
-    register volatile float ft1 asm("ft1");
-    register volatile float ft2 asm("ft2");
-
-    asm volatile("" : "=f"(ft0), "=f"(ft1), "=f"(ft2));
-
     unsigned core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
     int do_extra = 0;
@@ -126,7 +117,7 @@ int add_ssr_parallel(float *a, float* b, const size_t n, float* result) {
     snrt_ssr_repeat(SNRT_SSR_DM1, 1);
     snrt_ssr_read(SNRT_SSR_DM1, SNRT_SSR_1D, b + core_idx * local_n);
 
-    snrt_ssr_loop_1d(SNRT_SSR_DM2, local_n + 1, sizeof(*result));
+    snrt_ssr_loop_1d(SNRT_SSR_DM2, local_n, sizeof(*result));
     snrt_ssr_repeat(SNRT_SSR_DM2, 1);
     snrt_ssr_write(SNRT_SSR_DM2, SNRT_SSR_1D, result + core_idx * local_n);
 
@@ -145,7 +136,6 @@ int add_ssr_parallel(float *a, float* b, const size_t n, float* result) {
     if (do_extra) {
         result[local_n * core_num + core_idx] = a[local_n * core_num + core_idx] + b[local_n * core_num + core_idx];
     }
-    asm volatile("" :: "f"(ft0), "f"(ft1), "f"(ft2));
 
     snrt_global_barrier();
     return 0;
@@ -153,16 +143,9 @@ int add_ssr_parallel(float *a, float* b, const size_t n, float* result) {
 
 __attribute__((noinline))
 int add_ssr_frep_parallel(float *a, float* b, const size_t n, float* result) {
-
     // The last thread is not used in OpenMP.
     // I do not know why.
     unsigned core_num = snrt_cluster_core_num();
-    register volatile float ft0 asm("ft0");
-    register volatile float ft1 asm("ft1");
-    register volatile float ft2 asm("ft2");
-
-    asm volatile("" : "=f"(ft0), "=f"(ft1), "=f"(ft2));
-
     unsigned core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
     int do_extra = 0;
@@ -180,7 +163,7 @@ int add_ssr_frep_parallel(float *a, float* b, const size_t n, float* result) {
     snrt_ssr_repeat(SNRT_SSR_DM1, 1);
     snrt_ssr_read(SNRT_SSR_DM1, SNRT_SSR_1D, b + core_idx * local_n);
 
-    snrt_ssr_loop_1d(SNRT_SSR_DM2, local_n + 1, sizeof(*result));
+    snrt_ssr_loop_1d(SNRT_SSR_DM2, local_n, sizeof(*result));
     snrt_ssr_repeat(SNRT_SSR_DM2, 1);
     snrt_ssr_write(SNRT_SSR_DM2, SNRT_SSR_1D, result + core_idx * local_n);
 
@@ -199,20 +182,16 @@ int add_ssr_frep_parallel(float *a, float* b, const size_t n, float* result) {
         result[local_n * core_num + core_idx] = a[local_n * core_num + core_idx] + b[local_n * core_num + core_idx];
     }
 
-    asm volatile("" :: "f"(ft0), "f"(ft1), "f"(ft2));
-
     snrt_global_barrier();
     return 0;
 }
 
 __attribute__((noinline)) 
 int add_omp(float *a, float *b, const size_t n, float *result) {
-{
     #pragma omp parallel for schedule(static) // in the following line it's necessary to use 'signed'
     for (unsigned i = 0; i < n; i++) {
         result[i] = a[i] + b[i];
     }
-}
 
     return 0;
 }
@@ -222,11 +201,6 @@ int add_ssr_omp(float *a, float *b, const size_t n, float *result) {
     // The last thread is not used in OpenMP.
     // This is probably the DM core.
     unsigned core_num = snrt_cluster_core_num() - 1;
-    register volatile float ft0 asm("ft0");
-    register volatile float ft1 asm("ft1");
-    register volatile float ft2 asm("ft2");
-
-    asm volatile("" : "=f"(ft0), "=f"(ft1), "=f"(ft2));
 
 #pragma omp parallel
     {
@@ -247,7 +221,7 @@ int add_ssr_omp(float *a, float *b, const size_t n, float *result) {
         snrt_ssr_repeat(SNRT_SSR_DM1, 1);
         snrt_ssr_read(SNRT_SSR_DM1, SNRT_SSR_1D, b + core_idx * local_n);
 
-        snrt_ssr_loop_1d(SNRT_SSR_DM2, local_n + 1, sizeof(*result));
+        snrt_ssr_loop_1d(SNRT_SSR_DM2, local_n, sizeof(*result));
         snrt_ssr_repeat(SNRT_SSR_DM2, 1);
         snrt_ssr_write(SNRT_SSR_DM2, SNRT_SSR_1D, result + core_idx * local_n);
 
@@ -267,7 +241,6 @@ int add_ssr_omp(float *a, float *b, const size_t n, float *result) {
             result[local_n * core_num + core_idx] = a[local_n * core_num + core_idx] + b[local_n * core_num + core_idx];
         }
     }
-    asm volatile("" :: "f"(ft0), "f"(ft1), "f"(ft2));
 
     return 0;
 }
@@ -277,11 +250,6 @@ int add_ssr_frep_omp(float *a, float *b, const size_t n, float *result) {
     // The last thread is not used in OpenMP.
     // I do not know why.
     unsigned core_num = snrt_cluster_core_num() - 1;
-    register volatile float ft0 asm("ft0");
-    register volatile float ft1 asm("ft1");
-    register volatile float ft2 asm("ft2");
-
-    asm volatile("" : "=f"(ft0), "=f"(ft1), "=f"(ft2));
 
 #pragma omp parallel
     {
@@ -302,7 +270,7 @@ int add_ssr_frep_omp(float *a, float *b, const size_t n, float *result) {
         snrt_ssr_repeat(SNRT_SSR_DM1, 1);
         snrt_ssr_read(SNRT_SSR_DM1, SNRT_SSR_1D, b + core_idx * local_n);
 
-        snrt_ssr_loop_1d(SNRT_SSR_DM2, local_n + 1, sizeof(*result));
+        snrt_ssr_loop_1d(SNRT_SSR_DM2, local_n, sizeof(*result));
         snrt_ssr_repeat(SNRT_SSR_DM2, 1);
         snrt_ssr_write(SNRT_SSR_DM2, SNRT_SSR_1D, result + core_idx * local_n);
 
@@ -321,7 +289,6 @@ int add_ssr_frep_omp(float *a, float *b, const size_t n, float *result) {
             result[local_n * core_num + core_idx] = a[local_n * core_num + core_idx] + b[local_n * core_num + core_idx];
         }
     }
-    asm volatile("" :: "f"(ft0), "f"(ft1), "f"(ft2));
 
     return 0;
 }
