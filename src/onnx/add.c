@@ -73,7 +73,7 @@ int add_ssr_frep(float *a, float* b, const size_t n, float* result) {
 
 __attribute__((noinline))
 int add_parallel(float *a, float *b, const size_t n, float *result) {
-    unsigned core_num = snrt_cluster_core_num();
+    unsigned core_num = snrt_cluster_core_num() - 1;
     unsigned core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
     int do_extra = 0;
@@ -99,7 +99,7 @@ __attribute__((noinline))
 int add_ssr_parallel(float *a, float* b, const size_t n, float* result) {
     // The last thread is not used in OpenMP.
     // This is probably the DM core.
-    unsigned core_num = snrt_cluster_core_num() ;
+    unsigned core_num = snrt_cluster_core_num() - 1;
     unsigned core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
     int do_extra = 0;
@@ -145,7 +145,7 @@ __attribute__((noinline))
 int add_ssr_frep_parallel(float *a, float* b, const size_t n, float* result) {
     // The last thread is not used in OpenMP.
     // I do not know why.
-    unsigned core_num = snrt_cluster_core_num();
+    unsigned core_num = snrt_cluster_core_num() - 1;
     unsigned core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
     int do_extra = 0;

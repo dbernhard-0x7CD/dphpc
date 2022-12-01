@@ -46,7 +46,7 @@ size_t* cycles_count;
         snrt_global_barrier();                          \
         if (snrt_cluster_core_idx() == 0){              \
             size_t _max_cycles_ = 0;                    \
-            for (unsigned i = 0; i < snrt_cluster_core_num(); i++){    \
+            for (uint32_t i = 0; i < snrt_cluster_core_num() - 1; i++){    \
                 if (cycles_count[i] > _max_cycles_) {   \
                     _max_cycles_ = cycles_count[i];     \
                 }                                       \

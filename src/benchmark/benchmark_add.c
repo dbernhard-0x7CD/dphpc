@@ -11,7 +11,7 @@ float *x, *y, *result_ref, *result;
 
 int main() {
     uint32_t core_idx = snrt_cluster_core_idx();
-    unsigned core_num = snrt_cluster_core_num();
+    uint32_t core_num = snrt_cluster_core_num() - 1; // -1 as there is one DM core
 
     if (core_idx == 0){
         // Initialize the input data
@@ -44,7 +44,7 @@ int main() {
     cycles_count[core_idx] = 0;
     BENCH_VO_PARALLEL(add_parallel, x, y, size, result);
     if (core_idx == 0){
-        verify_vector(result, result_ref, size);
+        verify_vector_omp(result, result_ref, size, chunk_size);
         clear_vector(result, size);
     }
     snrt_global_barrier();
@@ -69,8 +69,6 @@ int main() {
     __snrt_omp_bootstrap(core_idx);
  
     // Some overhead
-    core_num--; // For OMP
-    chunk_size = size / core_num;
     printf("Chunk size: %d\n", chunk_size);
 
     BENCH_VO(add_omp, x, y, size, result);
