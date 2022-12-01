@@ -15,13 +15,10 @@ int copy_ssr(const float* source, const size_t n, float* target) {
     register volatile float ft0 asm("ft0");
     register volatile float ft2 asm("ft2");
 
-    // input is ft0
-    asm volatile("" : "=f"(ft0));
-
     // stream into ft0
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*source));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
-    snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, (float *)source);
+    snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, source);
 
     // stream from ft2 into result
     snrt_ssr_loop_1d(SNRT_SSR_DM2, n, sizeof(*target));
