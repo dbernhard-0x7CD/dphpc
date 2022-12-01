@@ -187,7 +187,9 @@ add_snitch_executable(benchmark_mem_versus_l1
                       ./src/lmq/lmq.c)
 # Compile 'sin'
 add_library(sin src/onnx/sin.c)
-add_snitch_executable(benchmark_sin ./src/benchmark/benchmark_sin.c)
+add_snitch_executable(benchmark_sin
+                      ./src/benchmark/benchmark_sin.c
+                      ./src/lmq/lmq.c)
 target_link_libraries(benchmark_sin sin)
 
 # Compile 'maxpool'
