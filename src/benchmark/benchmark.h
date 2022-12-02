@@ -37,23 +37,24 @@ size_t* cycles_count;
 /*
  * Benchmarks a vector operation which has no single result.
  */
-#define BENCH_VO_PARALLEL(func_name, ...)                        \
+#define BENCH_VO_PARALLEL(func_name, ...)               \
     do {                                                \
+        snrt_cluster_sw_barrier();                      \
         size_t _start_ = read_csr(mcycle);              \
         int _result_code_ = func_name(__VA_ARGS__);     \
         size_t _end_ = read_csr(mcycle);                \
-        cycles_count[snrt_cluster_core_idx()] = _end_ - _start_;    \
-        snrt_global_barrier();                          \
-        if (snrt_cluster_core_idx() == 0){              \
-            size_t _max_cycles_ = 0;                    \
-            for (uint32_t i = 0; i < snrt_cluster_core_num() - 1; i++){    \
-                if (cycles_count[i] > _max_cycles_) {   \
-                    _max_cycles_ = cycles_count[i];     \
-                }                                       \
-            }                                           \
+        size_t cycles = _end_ - _start_;                \
+        snrt_cluster_sw_barrier();                      \
+        /*printf("core %d start: %d\n", snrt_cluster_core_idx(), _start_); */ \
+        /* printf("core %d end: %d\n", snrt_cluster_core_idx(), _end_); */ \
+        /* for debugging purposes */                    \
+        /* printf("(%d): %d\n ", snrt_cluster_core_idx(), cycles);                          */ \
+        snrt_cluster_sw_barrier();                      \
+        if (snrt_cluster_core_idx() == 0) {             \
             printf(#func_name", size: %d: %lu cycles. Return code: %d\n", \
-                    size, _max_cycles_, _result_code_);        \
-    }   } while(0);
+                    size, cycles, _result_code_);       \
+        }                                               \   
+    } while(0);
 
 /*
  * Compares the vector starting at value element wise with the vector at reference.
