@@ -196,3 +196,8 @@ target_link_libraries(benchmark_sin sin)
 add_library(maxpool src/onnx/maxpool.c)
 add_snitch_executable(benchmark_maxpool ./src/benchmark/benchmark_maxpool.c ./src/lmq/lmq.c)
 target_link_libraries(benchmark_maxpool maxpool)
+
+# Compile 'gemm'
+add_library(gemm src/onnx/gemm.c)
+add_snitch_executable(benchmark_gemm ./src/benchmark/benchmark_gemm.c ./src/lmq/lmq.c)
+target_link_libraries(benchmark_gemm gemm)
