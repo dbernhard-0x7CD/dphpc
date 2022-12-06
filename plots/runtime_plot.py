@@ -60,6 +60,7 @@ for func_name in data.keys():
         y2 = list(map(q05, yaxis))
         y3 = list(map(q95, yaxis))
         c = ax.plot(xaxis, y1, label=func_name, marker=".")[0].get_color()
+        print(c)
         ax.fill_between(xaxis, y2, y3, alpha=0.2, zorder=1, color=c)
         confidence_interval_flag = True
 
@@ -79,10 +80,17 @@ xlabelpos = np.logspace(np.log2(min(xaxis)), np.log2(max(xaxis)), no_labels+2, b
 labelLines(align=True, yoffsets=0.1, yoffset_logspace=True, xvals=xlabelpos)
 # plt.legend(*zip(*labels), loc=2)
 
+title = "Runtime Plot"
+
 try:
-    plt.title(include[0] + " Runtime Plot")
+    title  = include[0] + " " + title
 except:
-    plt.title("Runtime Plot")
+    pass
+
+if confidence_interval_flag:
+    title += ' (shaded area := 5% - 95% quantile area)'
+
+plt.title(title)
 
 if savepath:
     plt.savefig(fullpath + savepath, dpi=300)

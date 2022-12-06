@@ -39,7 +39,7 @@ function dbuild () {
 
 # Builds using docker for given input size
 function dbuild_size () {
-    docker run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.io/pulp-platform/snitch /bin/bash ./container_build.sh build $1
+    docker run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.io/pulp-platform/snitch /bin/bash ./container_build.sh build $1 $2
 }
 
 # # Remove all built files

@@ -26,10 +26,17 @@ def load_plot_data(abspath, include=[], exclude=[]):
         if k == "n":
             continue
 
-        if not all([inc in k for inc in include]) or any([exc in k for exc in exclude]):
-            del data[k]
+        if include is not None and exclude is not None:
+            if not all([inc in k for inc in include]) or any([exc in k for exc in exclude]):
+                del data[k]
+        elif include is not None:
+            if not all([inc in k for inc in include]):
+                del data[k]
+        elif exclude is not None:
+            if any([exc in k for exc in exclude]):
+                del data[k]
     
-    print("[    DATA LOADER]     loaded data for the plots {}".format(data.keys()))
+    print("[    DATA LOADER]     loaded data for the plots {}".format(list(data.keys())))
     return data
 
 

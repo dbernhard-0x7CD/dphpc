@@ -12,26 +12,30 @@ int main() {
     // only run on 1 core
     if (core_idx != 0) return 1;
 
-    // Initialize the input data
-    float* x = allocate(size, sizeof(float));
-    float* y = allocate(size, sizeof(float));
-    float* result_ref = allocate(size, sizeof(float));
-    float* result = allocate(size, sizeof(float));
+    for(size_t size=32;size<=LMQ_SIZE;size*=2){
 
-    for (int i = 0; i < size; i++) {
-        x[i] = (float)i;
-        y[i] = (float)size - i + 1;
+
+        // Initialize the input data
+        float* x = allocate(size, sizeof(float));
+        float* y = allocate(size, sizeof(float));
+        float* result_ref = allocate(size, sizeof(float));
+        float* result = allocate(size, sizeof(float));
+
+        for (int i = 0; i < size; i++) {
+            x[i] = (float)i;
+            y[i] = (float)size - i + 1;
+        }
+        
+        BENCH_VO(div_baseline, x, y, size, result_ref);
+
+        BENCH_VO(div_ssr, x, y, size, result);
+        verify_vector(result, result_ref, size);
+        clear_vector(result, size);
+
+        BENCH_VO(div_ssr_frep, x, y, size, result);
+        verify_vector(result, result_ref, size);
+        clear_vector(result, size);
     }
-    
-    BENCH_VO(div_baseline, x, y, size, result_ref);
-
-    BENCH_VO(div_ssr, x, y, size, result);
-    verify_vector(result, result_ref, size);
-    clear_vector(result, size);
-
-    BENCH_VO(div_ssr_frep, x, y, size, result);
-    verify_vector(result, result_ref, size);
-    clear_vector(result, size);
  
     return 0;
 }

@@ -14,30 +14,33 @@ int main() {
 
     printf("Running benchmark_argmax\n");
 
-    // x is input; result is output of the optimized functions
-    float *x = allocate(size, sizeof(float));
-    int result_ref;
-    int result;
+    for(size_t size=32;size<=LMQ_SIZE;size*=2){
 
-    srandom(2);
-    for (size_t i = 0; i < size; i++) {
-        x[i] = 1.0 * random() / __LONG_MAX__;
+        // x is input; result is output of the optimized functions
+        float *x = allocate(size, sizeof(float));
+        int result_ref;
+        int result;
+
+        srandom(2);
+        for (size_t i = 0; i < size; i++) {
+            x[i] = 1.0 * random() / __LONG_MAX__;
+        }
+
+        // For debugging purposes
+        // for (size_t i = 0; i < size; i++) {
+        //     printf("Input at index %d is %f\n", i, x[i]);
+        // }
+
+        BENCH_VO(argmax_baseline, x, size, &result_ref);
+        
+        BENCH_VO(argmax_ssr, x, size, &result);
+        VERIFY_INT(result, result_ref, "Mismatch: expected %d but got %d\n", result_ref, result);
+        result = -1;
+
+        // BENCH_VO(argmax_ssr_frep, x, size, &result);
+        // VERIFY_INT(result, result_ref, "Mismatch: expected %d but got %d\n", result_ref, result);
+        // This is expected as no FREP implementation exists (for now)
     }
-
-    // For debugging purposes
-    // for (size_t i = 0; i < size; i++) {
-    //     printf("Input at index %d is %f\n", i, x[i]);
-    // }
-
-    BENCH_VO(argmax_baseline, x, size, &result_ref);
-    
-    BENCH_VO(argmax_ssr, x, size, &result);
-    VERIFY_INT(result, result_ref, "Mismatch: expected %d but got %d\n", result_ref, result);
-    result = -1;
-
-    // BENCH_VO(argmax_ssr_frep, x, size, &result);
-    // VERIFY_INT(result, result_ref, "Mismatch: expected %d but got %d\n", result_ref, result);
-    // This is expected as no FREP implementation exists (for now)
 
     return 0;
 }

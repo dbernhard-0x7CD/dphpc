@@ -9,6 +9,7 @@ def plotstyle():
     #                 '#D1362F', '#541F12', '#957A6D'])
     random.seed(42)
     c = ["#003f5c", "#7a5195", "#ef5675", "#ffa600"]
+    # c = ["#ff0000", "#00ff00", "#0000ff"]
     random.shuffle(c)
     colors = cycler('color',
                     c)
