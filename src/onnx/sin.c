@@ -10,7 +10,7 @@
  * Naive implementation of sin. Computes the element-wise sine and stores it in result.
  */
 __attribute__((noinline)) 
-int sin_baseline(const float* arr, const size_t n, float* result) {
+int sin_baseline(float* arr, const size_t n, float* result) {
     for (size_t i = 0; i < n; i++) {
         result[i] = sinf(arr[i]);
     }
@@ -18,7 +18,7 @@ int sin_baseline(const float* arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline)) 
-int sin_ssr(const float* arr, const size_t n, float* result) {
+int sin_ssr(float* arr, const size_t n, float* result) {
 
     // Adress pattern configuration
     register volatile float ft0 asm("ft0");
@@ -96,7 +96,7 @@ int sin_ssr(const float* arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline)) 
-int sin_ssr_frep(const float* arr, const size_t n, float* result) {
+int sin_ssr_frep(float* arr, const size_t n, float* result) {
 
     /*
      * I do not think we can optimize anything with FREP.
@@ -112,15 +112,16 @@ int sin_ssr_frep(const float* arr, const size_t n, float* result) {
  * Naive implementation of sin using a lookup table. Looks up the element-wise sine and stores it in result.
  */
 __attribute__((noinline)) 
-int sin_baseline_lookup_table(const float* arr, const size_t n, float* result, const float* lookup_table, const size_t lookup_table_size) {
+int sin_baseline_lookup_table(float* arr, const size_t n, float* result, float* lookup_table, const size_t lookup_table_size) {
+    float factor = lookup_table_size / M_PI * 2.0;
     for (size_t i = 0; i < n; i++) {
-        result[i] = lookup_table[(int)(arr[i] * lookup_table_size / M_PI * 2)];
+        result[i] = lookup_table[(int)(arr[i] * factor)];
     }
     return 0;
 }
 
 __attribute__((noinline)) 
-int sin_ssr_lookup_table(const float* arr, const size_t n, float* result, const float* lookup_table, const size_t lookup_table_size) {
+int sin_ssr_lookup_table(float* arr, const size_t n, float* result, float* lookup_table, const size_t lookup_table_size) {
 
     // Adress pattern configuration
     register volatile float ft0 asm("ft0");
@@ -139,18 +140,25 @@ int sin_ssr_lookup_table(const float* arr, const size_t n, float* result, const 
     snrt_ssr_enable();
 
     // Computation
-    for (size_t i = 0; i < n; i++) {
+    register float factor = lookup_table_size / M_PI * 2.0;
+    size_t index;
+    /*for (size_t i = 0; i < n; i++) {
         asm volatile(
-            "fmv.s fa0, ft0\n" // fa0 <- ft0
-            // "flw fa1, "
-            // WORK IN PROGRESS
-        );
-    }
+            "fmul.s fa1, ft0, %[factor]\n" // fa1 <- arr[i] * factor
+            "fcvt.wu.s %[index], fa1\n" // index <- cast fa1 to int
+            "lw a3, -48(s0)\n" // a3 <- lookup_table
+            "add a3, a3, %[index]\n" // a3 <- lookup_table + index
+            // "flw fa1, 0(a3)\n" // fa1 <- mem(a3) (i.e., lookup_table[index])
+            // "fmv.s ft1, fa1" // ft1 <- fa1
+            : [index] "+r"(index) // index is written to (and also read from)
+            : [factor] "f"(factor) // factor is only read form
+            : "ft0", "ft1", "fa1"
+        ); 
+    }*/
 
     // Disabling stream semantics
     snrt_ssr_disable();
-
     asm volatile("" :: "f"(ft1));
-    
+
     return 0;
 }

@@ -20,23 +20,14 @@ int main() {
 
     printf("Running benchmark_sin\n");
 
-    // x is input; result is output of the optimized functions
-    float *ptr = snrt_cluster_memory().start;
-
-    float *x = ptr;
-    ptr += size + 1;
-
-    float *lookup_table = ptr;
-    ptr += lookup_table_size;
+    float* x = allocate(size, sizeof(float)); // input
+    float* lookup_table = allocate(lookup_table_size, sizeof(float)); // lookup table for sin
+    float* result_ref = allocate(size, sizeof(float)); // reference output (ground truth)
+    float* result = allocate(size, sizeof(float)); // output of optimized functions
 
     for (size_t x = 0; x < lookup_table_size; x++) {
         lookup_table[x] = sinf(M_PI/2.0 * x / lookup_table_size);
     }
-    
-    float *result_ref = ptr;
-    ptr += size + 1;
-    
-    float *result = ptr;
 
     srandom(2); // setting seed 2
     x[0] = 0.0; // sin(0.0) is 0.0
@@ -54,8 +45,12 @@ int main() {
     clear_vector(result, size);
 
     BENCH_VO(sin_baseline_lookup_table, x, size, result, lookup_table, lookup_table_size);
-    
+
     BENCH_VO(sin_ssr_lookup_table, x, size, result, lookup_table, lookup_table_size);
+    for(size_t i = 0; i < size; i++) {
+        printf("%f vs. %f\n", x[i]*lookup_table_size / M_PI * 2, result[i]);
+    }
+    
     verify_vector(result, result_ref, size);
     
     return 0;
