@@ -1,4 +1,6 @@
 .vscode
+src/.vscode
+.vscode/settings.json
 build/*
 temp/*
 output/*
