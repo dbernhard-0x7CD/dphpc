@@ -22,9 +22,7 @@ int sin_baseline_lookup_table(float* arr, const size_t n, float* result, float* 
 
 int sin_ssr_lookup_table(float* arr, const size_t n, float* result, float* lookup_table, const size_t lookup_table_size);
 
-#endif
-
-int sin_omp(float* arr, const size_t n, float* result);
+int sin_omp(volatile float* arr, const size_t n, float* result);
 
 int sin_ssr_omp(const float* arr, const size_t n, float* result);
 

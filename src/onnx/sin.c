@@ -119,6 +119,7 @@ int sin_baseline_lookup_table(float* arr, const size_t n, float* result, float* 
     for (size_t i = 0; i < n; i++) {
         result[i] = lookup_table[(int)(arr[i] * factor)];
     }
+}
 
 
 __attribute__((noinline)) 
@@ -169,6 +170,9 @@ int sin_ssr_lookup_table(float* arr, const size_t n, float* result, float* looku
     // Disabling stream semantics
     snrt_ssr_disable();
     asm volatile("" :: "f"(ft1));
+
+    return 0;
+}
 
 int sin_ssr_omp(const float* arr, const size_t n, float* result) {
     // The last thread is not used in OpenMP.
