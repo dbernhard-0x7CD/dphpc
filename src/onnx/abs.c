@@ -8,9 +8,9 @@
  * Naive implementation of abs. Calculates for each element in x its absolute value and stores it in result
  */
 __attribute__((noinline))
-int fabs_baseline(float *x,  const size_t n, float* result) {
+int fabs_baseline(float *arr,  const size_t n, float* result) {
     for (size_t i = 0; i < n; i++) {
-        result[i] = fabsf(x[i]);
+        result[i] = fabsf(arr[i]);
     }
 
     return 0;
@@ -18,15 +18,15 @@ int fabs_baseline(float *x,  const size_t n, float* result) {
 
 
 __attribute__((noinline))
-int fabs_ssr(float *x, const size_t n, float* result) {
+int fabs_ssr(float *arr, const size_t n, float* result) {
 
     register volatile float ft0 asm("ft0");
     register volatile float ft1 asm("ft1");
     asm volatile("" : "=f"(ft0));
 
-    snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*x));
+    snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*arr));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
-    snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, x);
+    snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, arr);
 
     snrt_ssr_loop_1d(SNRT_SSR_DM1, n, sizeof(*result));
     snrt_ssr_repeat(SNRT_SSR_DM1, 1);
