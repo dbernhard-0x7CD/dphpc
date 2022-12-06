@@ -1,5 +1,6 @@
 #include <snrt.h>
 #include "printf.h"
+#include <stdlib.h>
 
 #include "lmq.h"
 #include "sin.h"
