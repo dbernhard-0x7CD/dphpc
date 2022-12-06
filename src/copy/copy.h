@@ -7,17 +7,17 @@
 /*
  * Naive implementation of copy. Copies n elements starting at source to target
  */
-int copy_baseline(const float* source, const size_t n, float* target);
+int copy_baseline(float* source, const size_t n, float* target);
 
-int copy_ssr(const float* source, const size_t n, float* target);
+int copy_ssr(float* source, const size_t n, float* target);
 
-int copy_ssr_frep(const float* source, const size_t n, float* target);
+int copy_ssr_frep(float* source, const size_t n, float* target);
 
-int copy_parallel(const float* source, const size_t n, float* target);
+int copy_parallel(float* source, const size_t n, float* target);
 
-int copy_ssr_parallel(const float* source, const size_t n, float* target);
+int copy_ssr_parallel(float* source, const size_t n, float* target);
 
-int copy_ssr_frep_parallel(const float* source, const size_t n, float* target);
+int copy_ssr_frep_parallel(float* source, const size_t n, float* target);
 
 int copy_omp(float* source, const size_t n, float* target);
 
