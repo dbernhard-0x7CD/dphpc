@@ -1,5 +1,6 @@
 
 #include "copy.h"
+#include "omp.h"
 
 #include <snrt.h>
 #include "printf.h"
@@ -165,4 +166,102 @@ int copy_ssr_frep_parallel(const float* source, const size_t n, float* target) {
     }
 
     return 0;
+}
+
+int copy_omp(float* source, const size_t n, float* target) {
+
+#pragma omp parallel for
+    for (size_t i = 0; i < n; i++) {
+        target[i] = source[i];
+    }
+
+    return 0;
+}
+
+int copy_ssr_omp(float* source, const size_t n, float* target) {
+    // The last thread is not used in OpenMP.
+    // This is probably the DM core.
+    unsigned core_num = snrt_cluster_core_num() - 1;
+
+#pragma omp parallel
+    {
+        unsigned core_idx = snrt_cluster_core_idx();
+        size_t local_n = n / core_num;
+        int do_extra = 0;
+
+        // Calculate which core does one more to account for the leftovers
+        if (core_idx < n - local_n * core_num) {
+            do_extra = 1;
+        }
+
+        snrt_ssr_loop_1d(SNRT_SSR_DM0, local_n, sizeof(*source));
+        snrt_ssr_repeat(SNRT_SSR_DM0, 1);
+        snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, source + core_idx * local_n);
+
+        snrt_ssr_loop_1d(SNRT_SSR_DM2, local_n, sizeof(*target));
+        snrt_ssr_repeat(SNRT_SSR_DM2, 1);
+        snrt_ssr_write(SNRT_SSR_DM2, SNRT_SSR_1D, target + core_idx * local_n);
+
+        snrt_ssr_enable();
+
+        for (size_t i = 0; i < local_n; i++) {
+            asm volatile(
+                "fmv.s ft2, ft0 \n"
+                ::: "ft0", "ft2"
+            );
+        }
+        
+        snrt_ssr_disable();
+
+        // Could also be done in ssr, but this only adds O(number of threads) which we assume is low.
+        if (do_extra) {
+            target[local_n * core_num + core_idx] = source[local_n * core_num + core_idx];
+        }
+    }
+
+    return 0;
+}
+
+int copy_ssr_frep_omp(float* source, const size_t n, float* target) {
+    // The last thread is not used in OpenMP.
+    // This is probably the DM core.
+    unsigned core_num = snrt_cluster_core_num() - 1;
+
+#pragma omp parallel
+    {
+        unsigned core_idx = snrt_cluster_core_idx();
+        size_t local_n = n / core_num;
+        int do_extra = 0;
+
+        // Calculate which core does one more to account for the leftovers
+        if (core_idx < n - local_n * core_num) {
+            do_extra = 1;
+        }
+
+        snrt_ssr_loop_1d(SNRT_SSR_DM0, local_n, sizeof(*source));
+        snrt_ssr_repeat(SNRT_SSR_DM0, 1);
+        snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, source + core_idx * local_n);
+
+        snrt_ssr_loop_1d(SNRT_SSR_DM2, local_n, sizeof(*target));
+        snrt_ssr_repeat(SNRT_SSR_DM2, 1);
+        snrt_ssr_write(SNRT_SSR_DM2, SNRT_SSR_1D, target + core_idx * local_n);
+
+        snrt_ssr_enable();
+
+        asm (
+            "frep.o %[n_frep], 1, 0, 0 \n"
+            "fmv.s ft2, ft0 \n"
+            :: [n_frep] "r"(local_n - 1) : "ft0", "ft1"
+        );
+        
+        snrt_ssr_disable();
+
+        // Could also be done in ssr, but this only adds O(number of threads) which we assume is low.
+        if (do_extra) {
+            target[local_n * core_num + core_idx] = source[local_n * core_num + core_idx];
+        }
+    }
+
+    return 0;
+
 }

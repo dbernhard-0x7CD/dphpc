@@ -19,4 +19,10 @@ int copy_ssr_parallel(const float* source, const size_t n, float* target);
 
 int copy_ssr_frep_parallel(const float* source, const size_t n, float* target);
 
+int copy_omp(float* source, const size_t n, float* target);
+
+int copy_ssr_omp(float* source, const size_t n, float* target);
+
+int copy_ssr_frep_omp(float* source, const size_t n, float* target);
+
 #endif
