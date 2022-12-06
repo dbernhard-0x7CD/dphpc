@@ -7,10 +7,10 @@
 #include "benchmark.h"
 
 int main() {
-    uint32_t core_idx = snrt_global_core_idx();
+    uint32_t core_idx = snrt_cluster_core_idx();
 
     // only run on 1 core
-    if (core_idx != 0) return 1;
+    if (core_idx != 0) return 0;
 
     printf("Running benchmark_acos\n");
 
