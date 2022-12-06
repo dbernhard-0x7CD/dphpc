@@ -8,7 +8,7 @@
  * Naive implementation of acosh. Calculates the acos of n elements starting at arr.
  */
 __attribute__((noinline))
-int acosh_baseline(const float* arr, const size_t n, float* result) {
+int acosh_baseline(float* arr, const size_t n, float* result) {
     for (size_t i = 0; i < n; i++) {
         result[i] = acoshf(arr[i]);
     }
@@ -17,7 +17,7 @@ int acosh_baseline(const float* arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline))
-int acosh_ssr(const float* arr, const size_t n, float* result) {
+int acosh_ssr(float* arr, const size_t n, float* result) {
     register volatile float ft0 asm("ft0");
     register volatile float ft1 asm("ft1");
 
@@ -80,7 +80,7 @@ int acosh_ssr(const float* arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline))
-int acosh_ssr_frep(const float* arr, const size_t n, float* result) {
+int acosh_ssr_frep(float* arr, const size_t n, float* result) {
     /*
      * I do not think we can optimize anything with FREP.
      * As we have a call to another function which consists of many more
