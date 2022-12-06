@@ -112,7 +112,7 @@ int fabs_ssr_parallel(float *arr, const size_t n, float *result) {
     
     snrt_ssr_enable();
 
-    for (size_t i = 0; i < n; i++) {
+    for (size_t i = 0; i < local_n; i++) {
         asm volatile(
             "fabs.s ft1, ft0 \n"
             ::: "ft0", "ft1"
