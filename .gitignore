@@ -2,3 +2,5 @@
 build/*
 temp/*
 output/*
+__pycache__/
+.venv/

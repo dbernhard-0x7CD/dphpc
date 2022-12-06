@@ -14,14 +14,15 @@ The goal of our project is to develop optimized operators (from the ONNX standar
 
 # Setup - Development Environment
 
-First we need to clone the snitch repo:
-```
+## Clone the snitch repo
+Execute in the project root directory:
+```bash
 git submodule update --init
 ```
 
 ## Load aliases
 After installing everthing you can source env.sh inside the **project root directory**: 
-```
+```bash
 source ./scripts/env.sh
 ```
 
@@ -30,7 +31,12 @@ This sets the following variables and aliases:
 * `dbuild` to build for banshee using **docker**
 * `pbuild` to build for banshee using **podman**
 * `build` to build for banshee locally
-* `build_cluster` to build for the simulator locally
+* `dbuild_size SIZE` to build for banshee using **docker** with given input size for the benchmark
+* `pbuild_size SIZE` to build for banshee using **podman** with given input size for the benchmark
+* `build_size SIZE` to build for banshee locally with given input size for the benchmark
+* `build_sim` to build for the simulator locally
+    * Run `clean` before switching from a banshee build and vice versa!
+* `build_sim_size` to build for the simulator locally with given input size for the benchmark
     * Run `clean` before switching from a banshee build and vice versa!
 * `clean` to remove all temporary build files
 * `run` to run using banshee (which must be on your *PATH*)
@@ -47,7 +53,7 @@ cd snitch/hw/system/snitch_cluster/
 make bin/snitch_cluster.vlt
 ```
 
-## Install riscv compiler (if you install the environment yourself)
+## Install riscv compiler (if you install the environment yourself and do not want to use docker)
 
 First define `$RISCV` to point to the directory you want to have the toolchain installed to.
 
@@ -81,8 +87,10 @@ run ./build/hello_world
 * [Register saves](https://web.eecs.utk.edu/~smarz1/courses/ece356/notes/assembly/)
 
 
-# Running on EULER
-* Maybe?
+# Report notes
+* Publish repository and add link to it in the report
+* Say why we have no error bars
+* Bar plot of speedup
 
 # TODO
 * File where we store the benchmark results (to plot later in the report)
@@ -105,7 +113,7 @@ run ./build/hello_world
 * ask if we need to accept n dimensional input
     * Answer: Use vectors where possible
 * Build for the simulator using a compile flag?
-    * use `-DCLUSTER_SIM=1` when calling `cmake ..` or simply use the alias `build_cluster`
+    * use `-DCLUSTER_SIM=1` when calling `cmake ..` or simply use the alias `build_sim`
 * Have a command to output assembly
     * can be done if compiled as executable. sufficient?
 * setup building

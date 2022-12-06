@@ -1,6 +1,5 @@
 #include <snrt.h>
 #include "printf.h"
-#include "stdlib.h"
 
 #include "lmq.h"
 #include "sin.h"
@@ -13,10 +12,9 @@
 const size_t lookup_table_size = 10000;
 
 int main() {
-    uint32_t core_idx = snrt_global_core_idx();
+    uint32_t core_idx = snrt_cluster_core_idx();
 
-    // only run on 1 core
-    if (core_idx != 0) return 1;
+    __snrt_omp_bootstrap(core_idx);
 
     printf("Running benchmark_sin\n");
 
@@ -36,6 +34,9 @@ int main() {
         x[i] = 1.0 * random() / __LONG_MAX__;
     }
 
+    // for(unsigned i = 0; i < size; i++) {
+    //     printf("Input at %d is %f\n", i, x[i]);
+    // }
     BENCH_VO(sin_baseline, x, size, result_ref);
     
     BENCH_VO(sin_ssr, x, size, result);
@@ -44,6 +45,7 @@ int main() {
     clear_vector(result_ref, size);
     clear_vector(result, size);
 
+    /*
     BENCH_VO(sin_baseline_lookup_table, x, size, result, lookup_table, lookup_table_size);
 
     BENCH_VO(sin_ssr_lookup_table, x, size, result, lookup_table, lookup_table_size);
@@ -53,6 +55,28 @@ int main() {
     
     verify_vector(result, result_ref, size);
     
+    */
+    // Some overhead
+    unsigned core_num = snrt_cluster_core_num() - 1;
+    size_t chunk_size = size / core_num;
+    printf("Chunk size: %d\n", chunk_size);
+
+    BENCH_VO(sin_omp, x, size, result);
+    // for(unsigned i = 0; i < size; i++) {
+    //     printf("Value of result at %d is %f\n", i, result[i]);
+    // }
+    verify_vector_omp(result, result_ref, size, chunk_size);
+    clear_vector(result, size);
+
+    BENCH_VO(sin_ssr_omp, x, size, result);
+    // for(unsigned i = 0; i < size; i++) {
+    //     printf("Value of result at %d is %f\n", i, result[i]);
+    // }
+    verify_vector_omp(result, result_ref, size, chunk_size);
+    clear_vector(result, size);
+    
+    __snrt_omp_destroy(core_idx);
+
     return 0;
 }
 

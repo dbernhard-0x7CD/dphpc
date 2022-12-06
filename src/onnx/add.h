@@ -1,11 +1,19 @@
 
-#ifndef LMQ_SUM_H
-#define LMQ_SUM_H
+#ifndef LMQ_ADD_H
+#define LMQ_ADD_H
 
 #include <snrt.h>
 
-float add_baseline(float *x, float *y, const size_t n, float *result);
-float add_ssr(float *x, float *y, const size_t n, float *result);
-float add_ssr_frep(float *x, float *y, const size_t n, float *result);
+int add_baseline(float *a, float *b, const size_t n, float *result);
+int add_ssr(float *a, float *b, const size_t n, float *result);
+int add_ssr_frep(float *a, float *b, const size_t n, float *result);
+
+int add_omp(float *a, float *b, const size_t n, float *result);
+int add_ssr_omp(float *a, float *b, const size_t n, float *result);
+int add_ssr_frep_omp(float *a, float *b, const size_t n, float *result);
+
+int add_parallel(float *a, float *b, const size_t n, float *result);
+int add_ssr_parallel(float *a, float *b, const size_t n, float *result);
+int add_ssr_frep_parallel(float *a, float *b, const size_t n, float *result);
 
 #endif

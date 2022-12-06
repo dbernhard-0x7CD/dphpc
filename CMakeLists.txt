@@ -32,10 +32,22 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/onnx)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/dot)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/benchmark)
 
+# Define size for the benchmark
+if (LMQ_SIZE)
+    message("Setting size to ${LMQ_SIZE}")
+    add_compile_definitions(LMQ_SIZE=${LMQ_SIZE})
+else()
+    message("no size defined")
+endif()
+
 add_snitch_executable(hello_world
                       ./src/lmq/lmq.c
                       ./src/hello_world/main.c)
 add_snitch_executable(debug-multicore ./src/debug-multicore/main.c)
+
+add_snitch_executable(ssr_anomaly
+                      ./src/lmq/lmq.c
+                      ./src/hello_world/ssr_anomaly.c)
 
 # Compile 'sum' library and its corresponding benchmark
 add_library(summation src/onnx/sum.c)
@@ -94,6 +106,14 @@ add_snitch_executable(benchmark_acosh
                       ./src/lmq/lmq.c)
 target_link_libraries(benchmark_acosh acosh)
 
+# Compile 'asinh'
+add_library(asinh src/onnx/asinh.c)
+add_snitch_executable(benchmark_asinh
+                      ./src/benchmark/benchmark_asinh.c
+                      ./src/lmq/lmq.c)
+target_link_libraries(benchmark_asinh asinh)
+
+
 # Compile 'sigmoid'
 add_library(sigmoid src/onnx/sigmoid.c)
 add_snitch_executable(benchmark_sigmoid
@@ -117,10 +137,14 @@ target_link_libraries(benchmark_max max)
 
 # Compile 'batchnorm'
 add_library(batchnorm src/onnx/batchnorm.c)
-add_snitch_executable(benchmark_batchnorm
-                      ./src/benchmark/benchmark_batchnorm.c
+add_snitch_executable(benchmark_batchnorm_ssr
+                      ./src/benchmark/benchmark_batchnorm_ssr.c
                       ./src/lmq/lmq.c)
-target_link_libraries(benchmark_batchnorm batchnorm)
+add_snitch_executable(benchmark_batchnorm_frep
+                      ./src/benchmark/benchmark_batchnorm_frep.c
+                      ./src/lmq/lmq.c)
+target_link_libraries(benchmark_batchnorm_ssr batchnorm)
+target_link_libraries(benchmark_batchnorm_frep batchnorm)
 
 # Compile 'cumsum'
 add_library(cumsum src/onnx/cumsum.c)
@@ -157,7 +181,23 @@ add_snitch_executable(benchmark_dot
                       ./src/lmq/lmq.c)
 target_link_libraries(benchmark_dot dot)
 
+# Compile memory test
+add_snitch_executable(benchmark_mem_versus_l1
+                      ./src/benchmark/benchmark_mem_versus_l1.c
+                      ./src/lmq/lmq.c)
 # Compile 'sin'
 add_library(sin src/onnx/sin.c)
-add_snitch_executable(benchmark_sin ./src/benchmark/benchmark_sin.c)
+add_snitch_executable(benchmark_sin
+                      ./src/benchmark/benchmark_sin.c
+                      ./src/lmq/lmq.c)
 target_link_libraries(benchmark_sin sin)
+
+# Compile 'maxpool'
+add_library(maxpool src/onnx/maxpool.c)
+add_snitch_executable(benchmark_maxpool ./src/benchmark/benchmark_maxpool.c ./src/lmq/lmq.c)
+target_link_libraries(benchmark_maxpool maxpool)
+
+# Compile 'gemm'
+add_library(gemm src/onnx/gemm.c)
+add_snitch_executable(benchmark_gemm ./src/benchmark/benchmark_gemm.c ./src/lmq/lmq.c)
+target_link_libraries(benchmark_gemm gemm)
