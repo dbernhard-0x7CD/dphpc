@@ -76,9 +76,8 @@ int copy_ssr_frep(const float* source, const size_t n, float* target) {
 
 __attribute__((noinline))
 int copy_parallel(const float* source, const size_t n, float* target) {
-    size_t core_num = snrt_global_core_num() - 1;
-    size_t core_idx = snrt_global_core_idx();
-
+    size_t core_num = snrt_cluster_core_num() - 1;
+    size_t core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
 
     int do_extra = 0;
@@ -99,9 +98,8 @@ int copy_parallel(const float* source, const size_t n, float* target) {
 
 __attribute__((noinline))
 int copy_ssr_parallel(const float* source, const size_t n, float* target) {
-    size_t core_num = snrt_global_core_num() - 1;
-    size_t core_idx = snrt_global_core_idx();
-
+    size_t core_num = snrt_cluster_core_num() - 1;
+    size_t core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
 
     int do_extra = 0;
