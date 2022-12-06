@@ -249,7 +249,7 @@ int copy_ssr_frep_omp(float* source, const size_t n, float* target) {
         asm (
             "frep.o %[n_frep], 1, 0, 0 \n"
             "fmv.s ft2, ft0 \n"
-            :: [n_frep] "r"(local_n - 1) : "ft0", "ft1"
+            :: [n_frep] "r"(local_n - 1) : "ft0", "ft2"
         );
         
         snrt_ssr_disable();
