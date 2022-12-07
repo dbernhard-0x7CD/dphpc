@@ -60,7 +60,7 @@ for i, benchmark in enumerate(benchmarks):
         s = r.split(" ")
         cycles = int(s[-2])
         size = int(s[-3][:-1])
-        name = s[0][:-1].replace("_", " ")
+        name = s[0][:-1]
         tmp[name][size].append(cycles)
     for k in tmp.keys():
         for l in tmp[k].keys():
