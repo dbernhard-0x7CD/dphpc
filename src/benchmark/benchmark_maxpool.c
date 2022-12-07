@@ -105,6 +105,7 @@ int main() {
         clear_vector(result, size);
     }
 
+
     run2d();
 
     return 0;

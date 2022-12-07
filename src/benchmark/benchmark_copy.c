@@ -13,7 +13,6 @@ int main() {
 
     for(size_t size=32;size<=LMQ_SIZE;size*=2){
 
-
         if (core_idx == 0) {
             printf("Running benchmark_copy\n");
 
@@ -100,7 +99,6 @@ int main() {
         BENCH_VO(copy_ssr_frep_omp, x, size, result);
         verify_vector_omp(result, result_ref, size, chunk_size);
         clear_vector(result, size);
-
     }
 
     __snrt_omp_destroy(core_idx);

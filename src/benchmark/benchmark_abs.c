@@ -15,9 +15,7 @@ int main() {
     if (core_idx == 0) {
         printf("Running benchmark_abs\n");
 
-
     for(size_t size=32;size<=LMQ_SIZE;size*=2){
-
         float* x = allocate(size, sizeof(float));
         float* result_ref = allocate(size, sizeof(float));
         float* result = allocate(size, sizeof(float));
@@ -34,7 +32,6 @@ int main() {
         BENCH_VO(fabs_ssr_frep, x, size, result);
         verify_vector(result, result_ref, size);
         clear_vector(result, size);
- 
         /* Benchmark parallel cores */
         snrt_cluster_hw_barrier();
         size_t chunk_size = size / core_num;
