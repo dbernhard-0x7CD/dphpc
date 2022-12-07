@@ -103,8 +103,8 @@ int main() {
         BENCH_VO(maxpool_ssr_frep, x, input_size, filter_size, stride, result);
         verify_vector(result, result_ref, size);
         clear_vector(result, size);
-    }
 
+    }
 
     run2d();
 

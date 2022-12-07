@@ -76,7 +76,6 @@ int main() {
         BENCH_VO(add_ssr_frep_omp, x, y, size, result);
         verify_vector_omp(result, result_ref, size, chunk_size);
         clear_vector(result, size);
-
     }
 
     __snrt_omp_destroy(core_idx);

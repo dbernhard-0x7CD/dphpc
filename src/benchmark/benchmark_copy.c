@@ -11,8 +11,8 @@ int main() {
     uint32_t core_idx = snrt_cluster_core_idx();
     uint32_t core_num = snrt_cluster_core_num() - 1; // -1 as there is one DM core
 
+    // for(size_t size=32;size<=LMQ_SIZE;size*=2){
     for(size_t size=32;size<=LMQ_SIZE;size*=2){
-
         if (core_idx == 0) {
             printf("Running benchmark_copy\n");
 
@@ -78,6 +78,7 @@ int main() {
 
     for(size_t size=32;size<=LMQ_SIZE;size*=2){
         size_t chunk_size = size / core_num;
+
 
         BENCH_VO(copy_omp, x, size, result);
         /* This applies to all OMP functions:
