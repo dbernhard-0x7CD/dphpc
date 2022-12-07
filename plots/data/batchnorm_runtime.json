@@ -9,13 +9,13 @@
         2048,
         4096
     ],
-    "batchnorm baseline": [
+    "batchnorm_baseline": [
         2336
     ],
-    "batchnorm ssr": [
+    "batchnorm_ssr": [
         1870
     ],
-    "batchnorm ssr frep": [
+    "batchnorm_ssr_frep": [
         572
     ]
 }

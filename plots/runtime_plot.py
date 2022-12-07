@@ -59,13 +59,13 @@ for func_name in data.keys():
         y1 = list(map(q50, yaxis))
         y2 = list(map(q05, yaxis))
         y3 = list(map(q95, yaxis))
-        c = ax.plot(xaxis, y1, label=func_name, marker=".")[0].get_color()
+        c = ax.plot(xaxis, y1, label=func_name.replace("_"," "), marker=".")[0].get_color()
         print(c)
         ax.fill_between(xaxis, y2, y3, alpha=0.2, zorder=1, color=c)
         confidence_interval_flag = True
 
     else:
-        lines.append(ax.plot(xaxis, yaxis, label=func_name, marker="."))
+        lines.append(ax.plot(xaxis, yaxis, label=func_name.replace("_"," "), marker="."))
 
 plt.xlabel("Input size [number of entries]")
 plt.ylabel("Runtime [cycles]")

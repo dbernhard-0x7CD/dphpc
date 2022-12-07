@@ -9,7 +9,7 @@
         2048,
         4096
     ],
-    "dot baseline": [
+    "dot_baseline": [
         236,
         460,
         908,
@@ -19,7 +19,7 @@
         14348,
         28684
     ],
-    "ssr dvec dvec dotp": [
+    "ssr_dvec_dvec_dotp": [
         72,
         104,
         168,
@@ -29,7 +29,7 @@
         2088,
         4136
     ],
-    "ssr dvec dvec dotpf": [
+    "ssr_dvec_dvec_dotpf": [
         78,
         110,
         174,
@@ -39,7 +39,7 @@
         2094,
         4142
     ],
-    "dot ssr": [
+    "dot_ssr": [
         128,
         224,
         416,
@@ -49,7 +49,7 @@
         6176,
         12320
     ],
-    "dot ssr frep": [
+    "dot_ssr_frep": [
         64,
         96,
         160,

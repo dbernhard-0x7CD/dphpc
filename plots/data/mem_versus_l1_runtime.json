@@ -9,7 +9,7 @@
         2048,
         4096
     ],
-    "copy memory to memory": [
+    "copy_memory_to_memory": [
         233,
         457,
         905,
@@ -19,7 +19,7 @@
         14345,
         28681
     ],
-    "copy l1 to memory": [
+    "copy_l1_to_memory": [
         233,
         457,
         905,

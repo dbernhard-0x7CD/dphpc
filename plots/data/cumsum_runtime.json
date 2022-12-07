@@ -9,7 +9,7 @@
         2048,
         4096
     ],
-    "cumsum baseline": [
+    "cumsum_baseline": [
         234,
         458,
         906,
@@ -19,7 +19,7 @@
         14346,
         28682
     ],
-    "cumsum ssr": [
+    "cumsum_ssr": [
         161,
         289,
         545,
@@ -29,7 +29,7 @@
         8225,
         16417
     ],
-    "cumsum ssr frep": [
+    "cumsum_ssr_frep": [
         96,
         160,
         288,

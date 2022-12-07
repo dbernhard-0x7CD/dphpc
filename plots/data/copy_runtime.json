@@ -9,7 +9,7 @@
         2048,
         4096
     ],
-    "copy baseline": [
+    "copy_baseline": [
         149,
         213,
         381,
@@ -19,7 +19,7 @@
         5301,
         10517
     ],
-    "copy ssr": [
+    "copy_ssr": [
         124,
         220,
         412,
@@ -29,7 +29,7 @@
         6172,
         12316
     ],
-    "copy ssr frep": [
+    "copy_ssr_frep": [
         66,
         98,
         162,
@@ -39,7 +39,7 @@
         2082,
         4130
     ],
-    "copy parallel": [
+    "copy_parallel": [
         57,
         89,
         153,
@@ -49,7 +49,7 @@
         2073,
         4121
     ],
-    "copy ssr parallel": [
+    "copy_ssr_parallel": [
         51,
         63,
         87,
@@ -59,7 +59,7 @@
         807,
         1575
     ],
-    "copy ssr frep parallel": [
+    "copy_ssr_frep_parallel": [
         41,
         45,
         53,
@@ -69,7 +69,7 @@
         293,
         549
     ],
-    "copy omp": [
+    "copy_omp": [
         [
             1312,
             1126,
@@ -8087,7 +8087,7 @@
             3372
         ]
     ],
-    "copy ssr omp": [
+    "copy_ssr_omp": [
         [
             299,
             1517,
@@ -16105,7 +16105,7 @@
             10777
         ]
     ],
-    "copy ssr frep omp": [
+    "copy_ssr_frep_omp": [
         [
             243,
             229,

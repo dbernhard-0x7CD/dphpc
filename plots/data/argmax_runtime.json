@@ -9,7 +9,7 @@
         2048,
         4096
     ],
-    "argmax baseline": [
+    "argmax_baseline": [
         358,
         702,
         1406,
@@ -19,7 +19,7 @@
         22520,
         45046
     ],
-    "argmax ssr": [
+    "argmax_ssr": [
         202,
         370,
         690,

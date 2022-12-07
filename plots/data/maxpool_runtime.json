@@ -9,7 +9,7 @@
         2048,
         4096
     ],
-    "maxpool baseline": [
+    "maxpool_baseline": [
         1077,
         2133,
         4245,
@@ -19,7 +19,7 @@
         67605,
         135189
     ],
-    "maxpool ssr": [
+    "maxpool_ssr": [
         611,
         1187,
         2339,
@@ -29,7 +29,7 @@
         36899,
         73763
     ],
-    "maxpool ssr frep": [
+    "maxpool_ssr_frep": [
         322,
         610,
         1186,

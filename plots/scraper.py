@@ -7,10 +7,8 @@ import sys
 import argparse
 import json
 from itertools import compress
-from plotloader import arg_parse
+from plotloader import arg_parse, arg_filter
 
-# input_sizes = [32, 64, 128, 256, 512]
-# input_sizes = [2**i for i in range(5, 13)]
 input_size = 12
 
 if ".git" not in os.listdir(os.getcwd()):
@@ -28,22 +26,7 @@ for filename in os.listdir(fullpath):
         benchmarks.append(filename.replace("benchmark_", ""))
 
 # filter benchmark names based on include, exclude
-benchmarks_filter = [True] * len(benchmarks)
-for i,k in enumerate(benchmarks):
-    if k == "n":
-        continue
-
-    if include is not None and exclude is not None:
-        if not all([inc in k for inc in include]) or any([exc in k for exc in exclude]):
-            benchmarks_filter[i] = False
-    elif include is not None:
-        if not all([inc in k for inc in include]):
-            benchmarks_filter[i] = False
-    elif exclude is not None:
-        if any([exc in k for exc in exclude]):
-            benchmarks_filter[i] = False
-
-benchmarks = list(compress(benchmarks, benchmarks_filter))
+benchmarks = arg_filter(benchmarks, include, exclude)
 
 # start simulator for each of the names in benchmarks
 print("[INFO]   simulating the operators: ", benchmarks)

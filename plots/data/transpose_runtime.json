@@ -9,7 +9,7 @@
         2048,
         4096
     ],
-    "transpose baseline": [
+    "transpose_baseline": [
         201,
         456,
         819,
@@ -19,7 +19,7 @@
         33390,
         115246
     ],
-    "transpose ssr": [
+    "transpose_ssr": [
         105,
         222,
         393,
@@ -29,7 +29,7 @@
         16458,
         57162
     ],
-    "transpose ssr frep": [
+    "transpose_ssr_frep": [
         54,
         93,
         150,

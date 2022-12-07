@@ -1,6 +1,7 @@
 import argparse
 import os
 import json
+from itertools import compress
 
 def load_plot_data(abspath, include=[], exclude=[]):
     files = list()
@@ -22,19 +23,12 @@ def load_plot_data(abspath, include=[], exclude=[]):
     
     # filter keys according to inclue/exclude
     func_names = list(data.keys())
-    for k in func_names:
-        if k == "n":
-            continue
-
-        if include is not None and exclude is not None:
-            if not all([inc in k for inc in include]) or any([exc in k for exc in exclude]):
-                del data[k]
-        elif include is not None:
-            if not all([inc in k for inc in include]):
-                del data[k]
-        elif exclude is not None:
-            if any([exc in k for exc in exclude]):
-                del data[k]
+    func_names = arg_filter(func_names, include, exclude)
+    tmp = {}
+    tmp["n"] = data["n"]
+    for fn in func_names:
+        tmp[fn] = data[fn]
+    data = tmp
     
     print("[    DATA LOADER]     loaded data for the plots {}".format(list(data.keys())))
     return data
@@ -52,3 +46,19 @@ def arg_parse():
     args = parser.parse_args()
     return (args.include, args.exclude, args.save)
 
+def arg_filter(x, include, exclude):
+    x_filter = [True] * len(x)
+    for i,k in enumerate(x):
+        if k == "n":
+            continue
+
+        if include is not None and exclude is not None:
+            if not all([inc in k for inc in include]) or any([exc in k for exc in exclude]):
+                x_filter[i] = False
+        elif include is not None:
+            if not all([inc in k for inc in include]):
+                x_filter[i] = False
+        elif exclude is not None:
+            if any([exc in k for exc in exclude]):
+                x_filter[i] = False
+    return list(compress(x, x_filter))

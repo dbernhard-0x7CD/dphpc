@@ -9,7 +9,7 @@
         2048,
         4096
     ],
-    "leakyrelu baseline": [
+    "leakyrelu_baseline": [
         302,
         590,
         1166,
@@ -19,7 +19,7 @@
         18446,
         36878
     ],
-    "leakyrelu ssr": [
+    "leakyrelu_ssr": [
         240,
         448,
         864,
@@ -29,7 +29,7 @@
         13344,
         26656
     ],
-    "leakyrelu ssr frep": [
+    "leakyrelu_ssr_frep": [
         310,
         598,
         1174,

@@ -9,7 +9,7 @@
         2048,
         4096
     ],
-    "dropout baseline": [
+    "dropout_baseline": [
         [
             1333,
             1333,
@@ -1627,7 +1627,7 @@
             165805
         ]
     ],
-    "dropout ssr": [
+    "dropout_ssr": [
         [
             1346,
             1346,
@@ -3245,7 +3245,7 @@
             163954
         ]
     ],
-    "dropout ssr frep": [
+    "dropout_ssr_frep": [
         1363,
         2643,
         5203,

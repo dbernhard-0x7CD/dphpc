@@ -9,7 +9,7 @@
         2048,
         4096
     ],
-    "sigmoid baseline": [
+    "sigmoid_baseline": [
         3257,
         6544,
         13209,
@@ -19,7 +19,7 @@
         212028,
         423943
     ],
-    "sigmoid ssr": [
+    "sigmoid_ssr": [
         3231,
         6486,
         13087,

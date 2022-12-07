@@ -9,7 +9,7 @@
         2048,
         4096
     ],
-    "masked dropout baseline": [
+    "masked_dropout_baseline": [
         435,
         851,
         1683,
@@ -19,7 +19,7 @@
         26643,
         53267
     ],
-    "masked dropout ssr": [
+    "masked_dropout_ssr": [
         176,
         304,
         560,
@@ -29,7 +29,7 @@
         8240,
         16432
     ],
-    "masked dropout ssr frep": [
+    "masked_dropout_ssr_frep": [
         110,
         174,
         302,
