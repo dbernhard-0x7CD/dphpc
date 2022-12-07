@@ -41,10 +41,16 @@ for i, benchmark in enumerate(benchmarks):
 
 
     # use shell to compile and run simulator
-    print("[COMPILING]  everything with input size up to " + str(2**input_size))
+    print("[COMPILING]  with input size up to " + str(2**input_size))
     p.sendline(bytes("./scripts/bench.sh " + str(2**input_size) + " build/benchmark_" + benchmark, encoding="utf-8"))
     p.recvuntil(b"---RUNNING SIMULATOR---") # voids output of compiler
-    print("[RUNNING]    " + benchmark)
+    print("[RUNNING]    " + benchmark + " (this takes a couple of minutes)")
+    # result = ""
+    # line = ""
+    # while "---SIMULATOR DONE---" not in line:
+    #     line = p.recvline().decode()
+    #     print("\t",line.replace("\n", ""))
+    #     result += line
     result = p.recvuntil(b"---SIMULATOR DONE---").decode()
 
     # prints the console output of the benchmark. groups duplicate outputs

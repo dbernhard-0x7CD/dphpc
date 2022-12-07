@@ -10,7 +10,7 @@
 #endif
 
 #ifndef LMQ_RUNS
-#define LMQ_RUNS 1000
+#define LMQ_RUNS 200
 #endif
 
 size_t* cycles_count;
