@@ -96,3 +96,5 @@ if savepath:
     plt.savefig(fullpath + savepath, dpi=300)
 else:
     plt.show()
+
+print("run e.g '$ python3 plots/runtime_plot.py -include add -exclude parallel' to show the runtime for add excluding parallel")

@@ -53,13 +53,12 @@ for i, benchmark in enumerate(benchmarks):
     p = process(["/bin/bash"])  # env.sh relies on bash. sh is not sufficient
     p.sendline(b"pwd")          # print execution path
     print("pwd: ", p.recvline().decode())
-
     data = dict()
     data["n"] = [2**i for i in range(5, input_size+1)]
 
 
     # use shell to compile and run simulator
-    print("[COMPILING]  " + benchmark + " with input size = " + str(2**input_size))
+    print("[COMPILING]  everything with input size up to " + str(2**input_size))
     p.sendline(bytes("./scripts/bench.sh " + str(2**input_size) + " build/benchmark_" + benchmark, encoding="utf-8"))
     p.recvuntil(b"---RUNNING SIMULATOR---") # voids output of compiler
     print("[RUNNING]    " + benchmark)
