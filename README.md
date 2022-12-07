@@ -75,6 +75,31 @@ Now you can simulate the built applications with:
 run ./build/hello_world
 ```
 
+# Running benchmarks and generating Plots
+Note: to use the python-benchmarker, you to the docker build system, banshee and python3 set up.
+
+First install the python dependencies found in `file://plots/requirements.txt`. We recommend doing this in a virtual environment.
+To set up the virtual python environment, run the following commands from the project root.
+```
+python3 -m venv plots/.venv
+source ./plots/.venv/bin/activate
+pip install -r plots/requirements.txt
+```
+
+To run the benchmarks for some specific operater (e.g. for the abs-operator), you can execute the following:
+```
+python3 plots/scraper.py -include abs
+```
+This script builds the project using docker, runs the benchmark using banshee and stores the measurements in a file for later use. Note that this might take a couple of minutes depending on the operator.
+To view a runtime plot of the abs-operator which you have just benchmarked, run:
+```
+python3 plots/runtime_plot.py -include abs
+```
+If you want to exclude a plot line from the runtime plot, use the "-exclude" flag. For example: 
+```
+python3 plots/runtime_plot.py -include abs -exclude frep
+```
+
 # Helpful Links
 * [gcc inline assembly](https://www.felixcloutier.com/documents/gcc-asm.html)
 * [onnx operators](https://github.com/onnx/onnx/blob/main/docs/Operators.md#aionnx-default)
@@ -119,3 +144,6 @@ run ./build/hello_world
 * setup building
 * Find project and TA
 * Created repo
+* Created scraper scripts that runs benchmarks and dumps their runtime into json files
+* Created scripts for automatically generating runtime plots
+
