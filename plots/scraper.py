@@ -46,22 +46,26 @@ for i, benchmark in enumerate(benchmarks):
     p.recvuntil(b"---RUNNING SIMULATOR---") # voids output of compiler
     print("[RUNNING]    " + benchmark)
     result = p.recvuntil(b"---SIMULATOR DONE---").decode()
+
+    # prints the console output of the benchmark. groups duplicate outputs
     unique_printer = defaultdict(int)
     for r in result.split("\n"):
         unique_printer[r] += 1
     for k, v in unique_printer.items():
         print("\t", v, "x", k)
-    # print(result.replace("\n", "\n\t"))
 
     # parse result and values into dict
     split_result = re.findall(r'\w+, \bsize: \b\d+: \b\d+\b cycles', result)
     tmp = defaultdict(lambda: defaultdict(list))
     for r in split_result:
+        # parse a single line of the output and put it into tmp
         s = r.split(" ")
         cycles = int(s[-2])
         size = int(s[-3][:-1])
         name = s[0][:-1]
         tmp[name][size].append(cycles)
+    
+    # restructure tmp-dict into data-dict
     for k in tmp.keys():
         for l in tmp[k].keys():
             if all(x == tmp[k][l][0] for x in tmp[k][l]):
@@ -69,11 +73,13 @@ for i, benchmark in enumerate(benchmarks):
     
     for k in tmp.keys():
         # data[k].append(tmp[k])
-        data[k] = [tmp[k][l] for l in sorted(tmp[k].keys())]
+        data[k] = [tmp[k][l] for l in sorted(tmp[k].keys())] # would technically work without sorting, but I dont like relying on the implementation detail that dict-keys are sorted by insertion order in python
     
+    # print progress
     full = len(benchmarks)
     print("[PROGRESS]   {:3.2%} Done ({}/{})".format((i+1) / full ,i+1 ,full))
     
+    # save data as json file
     filename = "plots/data/" + benchmark + "_runtime.json"
     with open(filename, "w") as jsonfile:
         jsonfile.write(json.dumps(data, indent=4))
