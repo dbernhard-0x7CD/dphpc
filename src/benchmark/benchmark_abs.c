@@ -14,6 +14,7 @@ int main() {
     // benchmark ssr+frep on a single core
     if (core_idx == 0) {
         printf("Running benchmark_abs\n");
+    }
 
     for(size_t size=32;size<=LMQ_SIZE;size*=2){
         float* x = allocate(size, sizeof(float));
