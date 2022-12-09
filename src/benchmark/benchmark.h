@@ -63,7 +63,6 @@ volatile size_t runs = LMQ_RUNS;
             size_t _end_ = read_csr(mcycle);                \
             size_t cycles = _end_ - _start_;                \
             size_t cycles2 = _end2_ - _start2_;             \
-            snrt_cluster_sw_barrier();                      \
             /* printf("core %d inner: %d\n", core_idx, cycles2);*/ \
             /* printf("core %d outer: %d\n", core_idx, cycles); */ \
             /* for debugging purposes */                    \
