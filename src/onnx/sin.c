@@ -110,6 +110,95 @@ int sin_ssr_frep(float* arr, const size_t n, float* result) {
     return 0;
 }
 
+__attribute__((noinline)) 
+int sin_parallel(float* arr, const size_t n, float* result) {
+    size_t core_num = snrt_cluster_core_num() - 1;
+    size_t core_idx = snrt_cluster_core_idx();
+    size_t local_n = n / core_num;
+
+    int do_extra = 0;
+    if (core_idx < n - local_n * core_num) {
+        do_extra = 1;
+    }
+
+    for (unsigned i = 0; i < local_n; i++) {
+        result[core_idx * local_n + i] = sinf(arr[core_idx * local_n + i]);
+    }
+
+    if (do_extra) {
+        result[core_idx * local_n + core_idx] = sinf(arr[core_idx * local_n + core_idx]);
+    }
+
+    return 0;
+}
+
+__attribute__((noinline)) 
+int sin_ssr_parallel(float* arr, const size_t n, float* result) {
+    size_t core_num = snrt_cluster_core_num() - 1;
+    size_t core_idx = snrt_cluster_core_idx();
+    size_t local_n = n / core_num;
+
+    int do_extra = 0;
+    if (core_idx < n - local_n * core_num) {
+        do_extra = 1;
+    }
+
+    snrt_ssr_loop_1d(SNRT_SSR_DM0, local_n, sizeof(float));
+    snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, arr + core_idx * local_n);
+
+    snrt_ssr_loop_1d(SNRT_SSR_DM1, local_n, sizeof(float));
+    snrt_ssr_write(SNRT_SSR_DM1, SNRT_SSR_1D, result + core_idx * local_n);
+
+    snrt_ssr_enable();
+
+    for (size_t i = 0; i < local_n; i++) {
+        asm volatile(
+            "fmv.s fa0, ft0\n" // fa0 <- ft0
+            ::: "fa0", "ft0"
+        );
+
+        /*
+         * We disable SSR as every read to 'ft0' will fetch the
+         * next element from the defined stream. And any called function
+         * may use the ft0 register (as it is caller saved)
+         */
+        snrt_ssr_disable();
+
+        /*
+         * As this is a function call we MUST have "ra" in the clobber.
+         * Else the compiler does not know that this function needs to 
+         * store 'ra' on the stack (or in some caller saved register) as it
+         * may get modified in the call.
+         * Same for all other caller saved registers below (in the clobber).
+        */
+        asm volatile(
+            "call %[sin]\n"
+            :: [sin] "i"(sinf)
+            : 
+            "fa0", "fa1", "fa2", "fa3", "fa4", "fa5", "fa6", "fa7",
+            "a0", "a1", "a2", "a3", "a4", "a5", "a6", "a7", 
+            "ft1", "ft2", "ft3", "ft4", "ft5", "ft6", "ft7",
+            "ra"
+        );
+
+        snrt_ssr_enable();
+
+        asm volatile(
+            "fmv.s ft1, fa0" // ft1 <- fa0
+            ::: "ft1", "fa0"
+        );
+    }
+
+    // Disabling stream semantics
+    snrt_ssr_disable();
+
+    if (do_extra) {
+        result[core_idx * local_n + core_idx] = sinf(arr[core_idx * local_n + core_idx]);
+    }
+
+    return 0;
+}
+
 /*
  * Naive implementation of sin using a lookup table. Looks up the element-wise sine and stores it in result.
  */
@@ -174,15 +263,10 @@ int sin_ssr_lookup_table(float* arr, const size_t n, float* result, float* looku
     return 0;
 }
 
-int sin_ssr_omp(const float* arr, const size_t n, float* result) {
+int sin_ssr_omp(float* arr, const size_t n, float* result) {
     // The last thread is not used in OpenMP.
     // I do not know why.
     unsigned core_num = snrt_cluster_core_num() - 1;
-    register volatile float ft0 asm("ft0");
-    register volatile float ft1 asm("ft1");
-    register volatile float ft2 asm("ft2");
-
-    asm volatile("" : "=f"(ft0), "=f"(ft1), "=f"(ft2));
 
 #pragma omp parallel
     {
@@ -258,14 +342,7 @@ int sin_ssr_omp(const float* arr, const size_t n, float* result) {
             result[local_n * core_num + core_idx] = sinf(arr[local_n * core_num + core_idx]);
         }
     }
-    asm volatile("" :: "f"(ft0), "f"(ft1), "f"(ft2));
 
     return 0;
 
-}
-
-__attribute__((noinline)) 
-int sin_ssr_frep_omp(const float* arr, const size_t n, float* result) {
-    // Not possible due to function call
-    return 0;
 }
