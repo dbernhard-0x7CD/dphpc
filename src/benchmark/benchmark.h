@@ -48,17 +48,22 @@ volatile size_t runs = LMQ_RUNS;
 #define BENCH_VO_PARALLEL(func_name, ...)               \
     do {                                                \
         for(int cur_run=0;cur_run<runs;cur_run++){      \
-            snrt_cluster_sw_barrier();                      \
+            size_t core_num = snrt_cluster_core_num() - 1;  \
+            size_t core_idx = snrt_cluster_core_idx();      \
             size_t _start_ = read_csr(mcycle);              \
+            snrt_cluster_hw_barrier();                      \
+            size_t _start2_ = read_csr(mcycle);             \
             int _result_code_ = func_name(__VA_ARGS__);     \
+            size_t _end2_ = read_csr(mcycle);               \
+            snrt_cluster_hw_barrier();                      \
             size_t _end_ = read_csr(mcycle);                \
             size_t cycles = _end_ - _start_;                \
+            size_t cycles2 = _end2_ - _start2_;             \
             snrt_cluster_sw_barrier();                      \
-            /*printf("core %d start: %d\n", snrt_cluster_core_idx(), _start_); */ \
-            /* printf("core %d end: %d\n", snrt_cluster_core_idx(), _end_); */ \
+            /* printf("core %d inner: %d\n", core_idx, cycles2);*/ \
+            /* printf("core %d outer: %d\n", core_idx, cycles); */ \
             /* for debugging purposes */                    \
-            /* printf("(%d): %d\n ", snrt_cluster_core_idx(), cycles);                          */ \
-            snrt_cluster_sw_barrier();                      \
+            /* printf("(%d): %d\n ", snrt_cluster_core_idx(), cycles);                                      */  \
             if (snrt_cluster_core_idx() == 0) {             \
                 printf(#func_name", size: %d: %lu cycles. Return code: %d\n", \
                         size, cycles, _result_code_);       \
