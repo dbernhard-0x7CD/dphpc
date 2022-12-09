@@ -114,26 +114,42 @@ python3 plots/runtime_plot.py -include abs -exclude frep
 
 # Report notes
 * Publish repository and add link to it in the report
-* Say why we have no error bars
+* Say why we have no error bars; Give confidence interval for OMP and bare metal parallelism
 * Bar plot of speedup
 * increase core count is not possible as it freezes and has 'branch to unpredicted address' errors (in banshee)
 
 # TODO
+* TEST core count configuration of SIMULATOR
 * File where we store the benchmark results (to plot later in the report)
 * Use multiple cores (f.ex in sum, cumsum (advanced), one compute heavy element-wise fctn, one bandwidth heavy computation, ... )
-* batchnorm
-* maxpool
-* avgpool
+* Try OpenMP (me)
+    * for compute intensive element wise function
+    * for BW heavy reduction
+    * argmax?
+    * gemm
 * conv?
 * scatter/gather
 * gemm
 * rnn?
+* parallel argmax
+* parallel cumsum
+* parallel sin
+* parallel transpose
 
 # DONE
+* SSR+FREP
+    * abs, acos (no frep), acosh (no frep), add, argmax (no frep), asinh (no frep), batchnorm, copy, cumsum, div, dot, dropout, gemm, masked_dropout, max, maxpool, relu, sigmoid, sin, sum, transpose
+* Parallel
+    * abs, add, copy, sum
+* OMP:
+    * abs, add, copy, sin, sum (broken due to SSR 'leaking' or wrong impl.)
+* maxpool
+* batchnorm
 * transpose
 * dropout
 * Use memory start pointer instead of l1?
     * Use start pointer; implemented in lmq.c
+    * L1 has a better latency than memory
 * should we do it for all datatypes (uint8, uint16, float32, ...)?
     * for `float` for now
 * ask if we need to accept n dimensional input
