@@ -11,7 +11,7 @@ int main() {
     uint32_t core_idx = snrt_cluster_core_idx();
     uint32_t core_num = snrt_cluster_core_num() - 1; // -1 as there is one DM core
 
-    if (core_idx == 0) {
+    for(size_t size=LMQ_START_SIZE; core_idx == 0 && size<=LMQ_SIZE;size*=2){
         printf("Running benchmark_copy\n");
 
         x = allocate(size, sizeof(float));

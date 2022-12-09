@@ -14,7 +14,7 @@ int main() {
     float result_ref = -1.0;
     float result = -1.0;
 
-    if (core_idx == 0) {
+    for(size_t size=LMQ_START_SIZE; core_idx == 0 && size<=LMQ_SIZE;size*=2){
         printf("Running benchmark_sum\n");
 
         x = allocate(size, sizeof(float));

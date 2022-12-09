@@ -13,7 +13,8 @@ int main() {
     uint32_t core_num = snrt_cluster_core_num() - 1; // -1 as there is one DM core
 
     // benchmark ssr+frep on a single core
-    if (core_idx == 0) {
+
+    for(size_t size=LMQ_START_SIZE; core_idx == 0 && size<=LMQ_SIZE;size*=2){
         printf("Running benchmark_add\n");
 
         // Initialize the input data

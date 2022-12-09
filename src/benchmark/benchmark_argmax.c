@@ -11,7 +11,7 @@ float *x, result, result_ref;
 int main() {
     uint32_t core_idx = snrt_global_core_idx();
 
-    if (core_idx == 0) {
+    for(size_t size=LMQ_START_SIZE; core_idx == 0 && size<=LMQ_SIZE;size*=2){
         printf("Running benchmark_argmax\n");
 
         // x is input; result is output of the optimized functions

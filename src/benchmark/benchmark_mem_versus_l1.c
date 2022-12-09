@@ -8,7 +8,7 @@ int main() {
     uint32_t core_idx = snrt_global_core_idx();
 
     // only run on 1 core
-    if (core_idx == 0) {
+    for(size_t size=LMQ_START_SIZE; core_idx == 0 && size<=LMQ_SIZE;size*=2){
         // memory
         float* memory_x = allocate(size, sizeof(float));
         float* memory_target = allocate(size, sizeof(float));

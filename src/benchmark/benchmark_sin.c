@@ -17,7 +17,7 @@ float *x, *lookup_table, *result_ref, *result;
 int main() {
     uint32_t core_idx = snrt_cluster_core_idx();
 
-    if (core_idx == 0) {
+    for(size_t size=LMQ_START_SIZE; core_idx == 0 && size<=LMQ_SIZE;size*=2){
         printf("Running benchmark_sin\n");
 
         x = allocate(size, sizeof(float)); // input

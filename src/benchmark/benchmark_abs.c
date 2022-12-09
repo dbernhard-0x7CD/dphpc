@@ -11,16 +11,16 @@ int main() {
     uint32_t core_idx = snrt_global_core_idx();
     uint32_t core_num = snrt_cluster_core_num() - 1; // -1 as there is one DM core
 
-    // benchmark ssr+frep on a single core
-    if (core_idx == 0) {
+    for(size_t size=LMQ_START_SIZE; core_idx == 0 && size<=LMQ_SIZE;size*=2){
+        // benchmark ssr+frep on a single core
         printf("Running benchmark_abs\n");
-        
+
         x = allocate(size, sizeof(float));
         result_ref = allocate(size, sizeof(float));
         result = allocate(size, sizeof(float));
-        
+
         BENCH_VO(fabs_baseline, x, size, result_ref);
-        
+
         BENCH_VO(fabs_ssr, x, size, result);
         verify_vector(result, result_ref, size);
         clear_vector(result, size);
