@@ -72,7 +72,6 @@ int main() {
             verify_vector_omp(result, result_ref, size, chunk_size);
             clear_vector(result, size);
         }
-        snrt_global_barrier();
     }
     __snrt_omp_bootstrap(core_idx);
 

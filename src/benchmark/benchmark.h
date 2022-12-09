@@ -129,4 +129,3 @@ static inline void clear_vector_int(short* arr, const size_t n) {
 
 
 #endif
-

@@ -11,7 +11,6 @@ int main() {
     if (core_idx != 0) return 1;
     for(size_t size=32;size<=LMQ_SIZE;size*=2){
 
-
         // memory
         float* memory_x = allocate(size, sizeof(float));
         float* memory_target = allocate(size, sizeof(float));

@@ -14,8 +14,6 @@ int main() {
     printf("Running benchmark_transpose\n");
 
     for(size_t size=32;size<=LMQ_SIZE;size*=2){
-
-
         int ox = (int)sqrt_approx(size);
         int rows = ox;
         int cols = ox;
@@ -48,7 +46,6 @@ int main() {
         // print_matrix(result, cols, rows);
         verify_vector(result, result_ref, cols * rows);
         clear_vector(result, rows * cols);
-
     }
 
     return 0;

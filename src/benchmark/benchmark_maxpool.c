@@ -61,8 +61,6 @@ int main() {
     if (core_idx != 0) return 1;
 
     for(size_t size=32;size<=LMQ_SIZE;size*=2){
-
-
         size_t filter_size = 5;
         size_t stride = 2;
 
@@ -72,22 +70,6 @@ int main() {
         float* x = allocate(input_size, sizeof(float));
         float* result_ref = allocate(size, sizeof(float));
         float* result = allocate(size, sizeof(float));
-
-        for (size_t i = 0; i < size; i++) {
-            x[i] = (float)i;
-        }
-
-        BENCH_VO(maxpool_baseline, x, input_size, filter_size, stride, result_ref);
-
-
-        BENCH_VO(maxpool_ssr, x, input_size, filter_size, stride, result);
-        verify_vector(result, result_ref, size);
-        clear_vector(result, size);
-
-        // verify for this fails if the above "batchnorm_ssr" is executed
-        BENCH_VO(maxpool_ssr_frep, x, input_size, filter_size, stride, result);
-        verify_vector(result, result_ref, size);
-        clear_vector(result, size);
 
         for (size_t i = 0; i < input_size; i++) {
             x[i] = (float)i;
@@ -103,7 +85,6 @@ int main() {
         BENCH_VO(maxpool_ssr_frep, x, input_size, filter_size, stride, result);
         verify_vector(result, result_ref, size);
         clear_vector(result, size);
-
     }
 
     run2d();

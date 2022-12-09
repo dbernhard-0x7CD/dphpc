@@ -20,7 +20,6 @@ int main() {
     printf("Running benchmark_sin\n");
     
     for(size_t size=32;size<=LMQ_SIZE;size*=2){
-
         float* x = allocate(size, sizeof(float)); // input
         float* lookup_table = allocate(lookup_table_size, sizeof(float)); // lookup table for sin
         float* result_ref = allocate(size, sizeof(float)); // reference output (ground truth)
@@ -50,7 +49,6 @@ int main() {
 
         /*
         BENCH_VO(sin_baseline_lookup_table, x, size, result, lookup_table, lookup_table_size);
-
         BENCH_VO(sin_ssr_lookup_table, x, size, result, lookup_table, lookup_table_size);
         for(size_t i = 0; i < size; i++) {
             printf("%f vs. %f\n", x[i]*lookup_table_size / M_PI * 2, result[i]);
@@ -77,7 +75,6 @@ int main() {
         // }
         verify_vector_omp(result, result_ref, size, chunk_size);
         clear_vector(result, size);
-
     }
 
     __snrt_omp_destroy(core_idx);
