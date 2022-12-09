@@ -21,12 +21,6 @@ int sin_baseline(float* arr, const size_t n, float* result) {
 
 __attribute__((noinline)) 
 int sin_ssr(float* arr, const size_t n, float* result) {
-
-    // Adress pattern configuration
-    register volatile float ft0 asm("ft0");
-    register volatile float ft1 asm("ft1");
-    asm volatile("" : "=f"(ft0));
-
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*arr));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1); // load every element only once
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, arr); // read from arr
@@ -92,7 +86,6 @@ int sin_ssr(float* arr, const size_t n, float* result) {
 
     // Disabling stream semantics
     snrt_ssr_disable();
-    asm volatile("" :: "f"(ft1));
 
     return 0;
 }
@@ -126,7 +119,7 @@ int sin_parallel(float* arr, const size_t n, float* result) {
     }
 
     if (do_extra) {
-        result[core_idx * local_n + core_idx] = sinf(arr[core_idx * local_n + core_idx]);
+        result[core_num * local_n + core_idx] = sinf(arr[core_num * local_n + core_idx]);
     }
 
     return 0;
@@ -193,7 +186,7 @@ int sin_ssr_parallel(float* arr, const size_t n, float* result) {
     snrt_ssr_disable();
 
     if (do_extra) {
-        result[core_idx * local_n + core_idx] = sinf(arr[core_idx * local_n + core_idx]);
+        result[core_num * local_n + core_idx] = sinf(arr[core_num * local_n + core_idx]);
     }
 
     return 0;
@@ -222,12 +215,6 @@ int sin_omp(float* arr, const size_t n, float* result) {
 
 __attribute__((noinline)) 
 int sin_ssr_lookup_table(float* arr, const size_t n, float* result, float* lookup_table, const size_t lookup_table_size) {
-
-    // Adress pattern configuration
-    register volatile float ft0 asm("ft0");
-    register volatile float ft1 asm("ft1");
-    asm volatile("" : "=f"(ft0));
-
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*arr));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1); // load every element only once
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, arr); // read from arr
@@ -258,7 +245,6 @@ int sin_ssr_lookup_table(float* arr, const size_t n, float* result, float* looku
 
     // Disabling stream semantics
     snrt_ssr_disable();
-    asm volatile("" :: "f"(ft1));
 
     return 0;
 }
@@ -344,5 +330,4 @@ int sin_ssr_omp(float* arr, const size_t n, float* result) {
     }
 
     return 0;
-
 }
