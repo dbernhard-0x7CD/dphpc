@@ -64,14 +64,14 @@ int main() {
         size_t chunk_size = size / core_num;
         printf("Chunk size: %d\n", chunk_size);
 
-        BENCH_VO(sin_omp, x, size, result);
+        BENCH_VO_OMP(sin_omp, x, size, result);
         // for(unsigned i = 0; i < size; i++) {
         //     printf("Value of result at %d is %f\n", i, result[i]);
         // }
         verify_vector_omp(result, result_ref, size, chunk_size);
         clear_vector(result, size);
 
-        BENCH_VO(sin_ssr_omp, x, size, result);
+        BENCH_VO_OMP(sin_ssr_omp, x, size, result);
         // for(unsigned i = 0; i < size; i++) {
         //     printf("Value of result at %d is %f\n", i, result[i]);
         // }

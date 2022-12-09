@@ -63,7 +63,7 @@ int main() {
         size_t chunk_size = size / core_num;
         /* Benchmark OMP */
         
-        BENCH_VO(fabs_omp, x, size, result);
+        BENCH_VO_OMP(fabs_omp, x, size, result);
         /* This applies to all OMP functions:
         * Due to the (probably unintentional) behaviour of SSR each SSR stream ends with an extra element at position n which is '-inf' Thus we ignore those values when validating.
         */
@@ -73,14 +73,14 @@ int main() {
         // }
         clear_vector(result, size);
         
-        BENCH_VO(fabs_ssr_omp, x, size, result);
+        BENCH_VO_OMP(fabs_ssr_omp, x, size, result);
         verify_vector_omp(result, result_ref, size, chunk_size);
         // for(unsigned i = 0; i < size; i++) {
         //     printf("Value of result at %d is %f\n", i, result[i]);
         // }
         clear_vector(result, size);
 
-        BENCH_VO(fabs_ssr_frep_omp, x, size, result);
+        BENCH_VO_OMP(fabs_ssr_frep_omp, x, size, result);
         verify_vector_omp(result, result_ref, size, chunk_size);
         clear_vector(result, size);
     }

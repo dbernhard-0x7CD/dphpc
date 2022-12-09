@@ -32,6 +32,21 @@ volatile size_t runs = LMQ_RUNS;
  */
 #define BENCH_VO(func_name, ...)                        \
     do {                                                \
+        size_t _start_ = read_csr(mcycle);              \
+        int _result_code_ = func_name(__VA_ARGS__);     \
+        size_t _end_ = read_csr(mcycle);                \
+        if (snrt_cluster_core_idx() == 0) {             \
+            printf(#func_name", size: %d: %lu cycles. Return code: %d\n", \
+                size, _end_ - _start_, _result_code_); \
+        }                                           \
+    } while(0);
+
+/*
+ * Benchmarks a vector operation which has no single result
+ * LMQ_RUNS times.
+ */
+#define BENCH_VO_OMP(func_name, ...)                        \
+    do {                                                \
         for(int cur_run=0;cur_run<runs;cur_run++){      \
             size_t _start_ = read_csr(mcycle);              \
             int _result_code_ = func_name(__VA_ARGS__);     \

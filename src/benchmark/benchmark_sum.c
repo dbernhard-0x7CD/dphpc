@@ -60,13 +60,13 @@ int main() {
 
     __snrt_omp_bootstrap(core_idx);
 
-    BENCH(sum_omp, x, size, &result);
+    BENCH_VO_OMP(sum_omp, x, size, &result);
     printf("sum_omp result: %f\n", result);
     VERIFY_INT(result, result_ref, "Expected %f but got %f\n", result_ref, result);
     result = -1.0;
 
     // This is still a WIP (or not possible)
-    BENCH(sum_ssr_omp, x, size, &result);
+    BENCH_VO_OMP(sum_ssr_omp, x, size, &result);
     printf("sum_ssr_omp result: %f\n", result);
     VERIFY_INT(result, result_ref, "Expected %f but got %f\n", result_ref, result);
     result = -1.0;

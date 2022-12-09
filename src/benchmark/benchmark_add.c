@@ -74,7 +74,7 @@ int main() {
         // Some overhead
         printf("Chunk size: %d\n", chunk_size);
 
-        BENCH_VO(add_omp, x, y, size, result);
+        BENCH_VO_OMP(add_omp, x, y, size, result);
         /* This applies to all OMP functions:
         * Due to the (probably unintentional) behaviour of SSR each SSR stream ends with an extra element at position n which is '-inf' Thus we ignore those values when validating.
         */
@@ -84,14 +84,14 @@ int main() {
         // }
         clear_vector(result, size);
 
-        BENCH_VO(add_ssr_omp, x, y, size, result);
+        BENCH_VO_OMP(add_ssr_omp, x, y, size, result);
         verify_vector_omp(result, result_ref, size, chunk_size);
         // for(unsigned i = 0; i < size; i++) {
         //     printf("Value of result at %d is %f\n", i, result[i]);
         // }
         clear_vector(result, size);
 
-        BENCH_VO(add_ssr_frep_omp, x, y, size, result);
+        BENCH_VO_OMP(add_ssr_frep_omp, x, y, size, result);
         verify_vector_omp(result, result_ref, size, chunk_size);
         clear_vector(result, size);
     }
