@@ -9,12 +9,7 @@
 int main() {
     uint32_t core_idx = snrt_global_core_idx();
 
-    // only run on 1 core
-    if (core_idx != 0) return 1;
-
-    for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
-
-
+    if (core_idx == 0) {
         // Initialize the input data
         float* x = allocate(size, sizeof(float));
         float* y = allocate(size, sizeof(float));

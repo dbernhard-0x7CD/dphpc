@@ -8,12 +8,9 @@
 int main() {
     uint32_t core_idx = snrt_global_core_idx();
 
-    // only run on 1 core
-    if (core_idx != 0) return 1;
-
-    printf("Running benchmark_transpose\n");
-
-    for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
+    if (core_idx == 0) {
+        printf("Running benchmark_transpose\n");
+        
         int ox = (int)sqrt_approx(size);
         int rows = ox;
         int cols = ox;
@@ -48,6 +45,9 @@ int main() {
         clear_vector(result, rows * cols);
     }
 
+    for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2) {
+        // TODO
+    }
     return 0;
 }
 

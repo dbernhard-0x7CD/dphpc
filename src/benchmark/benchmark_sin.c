@@ -12,18 +12,18 @@
 
 const size_t lookup_table_size = 10000;
 
+float *x, *lookup_table, *result_ref, *result;
+
 int main() {
     uint32_t core_idx = snrt_cluster_core_idx();
 
-    __snrt_omp_bootstrap(core_idx);
+    if (core_idx == 0) {
+        printf("Running benchmark_sin\n");
 
-    printf("Running benchmark_sin\n");
-    
-    for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
-        float* x = allocate(size, sizeof(float)); // input
-        float* lookup_table = allocate(lookup_table_size, sizeof(float)); // lookup table for sin
-        float* result_ref = allocate(size, sizeof(float)); // reference output (ground truth)
-        float* result = allocate(size, sizeof(float)); // output of optimized functions
+        x = allocate(size, sizeof(float)); // input
+        lookup_table = allocate(lookup_table_size, sizeof(float)); // lookup table for sin
+        result_ref = allocate(size, sizeof(float)); // reference output (ground truth)
+        result = allocate(size, sizeof(float)); // output of optimized functions
 
         for (size_t x = 0; x < lookup_table_size; x++) {
             lookup_table[x] = sinf(M_PI/2.0 * x / lookup_table_size);
@@ -44,8 +44,8 @@ int main() {
         BENCH_VO(sin_ssr, x, size, result);
         verify_vector(result, result_ref, size);
 
-        clear_vector(result_ref, size);
         clear_vector(result, size);
+    }
 
         /*
         BENCH_VO(sin_baseline_lookup_table, x, size, result, lookup_table, lookup_table_size);
@@ -54,9 +54,11 @@ int main() {
             printf("%f vs. %f\n", x[i]*lookup_table_size / M_PI * 2, result[i]);
         }
         
-        verify_vector(result, result_ref, size);
+        verify_vector(result, result_ref, size); */
         
-        */
+    /* Benchmark OMP parallel */
+    __snrt_omp_bootstrap(core_idx);
+    for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
         // Some overhead
         unsigned core_num = snrt_cluster_core_num() - 1;
         size_t chunk_size = size / core_num;

@@ -18,14 +18,9 @@ int print_gemm_pattern(const float* a, size_t m, size_t n, size_t k, float* resu
 int print_other_gemm_pattern(const float* a, size_t m, size_t n, size_t k, float* result, size_t result_len);
 
 int main() {
+    uint32_t core_idx = snrt_cluster_core_idx();
 
-    for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
-
-        uint32_t core_idx = snrt_global_core_idx();
-
-        // only run on 1 core
-        if (core_idx != 0) return 1;
-
+    if (core_idx == 0) {
         size_t M = size / 2;
         size_t N = size;
         size_t K = size * 2;

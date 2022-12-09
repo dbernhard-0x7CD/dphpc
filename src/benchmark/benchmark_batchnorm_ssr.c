@@ -15,12 +15,7 @@ int batchnorm_ssr_frep(float *a, const size_t n, float* result);
 int main() {
     uint32_t core_idx = snrt_global_core_idx();
 
-    for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
-
-
-        // only run on 1 core
-        if (core_idx != 0) return 1;
-
+    if (core_idx == 0) {
         // Initialize the input data
         float* x = allocate(size, sizeof(float));
         float* result_ref = allocate(size, sizeof(float));
@@ -37,7 +32,6 @@ int main() {
         BENCH_VO(batchnorm_ssr, x, size, result);
         verify_vector(result, result_ref, size);
         clear_vector(result, size);
-
     }
 
     return 0;

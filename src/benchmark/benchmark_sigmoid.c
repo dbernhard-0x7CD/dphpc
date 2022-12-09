@@ -9,13 +9,8 @@
 int main() {
     uint32_t core_idx = snrt_global_core_idx();
 
-    // only run on 1 core
-    if (core_idx != 0) return 1;
-
-    printf("Running benchmark_sigmoid\n");
-
-    for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
-
+    if (core_idx == 0) {
+        printf("Running benchmark_sigmoid\n");
 
         // x is input; result is output of the optimized functions
         float* x = allocate(size, sizeof(float));
@@ -40,7 +35,6 @@ int main() {
         BENCH_VO(sigmoid_ssr, x, size, result);
         verify_vector(result, result_ref, size);
         clear_vector(result, size);
-    
     }
 
     return 0;

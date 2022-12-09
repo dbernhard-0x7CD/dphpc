@@ -8,12 +8,7 @@
 int main() {
     uint32_t core_idx = snrt_global_core_idx();
 
-    // only run on 1 core
-    if (core_idx != 0) return 1;
-
-    for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
-
-
+    if (core_idx == 0) {
         float* x = allocate(size, sizeof(float));
         float* result_ref = allocate(size, sizeof(float));
         float* result = allocate(size, sizeof(float));
@@ -34,7 +29,6 @@ int main() {
         BENCH_VO(leakyrelu_ssr_frep, x, size, alpha, result);
         verify_vector(result, result_ref, size);
         clear_vector(result, size);
-    
     }
  
     return 0;
