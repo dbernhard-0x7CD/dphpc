@@ -116,6 +116,7 @@ python3 plots/runtime_plot.py -include abs -exclude frep
 * Publish repository and add link to it in the report
 * Say why we have no error bars
 * Bar plot of speedup
+* increase core count is not possible as it freezes and has 'branch to unpredicted address' errors (in banshee)
 
 # TODO
 * File where we store the benchmark results (to plot later in the report)
