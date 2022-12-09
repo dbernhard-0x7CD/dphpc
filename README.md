@@ -140,7 +140,7 @@ python3 plots/runtime_plot.py -include abs -exclude frep
 * SSR+FREP
     * abs, acos (no frep), acosh (no frep), add, argmax (no frep), asinh (no frep), batchnorm, copy, cumsum, div, dot, dropout, gemm, masked_dropout, max, maxpool, relu, sigmoid, sin, sum, transpose
 * Parallel
-    * abs, add, copy, sum
+    * abs, add, copy, sin, sum
 * OMP:
     * abs, add, copy, sin, sum (broken due to SSR 'leaking' or wrong impl.)
 * maxpool
