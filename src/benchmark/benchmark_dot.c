@@ -13,7 +13,7 @@ int main() {
     if (core_idx != 0) return 1;
 
     printf("Running benchmark_dot\n");
-    for(size_t size=32;size<=LMQ_SIZE;size*=2){
+    for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
 
 
         // x,y,xd,yd is input

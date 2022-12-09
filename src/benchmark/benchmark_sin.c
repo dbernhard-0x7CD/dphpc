@@ -19,7 +19,7 @@ int main() {
 
     printf("Running benchmark_sin\n");
     
-    for(size_t size=32;size<=LMQ_SIZE;size*=2){
+    for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
         float* x = allocate(size, sizeof(float)); // input
         float* lookup_table = allocate(lookup_table_size, sizeof(float)); // lookup table for sin
         float* result_ref = allocate(size, sizeof(float)); // reference output (ground truth)

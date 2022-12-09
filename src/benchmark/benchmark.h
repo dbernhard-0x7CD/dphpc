@@ -5,6 +5,10 @@
 #include <snrt.h>
 #include "printf.h"
 
+#ifndef LMQ_START_SIZE
+#define LMQ_START_SIZE 10
+#endif
+
 #ifndef LMQ_SIZE
 #define LMQ_SIZE 1024
 #endif

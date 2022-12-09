@@ -14,7 +14,7 @@ int main() {
 
     printf("Running benchmark_dropout\n");
 
-    for(size_t size=32;size<=LMQ_SIZE;size*=2){
+    for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
 
 
 

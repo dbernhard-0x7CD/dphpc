@@ -13,7 +13,7 @@ int main() {
     if (core_idx != 0) return 0;
 
     printf("Running benchmark_acosh\n");
-    for(size_t size=32;size<=LMQ_SIZE;size*=2){
+    for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
 
         // x is input; result is output of the optimized functions
         float *x = allocate(size, sizeof(float));

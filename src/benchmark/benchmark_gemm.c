@@ -19,7 +19,7 @@ int print_other_gemm_pattern(const float* a, size_t m, size_t n, size_t k, float
 
 int main() {
 
-    for(size_t size=32;size<=LMQ_SIZE;size*=2){
+    for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
 
         uint32_t core_idx = snrt_global_core_idx();
 
