@@ -53,10 +53,10 @@ def arg_filter(x, include, exclude):
             continue
 
         if include is not None and exclude is not None:
-            if not all([inc in k for inc in include]) or any([exc in k for exc in exclude]):
+            if not any([inc in k for inc in include]) or any([exc in k for exc in exclude]):
                 x_filter[i] = False
         elif include is not None:
-            if not all([inc in k for inc in include]):
+            if not any([inc in k for inc in include]):
                 x_filter[i] = False
         elif exclude is not None:
             if any([exc in k for exc in exclude]):

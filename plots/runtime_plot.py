@@ -1,8 +1,5 @@
-import argparse
-import csv
 import os
 import sys
-import json
 import numpy as np
 
 import matplotlib.pyplot as plt
@@ -28,14 +25,8 @@ del data["n"]
 # apply similar styling across all plots
 plotstyle()
 
-# violin plots do not support out-of-the-box labels. this function fixes this
-def violin_create_label(violin, label):
-    color = violin["cmeans"].get_color().flatten()
-    # color = violin["bodies"][3].get_facecolor().flatten()
-    return (mpatches.Patch(color=color), label)
 
 # Draw plots
-
 fig, ax = plt.subplots(figsize=(6.4, 4.8))
 plt.xscale("log")
 plt.yscale("log")
@@ -44,15 +35,9 @@ labels = list()
 lines = list()
 for func_name in data.keys():
     yaxis = data[func_name]
+    print(func_name)
+    print(len(yaxis))
     if isinstance(data[func_name][0], list):
-        # v = ax.violinplot(
-        #     yaxis, xaxis, 
-        #     # ytest, xaxis, 
-        #     widths=[x/4 for x in xaxis], 
-        #     bw_method=0.5, points=15,
-        #     showmeans=True, showmedians=True, showextrema=True
-        # )
-        # labels.append(violin_create_label(v, func_name))
         q95 = lambda x: np.quantile(x, 0.95)
         q50 = lambda x: np.quantile(x, 0.5)
         q05 = lambda x: np.quantile(x, 0.05)

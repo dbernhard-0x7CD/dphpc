@@ -6,11 +6,11 @@
 #include "printf.h"
 
 #ifndef LMQ_SIZE
-#define LMQ_SIZE 10000
+#define LMQ_SIZE 1024
 #endif
 
 #ifndef LMQ_RUNS
-#define LMQ_RUNS 200
+#define LMQ_RUNS 20
 #endif
 
 size_t* cycles_count;
