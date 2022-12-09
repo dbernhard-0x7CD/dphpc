@@ -56,11 +56,6 @@ volatile size_t runs = LMQ_RUNS;
         }                                           \
     } while(0);
 
-#define VERIFY_INT(value, reference, ...)           \
-    do { if (value != reference) {                  \
-        printf(__VA_ARGS__);                        \
-    } } while(0);
-
 /*
  * Benchmarks a vector operation which has no single result.
  */
@@ -88,6 +83,11 @@ volatile size_t runs = LMQ_RUNS;
             }                                               \   
         }                                               \
     } while(0);
+
+#define VERIFY_INT(value, reference, ...)           \
+    do { if (value != reference) {                  \
+        printf(__VA_ARGS__);                        \
+    } } while(0);
 
 /*
  * Compares the vector starting at value element wise with the vector at reference.
