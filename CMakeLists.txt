@@ -192,12 +192,21 @@ add_snitch_executable(benchmark_sin
                       ./src/lmq/lmq.c)
 target_link_libraries(benchmark_sin sin)
 
-# Compile 'maxpool'
+# Compile 'maxpool' and 'maxpool2d'
 add_library(maxpool src/onnx/maxpool.c)
 add_snitch_executable(benchmark_maxpool ./src/benchmark/benchmark_maxpool.c ./src/lmq/lmq.c)
 target_link_libraries(benchmark_maxpool maxpool)
+add_snitch_executable(benchmark_maxpool2d ./src/benchmark/benchmark_maxpool2d.c ./src/lmq/lmq.c)
+target_link_libraries(benchmark_maxpool2d maxpool)
 
 # Compile 'gemm'
 add_library(gemm src/onnx/gemm.c)
 add_snitch_executable(benchmark_gemm ./src/benchmark/benchmark_gemm.c ./src/lmq/lmq.c)
 target_link_libraries(benchmark_gemm gemm)
+
+# Compile 'conv' and 'conv2d'
+add_library(conv src/onnx/conv.c)
+add_snitch_executable(benchmark_conv ./src/benchmark/benchmark_conv.c ./src/lmq/lmq.c)
+target_link_libraries(benchmark_conv conv)
+add_snitch_executable(benchmark_conv2d ./src/benchmark/benchmark_conv2d.c ./src/lmq/lmq.c)
+target_link_libraries(benchmark_conv2d conv)
