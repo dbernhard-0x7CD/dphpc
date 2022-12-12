@@ -108,7 +108,7 @@ static inline void verify_vector(const float* value, const float* reference, con
 static inline void verify_vector_omp(const float* value, const float* reference, const size_t n, const size_t chunk_size) {
     printf("Verifying and ignoring every %d value\n", chunk_size);
     for (size_t i = 0; i < n; ++i) {
-        if (value[i] != reference[i] && i % chunk_size != 0 ) {
+        if (value[i] != reference[i] && (chunk_size == 0 || i % chunk_size != 0) ) {
             printf("MISMATCH at i=%d: expected %.10f, but got %.10f\n", i, reference[i], value[i]);
 
             // return;
