@@ -1,34 +1,35 @@
 #include <snrt.h>
 #include "printf.h"
 
-// matmul needs a much smaller size, otherwise allocations fail and runs take forever
-#ifndef LMQ_SIZE
-#define LMQ_SIZE 100
-#endif
-
 #include "lmq.h"
 #include "benchmark.h"
-
-
-int gemm_baseline(const float* a, const float* b, size_t m, size_t n, size_t k, float* __restrict__ result);
-int gemm_ssr(const float* a, const float* b, size_t m, size_t n, size_t k, float* __restrict__ result);
-int gemm_ssr_frep(const float* a, const float* b, size_t m, size_t n, size_t k, float* __restrict__ result);
+#include "gemm.h"
 
 int print_gemm_pattern(const float* a, size_t m, size_t n, size_t k, float* result, size_t result_len);
 int print_other_gemm_pattern(const float* a, size_t m, size_t n, size_t k, float* result, size_t result_len);
 
+float *x, *y, *result_ref, *result;
+
 int main() {
     uint32_t core_idx = snrt_cluster_core_idx();
+    uint32_t core_num = snrt_cluster_core_num() - 1; // -1 as there is one DM core
 
-    if (core_idx == 0) {
-        size_t M = size / 2;
-        size_t N = size;
-        size_t K = size * 2;
+    uint32_t sqrt = sqrt_approx(size);
+    size_t M = sqrt / 2;
+    size_t N = sqrt * 2;
+    size_t K = sqrt / 2;
+    // size_t M = sqrt + 2;
+    // size_t N = sqrt - 2;
+    // size_t K = sqrt + 2;
 
-        float* x = allocate(M * N, sizeof(float));
-        float* y = allocate(N * K, sizeof(float));
-        float* result_ref = allocate(M * K, sizeof(float));
-        float* result = allocate(M * K, sizeof(float));
+
+    for(size_t size=LMQ_START_SIZE; core_idx == 0 && size<=LMQ_SIZE;size*=2) {
+                            // sqrt / 2 * sqrt * 2 --> size
+        x = allocate(M * N, sizeof(float));
+                            // sqrt * 2 * sqrt / 2 --> size
+        y = allocate(N * K, sizeof(float));
+        result_ref = allocate(M * K, sizeof(float));
+        result = allocate(M * K, sizeof(float));
 
         for (size_t i = 0; i < M * N; i++) {
             x[i] = (float)i;
@@ -49,5 +50,67 @@ int main() {
         clear_vector(result, M * K);
     }
  
+    for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2) {
+        gemm_baseline(x, y, M, N, K, result_ref);
+
+        BENCH_VO_PARALLEL(gemm_parallel, x, y, M, N, K, result);
+        if (core_idx == 0) {
+            verify_vector(result, result_ref, M * K);
+            clear_vector(result, M * K);
+        }
+        
+        // if (core_idx == 0) {
+        //     printf("A:\n");
+        //     print_matrix(x, M, N);
+        //     
+        //     printf("B:\n");
+        //     print_matrix(y, N, K);
+        // }
+
+        BENCH_VO_PARALLEL(gemm_ssr_parallel, x, y, M, N, K, result);
+        if (core_idx == 0) {
+            // as every 'cores' does M/core_num rows we have at every index which is a multiple of (M/core_num) * K a potential '-inf' value
+            verify_vector_omp(result, result_ref, M * K, M/core_num * K);
+            clear_vector(result, M * K);
+        }
+        
+        BENCH_VO_PARALLEL(gemm_ssr_frep_parallel, x, y, M, N, K, result);
+        if (core_idx == 0) {
+            // as every 'cores' does M/core_num rows we have at every index which is a multiple of (M/core_num) * K a potential '-inf' value
+            verify_vector_omp(result, result_ref, M * K, M/core_num * K);
+            clear_vector(result, M * K);
+        }
+    }
+
+    // Benchmark OMP
+    __snrt_omp_bootstrap(core_idx);
+
+    for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
+        gemm_baseline(x, y, M, N, K, result_ref);
+
+        BENCH_VO_OMP(gemm_omp, x, y, M, N, K, result);
+        /* This applies to all OMP functions:
+        * Due to the (probably unintentional) behaviour of SSR each SSR stream ends with an extra element at position n which is '-inf' Thus we ignore those values when validating.
+        */
+        verify_vector(result, result_ref, M * K);
+        // for(unsigned i = 0; i < size; i++) {
+        //     printf("Value of result at %d is %f\n", i, result[i]);
+        // }
+        clear_vector(result, M * K);
+        
+        BENCH_VO_OMP(gemm_ssr_omp, x, y, M, N, K, result);
+        verify_vector_omp(result, result_ref, M * K, M/core_num * K);
+        // for(unsigned i = 0; i < size; i++) {
+        //     printf("Value of result at %d is %f\n", i, result[i]);
+        // }
+        clear_vector(result, M * K);
+
+        BENCH_VO_OMP(gemm_ssr_frep_omp, x, y, M, N, K, result);
+        verify_vector_omp(result, result_ref, M * K, M/core_num * K);
+        clear_vector(result, M * K);
+    }
+    
+    __snrt_omp_destroy(core_idx);
+
     return 0;
 }
