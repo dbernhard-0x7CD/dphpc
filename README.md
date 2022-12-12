@@ -120,27 +120,25 @@ python3 plots/runtime_plot.py -include abs -exclude frep
 
 # TODO
 * TEST core count configuration of SIMULATOR
-* File where we store the benchmark results (to plot later in the report)
-* Use multiple cores (f.ex in sum, cumsum (advanced), one compute heavy element-wise fctn, one bandwidth heavy computation, ... )
-* Try OpenMP (me)
-    * for compute intensive element wise function
+* Use multiple cores
+    * cumsum, argmax?
+* Try OpenMP
     * for BW heavy reduction
     * argmax?
     * gemm
 * conv?
 * scatter/gather
+    * here we should not use powers of 2 (they are optimal for trees)
 * rnn?
-* parallel argmax
-* parallel cumsum
 * parallel transpose
 
 # DONE
 * SSR+FREP
     * abs, acos (no frep), acosh (no frep), add, argmax (no frep), asinh (no frep), batchnorm, copy, cumsum, div, dot, dropout, gemm, masked_dropout, max, maxpool, relu, sigmoid, sin, sum, transpose
 * Parallel
-    * abs, add, copy, sin (no frep), sum
+    * abs, add, copy, sin (no frep), sum, gemm
 * OMP:
-    * abs, add, copy, sin (no frep), sum (broken due to SSR 'leaking' or wrong impl.)
+    * abs, add, copy, sin (no frep), sum (broken due to SSR 'leaking' or wrong impl.), gemm
 * Use memory start pointer instead of l1?
     * Use start pointer; implemented in lmq.c
     * L1 has a better latency than memory
