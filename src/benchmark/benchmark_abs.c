@@ -34,8 +34,7 @@ int main() {
     /* Benchmark parallel */
     for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
         size_t chunk_size = size / core_num;
-        // printf("chunk_size: %d of core %d\n", chunk_size, core_idx);
-
+        fabs_baseline(x, size, result_ref);
 
         BENCH_VO_PARALLEL(fabs_parallel, x, size, result);
         if (core_idx == 0) {
@@ -60,8 +59,8 @@ int main() {
     __snrt_omp_bootstrap(core_idx);
 
     for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
+        fabs_baseline(x, size, result_ref);
         size_t chunk_size = size / core_num;
-        /* Benchmark OMP */
         
         BENCH_VO_OMP(fabs_omp, x, size, result);
         /* This applies to all OMP functions:
