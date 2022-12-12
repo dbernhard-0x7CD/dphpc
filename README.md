@@ -115,7 +115,7 @@ python3 plots/runtime_plot.py -include abs -exclude frep
 # Report notes
 * Publish repository and add link to it in the report
 * Say why we have no error bars; Give confidence interval for OMP and bare metal parallelism
-* Bar plot of speedup
+* Bar plot of speedup per function
 * increase core count is not possible as it freezes and has 'branch to unpredicted address' errors (in banshee)
 
 # TODO
@@ -129,24 +129,18 @@ python3 plots/runtime_plot.py -include abs -exclude frep
     * gemm
 * conv?
 * scatter/gather
-* gemm
 * rnn?
 * parallel argmax
 * parallel cumsum
-* parallel sin
 * parallel transpose
 
 # DONE
 * SSR+FREP
     * abs, acos (no frep), acosh (no frep), add, argmax (no frep), asinh (no frep), batchnorm, copy, cumsum, div, dot, dropout, gemm, masked_dropout, max, maxpool, relu, sigmoid, sin, sum, transpose
 * Parallel
-    * abs, add, copy, sin, sum
+    * abs, add, copy, sin (no frep), sum
 * OMP:
-    * abs, add, copy, sin, sum (broken due to SSR 'leaking' or wrong impl.)
-* maxpool
-* batchnorm
-* transpose
-* dropout
+    * abs, add, copy, sin (no frep), sum (broken due to SSR 'leaking' or wrong impl.)
 * Use memory start pointer instead of l1?
     * Use start pointer; implemented in lmq.c
     * L1 has a better latency than memory
