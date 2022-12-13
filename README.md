@@ -125,11 +125,13 @@ python3 plots/runtime_plot.py -include abs -exclude frep
 * Try OpenMP
     * for BW heavy reduction
     * argmax?
-* conv?
+* conv
+    * also parallel?
 * scatter/gather
     * here we should not use powers of 2 (they are optimal for trees)
 * rnn?
 * parallel transpose
+* fix batchnorm benchmark
 
 # DONE
 * barrier wait indefinitely; reduce has "undefined symbol: __kmpc_reduce_nowait" compile error
