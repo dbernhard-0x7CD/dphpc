@@ -107,3 +107,5 @@ for i, benchmark in enumerate(benchmarks):
     filename = "plots/data/" + benchmark + "_runtime.json"
     with open(filename, "w") as jsonfile:
         jsonfile.write(json.dumps(data, indent=4))
+
+    p.sendline(bytes(f"exit 0", encoding="utf-8"))
