@@ -125,7 +125,6 @@ python3 plots/runtime_plot.py -include abs -exclude frep
 * Try OpenMP
     * for BW heavy reduction
     * argmax?
-    * gemm
 * conv?
 * scatter/gather
     * here we should not use powers of 2 (they are optimal for trees)
