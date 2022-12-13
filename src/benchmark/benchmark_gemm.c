@@ -14,16 +14,11 @@ int main() {
     uint32_t core_idx = snrt_cluster_core_idx();
     uint32_t core_num = snrt_cluster_core_num() - 1; // -1 as there is one DM core
 
-    uint32_t sqrt = sqrt_approx(size);
-    size_t M = sqrt / 2;
-    size_t N = sqrt * 2;
-    size_t K = sqrt / 2;
-    // size_t M = sqrt + 2;
-    // size_t N = sqrt - 2;
-    // size_t K = sqrt + 2;
-
-
     for(size_t size=LMQ_START_SIZE; core_idx == 0 && size<=LMQ_SIZE;size*=2) {
+        uint32_t sqrt = sqrt_approx(size);
+        size_t M = sqrt / 2;
+        size_t N = sqrt * 2;
+        size_t K = sqrt / 2;
                             // sqrt / 2 * sqrt * 2 --> size
         x = allocate(M * N, sizeof(float));
                             // sqrt * 2 * sqrt / 2 --> size
@@ -51,7 +46,22 @@ int main() {
     }
  
     for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2) {
-        gemm_baseline(x, y, M, N, K, result_ref);
+        uint32_t sqrt = sqrt_approx(size);
+        size_t M = sqrt / 2;
+        size_t N = sqrt * 2;
+        size_t K = sqrt / 2;
+
+        if (core_idx == 0) {
+            for (size_t i = 0; i < M * N; i++) {
+                x[i] = (float)i;
+            }
+
+            for (size_t i = 0; i < N * K; i++) {
+                y[i] = (float)i;
+            }
+            gemm_baseline(x, y, M, N, K, result_ref);
+        }
+        snrt_cluster_hw_barrier();
 
         BENCH_VO_PARALLEL(gemm_parallel, x, y, M, N, K, result);
         if (core_idx == 0) {
@@ -73,7 +83,7 @@ int main() {
             verify_vector_omp(result, result_ref, M * K, M/core_num * K);
             clear_vector(result, M * K);
         }
-        
+
         BENCH_VO_PARALLEL(gemm_ssr_frep_parallel, x, y, M, N, K, result);
         if (core_idx == 0) {
             // as every 'cores' does M/core_num rows we have at every index which is a multiple of (M/core_num) * K a potential '-inf' value
@@ -86,7 +96,21 @@ int main() {
     __snrt_omp_bootstrap(core_idx);
 
     for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
-        gemm_baseline(x, y, M, N, K, result_ref);
+        uint32_t sqrt = sqrt_approx(size);
+        size_t M = sqrt / 2;
+        size_t N = sqrt * 2;
+        size_t K = sqrt / 2;
+
+        if (core_idx == 0) {
+            for (size_t i = 0; i < M * N; i++) {
+                x[i] = (float)i;
+            }
+
+            for (size_t i = 0; i < N * K; i++) {
+                y[i] = (float)i;
+            }
+            gemm_baseline(x, y, M, N, K, result_ref);
+        }
 
         BENCH_VO_OMP(gemm_omp, x, y, M, N, K, result);
         /* This applies to all OMP functions:
