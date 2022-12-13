@@ -100,11 +100,12 @@ python3 plots/scaper.py -inclide abs -builder 'dbuild_size 40'
 
 This script builds the project using docker (or any other build command from above using, i.e: `-builder 'pbuild_size ZXY`), runs the benchmark using banshee and stores the measurements in a file for later use. Note that this might take a couple of minutes depending on the operator.
 To view a runtime plot of the abs-operator which you have just benchmarked, run:
-```
+```bash
 python3 plots/runtime_plot.py -include abs
 ```
+
 If you want to exclude a plot line from the runtime plot, use the "-exclude" flag. For example: 
-```
+```bash
 python3 plots/runtime_plot.py -include abs -exclude frep
 ```
 
@@ -140,6 +141,7 @@ python3 plots/runtime_plot.py -include abs -exclude frep
 * rnn?
 * parallel transpose
 * fix batchnorm benchmark
+* bar plot
 
 # DONE
 * barrier wait indefinitely; reduce has "undefined symbol: __kmpc_reduce_nowait" compile error
