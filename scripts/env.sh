@@ -30,55 +30,55 @@ alias sim="$SIM"
 run() {
     banshee --configuration $SNITCH_ROOT/sw/banshee/config/snitch_cluster.yaml -l $1
 }
-export -f run
+export run
 
 # Builds locally
 build() {
     cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE .. && cmake --build . -j && cd ..
 }
-export -f build
+export build
 
 # Builds against the vlt simulator (clean before running this)
 build_sim() {
     cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE -DCLUSTER_SIM=1 .. && cmake --build . -j && cd ..
 }
-export -f build_sim
+export build_sim
 
 # Builds against the vlt simulator (clean before running this) with a given size for the benchmark
 build_sim_size() {
     cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE -DCLUSTER_SIM=1 -DLMQ_SIZE=$1 .. && cmake --build . -j && cd ..
 }
-export -f build_sim_size
+export build_sim_size
 
 # Builds using docker
 dbuild() {
     docker run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.io/pulp-platform/snitch /bin/bash ./container_build.sh build
 }
-export -f dbuild
+export dbuild
 
 # Builds using podman
 pbuild() {
     podman run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.io/pulp-platform/snitch /bin/bash ./container_build.sh build
 }
-export -f pbuild
+export pbuild
 
 # Builds locally for given input size
 build_size() {
     cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE -DLMQ_SIZE=$1 .. && cmake --build . -j && cd ..
 }
-export -f build_size
+export build_size
 
 # Builds using docker for given input size
 dbuild_size() {
     docker run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.io/pulp-platform/snitch /bin/bash ./container_build.sh build $1 && cd build
 }
-export -f dbuild_size
+export dbuild_size
 
 # Builds using podman for given input size
 pbuild_size() {
     podman run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.io/pulp-platform/snitch /bin/bash ./container_build.sh build $1 && cd build
 }
-export -f pbuild_size
+export pbuild_size
 
 # Remove all built files
 alias clean='rm -r "$PROOT"build/*'
