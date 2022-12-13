@@ -13,6 +13,16 @@ int copy_baseline(float* source, const size_t n, float* target) {
 }
 
 __attribute__((noinline))
+int copy_simple(float* source, const size_t n, float* target) {
+
+    for (uint32_t i = 0; i < n; i++) {
+        target[i] = source[i];
+    }
+
+    return 0;
+}
+
+__attribute__((noinline))
 int copy_ssr(float* source, const size_t n, float* target) {
     register volatile float ft0 asm("ft0");
     register volatile float ft2 asm("ft2");

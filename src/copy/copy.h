@@ -8,6 +8,7 @@
  * Naive implementation of copy. Copies n elements starting at source to target
  */
 int copy_baseline(float* source, const size_t n, float* target);
+int copy_simple(float* source, const size_t n, float* target);
 int copy_ssr(float* source, const size_t n, float* target);
 int copy_ssr_frep(float* source, const size_t n, float* target);
 
