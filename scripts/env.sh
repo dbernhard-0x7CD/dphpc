@@ -27,55 +27,79 @@ alias proot='cd $PROOT'
 alias sim="$SIM"
 
 # Runs using banshee and the default configuration
-alias run='banshee --configuration $SNITCH_ROOT/sw/banshee/config/snitch_cluster.yaml -l'
+run() {
+    banshee --configuration $SNITCH_ROOT/sw/banshee/config/snitch_cluster.yaml -l $1
+}
+export -f run
 
 # Builds locally
-alias build='cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE .. && cmake --build . -j || cd ..'
+build() {
+    cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE .. && cmake --build . -j && cd ..
+}
+export -f build
 
 # Builds against the vlt simulator (clean before running this)
-alias build_sim='cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE -DCLUSTER_SIM=1 .. && cmake --build . -j || cd ..'
+build_sim() {
+    cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE -DCLUSTER_SIM=1 .. && cmake --build . -j && cd ..
+}
+export -f build_sim
 
 # Builds against the vlt simulator (clean before running this) with a given size for the benchmark
-alias build_sim_size='function fwrap(){ cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE -DCLUSTER_SIM=1 -DLMQ_SIZE=$1 .. && cmake --build . -j || cd ..}; fwrap'
+build_sim_size() {
+    cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE -DCLUSTER_SIM=1 -DLMQ_SIZE=$1 .. && cmake --build . -j && cd ..
+}
+export -f build_sim_size
 
 # Builds using docker
-alias dbuild='docker run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.io/pulp-platform/snitch /bin/bash ./container_build.sh build'
+dbuild() {
+    docker run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.io/pulp-platform/snitch /bin/bash ./container_build.sh build
+}
+export -f dbuild
 
 # Builds using podman
-alias pbuild='podman run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.io/pulp-platform/snitch /bin/bash ./container_build.sh build'
+pbuild() {
+    podman run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.io/pulp-platform/snitch /bin/bash ./container_build.sh build
+}
+export -f pbuild
 
 # Builds locally for given input size
-alias build_size='function fwrap(){ cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE -DLMQ_SIZE=$1 .. && cmake --build . -j || cd ..}; fwrap'
+build_size() {
+    cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE -DLMQ_SIZE=$1 .. && cmake --build . -j && cd ..
+}
+export -f build_size
 
 # Builds using docker for given input size
-alias dbuild_size='function fwrap(){ docker run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.io/pulp-platform/snitch /bin/bash ./container_build.sh build $1 && cd build }; fwrap'
+dbuild_size() {
+    docker run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.io/pulp-platform/snitch /bin/bash ./container_build.sh build $1 && cd build
+}
+export -f dbuild_size
 
 # Builds using podman for given input size
-alias pbuild_size='function fwrap(){ podman run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.io/pulp-platform/snitch /bin/bash ./container_build.sh build $1 && cd build }; fwrap'
+pbuild_size() {
+    podman run --rm -v $PROOT:/repo -w /repo --name snitch_build ghcr.io/pulp-platform/snitch /bin/bash ./container_build.sh build $1 && cd build
+}
+export -f pbuild_size
 
 # Remove all built files
 alias clean='rm -r "$PROOT"build/*'
 
 # Runns all benchmarks (binary must start with benchmark_ and lie in the builds/ directory)
-bench_cmd='''
-for x in $PROOT/build/benchmark_*;
-do
-    if [[ $x != *.s ]]; then
-        echo "Running $x"
-        banshee --configuration $SNITCH_ROOT/sw/banshee/config/snitch_cluster.yaml -l $x
-    fi
-done
-'''
-alias bench='''echo $bench_cmd | bash 2>&1'''
+bench() {
+    for x in $PROOT/build/benchmark_*;
+    do
+        if [[ $x != *.s ]]; then
+            echo "Running $x"
+            banshee --configuration $SNITCH_ROOT/sw/banshee/config/snitch_cluster.yaml -l $x
+        fi
+    done
+}
 
-bench_sim_cmd='''
-for x in $PROOT/build/benchmark_*;
-do
-    if [[ $x != *.s ]]; then
-        echo "Running $x"
-        $SIM $x
-    fi
-done
-'''
-
-alias bench_sim='''echo $bench_sim_cmd | bash 2>&1'''
+bench_sim() {
+    for x in $PROOT/build/benchmark_*;
+    do
+        if [[ $x != *.s ]]; then
+            echo "Running $x"
+            $SIM $x
+        fi
+    done
+}

@@ -76,21 +76,29 @@ run ./build/hello_world
 ```
 
 # Running benchmarks and generating Plots
-Note: to use the python-benchmarker, you need the docker build system, banshee and python3 set up.
+Note: To use the python-benchmarker, you need banshee and python3 set up.
 
 First install the python dependencies found in `file://plots/requirements.txt`. We recommend doing this in a virtual environment.
 To set up the virtual python environment, run the following commands from the project root.
-```
+```bash
 python3 -m venv plots/.venv
 source ./plots/.venv/bin/activate
 pip install -r plots/requirements.txt
 ```
 
 To run the benchmarks for some specific operater (e.g. for the abs-operator), you can execute the following:
-```
+```bash
 python3 plots/scraper.py -include abs
 ```
-This script builds the project using docker, runs the benchmark using banshee and stores the measurements in a file for later use. Note that this might take a couple of minutes depending on the operator.
+You can also specify up to which size we double (We start at 10 and double each run).
+For example:
+```bash
+python3 plots/scaper.py -inclide abs -builder 'dbuild_size 40'
+```
+* This will build and run the sizes: `10, 20, 40`
+
+
+This script builds the project using docker (or any other build command from above using, i.e: `-builder 'pbuild_size ZXY`), runs the benchmark using banshee and stores the measurements in a file for later use. Note that this might take a couple of minutes depending on the operator.
 To view a runtime plot of the abs-operator which you have just benchmarked, run:
 ```
 python3 plots/runtime_plot.py -include abs

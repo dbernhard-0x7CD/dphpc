@@ -41,10 +41,27 @@ def arg_parse():
                         help="Only function names containing a string from this list will be included, eg. sin")
     parser.add_argument("-exclude", type=str, nargs="*", dest="exclude",
                         help="Exclude all function names that contain a string from this list, eg. cosh")
-    parser.add_argument("-save", type=str, nargs="?", dest="save", const="plot.png",
+    parser.add_argument("-save",
+                        type=str,
+                        nargs="?",
+                        dest="save",
+                        const="plot.png",
                         help="Save plot output instead of showing it, default filename is plot.png")
+    parser.add_argument("-builder",
+                        type=str,
+                        nargs="?",
+                        dest="builder",
+                        default="dbuild_size 8192",
+                        help="Which build commant to use (build, build_size, dbuild_size or pbuild_size)")
+    parser.add_argument("-runner",
+                        type=str,
+                        nargs="?",
+                        dest="runner",
+                        default="run",
+                        help="Which run commant to use (run, sim)")
     args = parser.parse_args()
-    return (args.include, args.exclude, args.save)
+
+    return (args.include, args.exclude, args.save, args.builder, args.runner)
 
 def arg_filter(x, include, exclude):
     x_filter = [True] * len(x)

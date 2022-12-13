@@ -9,13 +9,11 @@ import json
 from itertools import compress
 from plotloader import arg_parse, arg_filter
 
-input_size = 12
-
 if ".git" not in os.listdir(os.getcwd()):
     print("please run this script from the project root")
     sys.exit()
 
-include, exclude, save = arg_parse()
+include, exclude, save, builder, runner = arg_parse()
 # add argparse to specify function names that should either be included or excluded
 
 # finds all relevant benchmark names
@@ -31,26 +29,37 @@ benchmarks = arg_filter(benchmarks, include, exclude)
 # start simulator for each of the names in benchmarks
 print("[INFO]   simulating the operators: ", benchmarks)
 for i, benchmark in enumerate(benchmarks):
+    print(f"Running benchmark \"{benchmark}\"")
+    def create_shell():
+        p = process(["/bin/bash"])  # env.sh relies on bash. sh is not sufficient
+
+        p.sendline(b"pwd")          # print execution path
+        print("pwd: ", p.recvline().decode())
+
+        p.sendline(b"source ./scripts/env.sh")
+        print("sourcing: ", p.recvline().decode())
+ 
+        # This enables expansion of aliases (normally only in interactive shells)
+        # p.sendline(b"shopt -s expand_aliases")
+        return p
+    
+    p = create_shell()
     # start bash shell subprocess
-    print("[SUBPROCESS  ] starting bash shell")
-    p = process(["/bin/bash"])  # env.sh relies on bash. sh is not sufficient
-    p.sendline(b"pwd")          # print execution path
-    print("pwd: ", p.recvline().decode())
-    data = dict()
-    # data["n"] = [2**i for i in range(5, input_size+1)]
-    n = set()
+    print("[SUBPROCESS]  starting bash shell")
+
+    p.sendline(b"echo $PROOT")          # print project root
+    print("proot: ", p.recvline().decode())
 
     # use shell to compile and run simulator
-    print("[COMPILING]  with input size up to " + str(2**input_size))
-    p.sendline(bytes("./scripts/bench.sh " + str(2**input_size) + " build/benchmark_" + benchmark, encoding="utf-8"))
-    p.recvuntil(b"---RUNNING SIMULATOR---") # voids output of compiler
-    print("[RUNNING]    " + benchmark + " (this takes a couple of minutes)")
-    # result = ""
-    # line = ""
-    # while "---SIMULATOR DONE---" not in line:
-    #     line = p.recvline().decode()
-    #     print("\t",line.replace("\n", ""))
-    #     result += line
+    print(f"[COMPILING] with builder: {builder}")
+    
+    p.sendline(bytes(f"{builder}; echo \"FINISHED COMPILING\""
+, encoding="utf-8"))
+    p.recvuntil(bytes("FINISHED COMPILING", encoding="utf-8"))
+
+    print(f"[RUNNING]: {runner} (this takes a couple of minutes)")
+    p.sendline(bytes(f"{runner} $PROOT/build/benchmark_{benchmark}; echo \"---SIMULATOR DONE---\"", encoding="utf-8"))
+
     result = p.recvuntil(b"---SIMULATOR DONE---").decode()
 
     # prints the console output of the benchmark. groups duplicate outputs
@@ -61,6 +70,8 @@ for i, benchmark in enumerate(benchmarks):
         print("\t", v, "x", k)
 
     # parse result and values into dict
+    sizes = set()
+    data = dict()
     split_result = re.findall(r'\w+, \bsize: \b\d+: \b\d+\b cycles', result)
     tmp = defaultdict(lambda: defaultdict(list))
     for r in split_result:
@@ -70,7 +81,8 @@ for i, benchmark in enumerate(benchmarks):
         size = int(s[-3][:-1])
         name = s[0][:-1]
 
-        n.add(size)
+        sizes.add(size)
+        # print("Adding size: " + str(size))
         tmp[name][size].append(cycles)
     
     # restructure tmp-dict into data-dict
@@ -78,11 +90,10 @@ for i, benchmark in enumerate(benchmarks):
         for l in tmp[k].keys():
             if all(x == tmp[k][l][0] for x in tmp[k][l]):
                 tmp[k][l] = tmp[k][l][0]
-
-    n = list(n)
-    n.sort()
+    sizes = list(sizes)
+    sizes.sort()
     # print(n)
-    data["n"] = n
+    data["n"] = sizes
 
     for k in tmp.keys():
         # data[k].append(tmp[k])
