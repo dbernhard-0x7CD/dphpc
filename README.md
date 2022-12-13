@@ -58,9 +58,9 @@ make bin/snitch_cluster.vlt
 First define `$RISCV` to point to the directory you want to have the toolchain installed to.
 
 ```
-curl -Ls -o riscv-gcc.tar.gz https://static.dev.sifive.com/dev-tools/riscv64-unknown-elf-gcc-8.3.0-2020.04.0-x86_64-linux-ubuntu14.tar.gz
+curl -Ls --progress-bar -o riscv-llvm.tar.gz https://sourceforge.net/projects/pulp-llvm-project/files/nightly/riscv32-pulp-llvm-ubuntu2004.tar.gz/download
 
-tar -C $RISCV -xf riscv-gcc.tar.gz --strip-components=1
+tar -C $RISCV -xf riscv-llvm.tar.gz --strip-components=1
 
 for file in riscv64-*; do ln -s $file $(echo "$file" | sed 's/^riscv64/riscv32/g'); done
 ```
