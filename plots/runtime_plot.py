@@ -35,8 +35,9 @@ labels = list()
 lines = list()
 for func_name in data.keys():
     yaxis = data[func_name]
-    print(func_name)
-    print(len(yaxis))
+    xlen = min(len(xaxis), len(yaxis))
+    # print(func_name)
+    # print(len(yaxis))
     if isinstance(data[func_name][0], list):
         q95 = lambda x: np.quantile(x, 0.95)
         q50 = lambda x: np.quantile(x, 0.5)
@@ -44,13 +45,15 @@ for func_name in data.keys():
         y1 = list(map(q50, yaxis))
         y2 = list(map(q05, yaxis))
         y3 = list(map(q95, yaxis))
-        c = ax.plot(xaxis, y1, label=func_name.replace("_"," "), marker=".")[0].get_color()
-        print(c)
-        ax.fill_between(xaxis, y2, y3, alpha=0.2, zorder=1, color=c)
+        c = ax.plot(xaxis[:xlen], y1[:xlen], label=func_name.replace("_"," "), marker=".")[0].get_color()
+        # print(c)
+        ax.fill_between(xaxis[:xlen], y2[:xlen], y3[:xlen], alpha=0.2, zorder=1, color=c)
         confidence_interval_flag = True
 
     else:
-        lines.append(ax.plot(xaxis, yaxis, label=func_name.replace("_"," "), marker="."))
+        lines.append(ax.plot(xaxis[:xlen], yaxis[:xlen], label=func_name.replace("_"," "), marker="."))
+
+print("run e.g '$ python3 plots/runtime_plot.py -include add -exclude parallel' to show the runtime for add excluding parallel")
 
 plt.xlabel("Input size [number of entries]")
 plt.ylabel("Runtime [cycles]")
@@ -81,5 +84,3 @@ if savepath:
     plt.savefig(fullpath + savepath, dpi=300)
 else:
     plt.show()
-
-print("run e.g '$ python3 plots/runtime_plot.py -include add -exclude parallel' to show the runtime for add excluding parallel")

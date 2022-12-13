@@ -37,8 +37,8 @@ for i, benchmark in enumerate(benchmarks):
     p.sendline(b"pwd")          # print execution path
     print("pwd: ", p.recvline().decode())
     data = dict()
-    data["n"] = [2**i for i in range(5, input_size+1)]
-
+    # data["n"] = [2**i for i in range(5, input_size+1)]
+    n = set()
 
     # use shell to compile and run simulator
     print("[COMPILING]  with input size up to " + str(2**input_size))
@@ -69,6 +69,8 @@ for i, benchmark in enumerate(benchmarks):
         cycles = int(s[-2])
         size = int(s[-3][:-1])
         name = s[0][:-1]
+
+        n.add(size)
         tmp[name][size].append(cycles)
     
     # restructure tmp-dict into data-dict
@@ -76,7 +78,12 @@ for i, benchmark in enumerate(benchmarks):
         for l in tmp[k].keys():
             if all(x == tmp[k][l][0] for x in tmp[k][l]):
                 tmp[k][l] = tmp[k][l][0]
-    
+
+    n = list(n)
+    n.sort()
+    # print(n)
+    data["n"] = n
+
     for k in tmp.keys():
         # data[k].append(tmp[k])
         data[k] = [tmp[k][l] for l in sorted(tmp[k].keys())] # would technically work without sorting, but I dont like relying on the implementation detail that dict-keys are sorted by insertion order in python
