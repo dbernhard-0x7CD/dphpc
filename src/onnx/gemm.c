@@ -151,14 +151,14 @@ __attribute__((noinline))
 int gemm_parallel(float* a, float* b, const size_t m, const size_t n, const size_t k, float* __restrict__ result) {
     size_t core_num = snrt_cluster_core_num() - 1;
     size_t core_idx = snrt_cluster_core_idx();
-    size_t local_n = m / core_num;
+    size_t local_m = m / core_num;
 
     int do_extra = 0;
-    if (core_idx < m - local_n * core_num) {
+    if (core_idx < m - local_m * core_num) {
         do_extra = 1;
     }
 
-    for (size_t i = core_idx * local_n; i < (core_idx + 1) * local_n; ++i) {
+    for (size_t i = core_idx * local_m; i < (core_idx + 1) * local_m; ++i) {
         for (size_t j = 0; j < k; ++j) {
             float acc = 0;
             for (size_t l = 0; l < n; ++l) {
@@ -172,9 +172,9 @@ int gemm_parallel(float* a, float* b, const size_t m, const size_t n, const size
         for (size_t j = 0; j < k; ++j) {
             float acc = 0;
             for (size_t l = 0; l < n; ++l) {
-                acc += a[(core_num * local_n + core_idx) * n + l] * b[l * k + j];
+                acc += a[(core_num * local_m + core_idx) * n + l] * b[l * k + j];
             }
-            result[(core_num * local_n + core_idx) * k + j] = acc;
+            result[(core_num * local_m + core_idx) * k + j] = acc;
         }
     }
 
