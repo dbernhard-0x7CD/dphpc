@@ -93,7 +93,7 @@ python3 plots/scraper.py -include abs
 You can also specify up to which size we double (We start at 10 and double each run).
 For example:
 ```bash
-python3 plots/scaper.py -inclide abs -builder 'dbuild_size 40'
+python3 plots/scraper.py -inclide abs -builder 'dbuild_size 40'
 ```
 * This will build and run the sizes: `10, 20, 40`
 
