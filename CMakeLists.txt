@@ -210,3 +210,10 @@ add_snitch_executable(benchmark_conv ./src/benchmark/benchmark_conv.c ./src/lmq/
 target_link_libraries(benchmark_conv conv)
 add_snitch_executable(benchmark_conv2d ./src/benchmark/benchmark_conv2d.c ./src/lmq/lmq.c)
 target_link_libraries(benchmark_conv2d conv)
+
+# Compile 'unique'
+add_library(unique src/onnx/unique.c)
+add_snitch_executable(benchmark_unique
+                      ./src/benchmark/benchmark_unique.c
+                      ./src/lmq/lmq.c)
+target_link_libraries(benchmark_unique unique)
