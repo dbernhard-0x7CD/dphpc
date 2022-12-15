@@ -27,8 +27,8 @@ int main() {
         size_t s0 = 3;
         size_t s1 = 2;
 
-        size_t outn0 = size;
-        size_t outn1 = size;
+        size_t outn0 = sqrt_approx(size);
+        size_t outn1 = sqrt_approx(size);
 
         size_t n0 = (outn0 - 1) * s0 + f0;
         size_t n1 = (outn1 - 1) * s1 + f1;

@@ -30,8 +30,8 @@ int main() {
         size_t d0 = 2;
         size_t d1 = 1;
 
-        size_t outn0 = size;
-        size_t outn1 = size;
+        size_t outn0 = sqrt_approx(size);
+        size_t outn1 = sqrt_approx(size);
 
         size_t n0 = (outn0 - 1) * s0 + (1 + (f0 - 1) * d0);
         size_t n1 = (outn1 - 1) * s1 + (1 + (f1 - 1) * d1);
