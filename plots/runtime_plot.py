@@ -81,6 +81,6 @@ if confidence_interval_flag:
 plt.title(title)
 
 if savepath:
-    plt.savefig(fullpath + savepath, dpi=300)
+    plt.savefig(os.path.join(os.getcwd(), savepath), dpi=300)
 else:
     plt.show()
