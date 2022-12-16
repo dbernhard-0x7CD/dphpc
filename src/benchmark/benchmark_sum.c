@@ -40,25 +40,28 @@ int main() {
     for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
         // calculate reference solution for this size
         sum_baseline(x, size, &result_ref);
+        if (core_idx == 0) {
+            printf("Baseline result for size %lu: %f\n", size, result_ref);
+        }
 
         BENCH_VO_PARALLEL(sum_parallel, x, size, &result);
         if (core_idx == 0) {
             VERIFY_INT(result, result_ref, "MISMATCH Expected %f but got %f\n", result_ref, result);
-            printf("sum result: %f\n", result);
+            printf("sum_parallel result: %f\n", result);
             result = -1.0;
         }
 
         BENCH_VO_PARALLEL(sum_ssr_parallel, x, size, &result);
         if (core_idx == 0) {
             VERIFY_INT(result, result_ref, "MISMATCH Expected %f but got %f\n", result_ref, result);
-            printf("sum_ssr result: %f\n", result);
+            printf("sum_ssr_parallel result: %f\n", result);
             result = -1.0;
         }
     
         BENCH_VO_PARALLEL(sum_ssr_frep_parallel, x, size, &result);
         if (core_idx == 0) {
             VERIFY_INT(result, result_ref, "MISMATCH Expected %f but got %f\n", result_ref, result);
-            printf("sum_ssr_frep result: %f\n", result);
+            printf("sum_ssr_frep_parallel result: %f\n", result);
         }
     }
 
