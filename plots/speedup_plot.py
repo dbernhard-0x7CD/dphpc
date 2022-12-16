@@ -19,7 +19,7 @@ if ".git" not in os.listdir(os.getcwd()):
     sys.exit()
 
 include, exclude, savepath = arg_parse()
-data = load_plot_data(fullpath, include=include, exclude=exclude)
+functions, data = load_plot_data(fullpath, include=include, exclude=exclude)
 del data["n"]
 
 # finds all plot lines with "baseline" in their name

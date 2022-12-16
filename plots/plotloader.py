@@ -3,9 +3,13 @@ import os
 import json
 from itertools import compress
 
+'''
+Loads all *.json files in abspath and returns a list of functions and a dictionary with all runtime-cycles.
+'''
 def load_plot_data(abspath, include=[], exclude=[]):
     files = list()
     data = dict()
+    functions = list()
 
     assert(os.path.isabs(abspath))
     # load all json files into list
@@ -19,19 +23,24 @@ def load_plot_data(abspath, include=[], exclude=[]):
     # merge all json dicts into one
     for json_file in files:
         for func_name in json_file.keys():
+            if func_name == "n": continue
+            functions.append(func_name)
             data[func_name] = json_file[func_name]
+            data[f"{func_name}_n"] = json_file["n"]
     
     # filter keys according to inclue/exclude
     func_names = list(data.keys())
     func_names = arg_filter(func_names, include, exclude)
     tmp = {}
-    tmp["n"] = data["n"]
+    # tmp["n"] = data["n"]
     for fn in func_names:
-        tmp[fn] = data[fn]
+        if fn == "n": continue
+        tmp[fn] = data[fn] 
     data = tmp
     
+    functions = arg_filter(functions, include, exclude)
     print("[    DATA LOADER]     loaded data for the plots {}".format(list(data.keys())))
-    return data
+    return functions, data
 
 
 def arg_parse():

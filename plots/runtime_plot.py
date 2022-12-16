@@ -18,23 +18,26 @@ if ".git" not in os.listdir(os.getcwd()):
     sys.exit()
 
 include, exclude, savepath, _, _ = arg_parse()
-data = load_plot_data(fullpath, include=include, exclude=exclude)
-xaxis = data["n"]
-del data["n"]
+functions, data = load_plot_data(fullpath, include=include, exclude=exclude)
+global_xaxis = set()
+# del data["n"]
 
 # apply similar styling across all plots
 plotstyle()
 
 
 # Draw plots
-fig, ax = plt.subplots(figsize=(6.4, 4.8))
+fig, ax = plt.subplots(figsize=(8.0, 8.0))
 plt.xscale("log")
 plt.yscale("log")
 
 labels = list()
 lines = list()
-for func_name in data.keys():
+print("Including those functions: " + str(functions))
+for func_name in functions:
     yaxis = data[func_name]
+    xaxis = data[f"{func_name}_n"]
+    global_xaxis = global_xaxis.union(xaxis)
     xlen = min(len(xaxis), len(yaxis))
     # print(func_name)
     # print(len(yaxis))
@@ -45,13 +48,18 @@ for func_name in data.keys():
         y1 = list(map(q50, yaxis))
         y2 = list(map(q05, yaxis))
         y3 = list(map(q95, yaxis))
-        c = ax.plot(xaxis[:xlen], y1[:xlen], label=func_name.replace("_"," "), marker=".")[0].get_color()
+        c = ax.plot(xaxis, y1, label=func_name.replace("_"," "), marker=".")[0].get_color()
         # print(c)
-        ax.fill_between(xaxis[:xlen], y2[:xlen], y3[:xlen], alpha=0.2, zorder=1, color=c)
+        ax.fill_between(xaxis, y2, y3, alpha=0.2, zorder=1, color=c)
         confidence_interval_flag = True
 
     else:
-        lines.append(ax.plot(xaxis[:xlen], yaxis[:xlen], label=func_name.replace("_"," "), marker="."))
+        try:
+            lines.append(ax.plot(xaxis, yaxis, label=func_name.replace("_"," "), marker="."))
+            # plt.legend()
+        except Exception as e:
+            print (f"xaxis: {xaxis} and yaxis: {yaxis}")
+            raise e
 
 print("run e.g '$ python3 plots/runtime_plot.py -include add -exclude parallel' to show the runtime for add excluding parallel")
 
@@ -62,9 +70,9 @@ ax.set_xscale('log', base=2)
 ax.set_yscale('log', base=2)
 
 no_labels = len(data.keys())
-xlabelpos = np.logspace(np.log2(min(xaxis)), np.log2(max(xaxis)), no_labels+2, base=2)[1:-1]
+xlabelpos = np.logspace(np.log2(sorted(global_xaxis)[-3]), np.log2(sorted(global_xaxis)[0]), no_labels, base=2)[1:-1]
 
-# xlabelpos = [64*4**i for i in range(4)]
+# print(f"Max on x-axis: {max(global_xaxis)}")
 labelLines(align=True, yoffsets=0.1, yoffset_logspace=True, xvals=xlabelpos)
 # plt.legend(*zip(*labels), loc=2)
 
