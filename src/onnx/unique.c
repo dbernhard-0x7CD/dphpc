@@ -1,5 +1,7 @@
 #include <snrt.h>
 
+#include <stdlib.h>
+
 #include <unique.h>
 #include <float.h>
 
@@ -76,35 +78,6 @@ int unique_ssr(float* arr, const size_t n, float* result) {
         : [n] "r"(n)
         : "ft0", "ft1", "fa0", "fa1"
     );
-
-    /*for (size_t i = 0; i < n; i++) {
-        asm volatile(
-            "li a5, 1\n" // a5 <- 1 (for simulating the variable unique)
-            "fmv.s fa0, ft0\n" // fa0 <- ft0; i.e., fa0 = arr[i]
-            "fmv.s ft1, fa0\n" // ft1 <- fa0
-            :
-            :
-            : "ft0", "fa0"
-        );
-        for(size_t j = i+1; j < n; j++) {
-            asm volatile(
-                "fmv.s fa1, ft0\n" // fa1 <- ft0;
-                "feq.s a4, fa0, fa1\n" // compute result of fa0 == fa1, i.e., arr[i] == arr[j]
-                "bge %[i], %[j], 2f\n" // if i >= j -> go to 2
-                "beq a4, zero, 2f\n" // if fa0 == fa1, i.e., arr[i] == arr[j] -> go to 2
-                "li a5, 0\n" // a5 <- 0
-                "2:\n" // exit
-                : [i] "+r"(i), [j] "+r"(j)
-                :
-                : "ft0", "fa0", "fa1"
-            );
-        }
-        asm volatile (
-            "bne a5, zero, 3f\n" // if a5 != 0 -> go to 3
-            "fmv.s ft1, fa0\n" // ft1 <- fa0
-            "3:\n" // exit
-        );
-    }*/
 
     snrt_ssr_disable();
     asm volatile("" :: "f"(ft0));
