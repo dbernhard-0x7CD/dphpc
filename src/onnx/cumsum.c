@@ -3,6 +3,8 @@
 
 #include <cumsum.h>
 #include <float.h>
+#include "lmq.h"
+#include "printf.h"
 
 /*
  * Naive implementation of cumulative sum. Calculates the cumulative sum of n elements starting at arr.
@@ -97,4 +99,84 @@ int cumsum_ssr_frep(const float* arr, const size_t n, volatile float* result) {
     asm volatile("" :: "f"(ft2));
 
     return 0;
+}
+
+float* shared;
+int cumsum_parallel(const float* arr, const size_t n, float* result) {
+    size_t core_num = snrt_cluster_core_num() - 1;
+    size_t core_idx = snrt_cluster_core_idx();
+    size_t local_n = n / core_num;
+    
+    // The DM core should not do anything
+    if (snrt_is_dm_core()) {
+        snrt_cluster_hw_barrier();
+        snrt_cluster_hw_barrier();
+        snrt_cluster_hw_barrier();
+        snrt_cluster_hw_barrier();
+        return 0;
+    }
+
+    volatile float my_sum = arr[core_idx * local_n];
+
+    if (core_idx == 0) {
+        shared = allocate(core_num, sizeof(float));
+    }
+    snrt_cluster_hw_barrier();
+
+    /* In this case do_extra works different; The core 0 does all the work */
+    int do_extra = 0;
+    if (0 != n - local_n * core_num && core_idx == 0) {
+        do_extra = 1;
+    }
+
+    // let each calc it's prefix sum
+    result[core_idx * local_n] = my_sum;
+    for (unsigned i = 1; i < local_n; i++) {
+        my_sum += arr[core_idx * local_n + i];
+        result[core_idx * local_n + i] = my_sum;
+    }
+
+    shared[core_idx] = my_sum;
+    snrt_cluster_hw_barrier();
+
+    if (core_idx == 0) {
+        for (size_t i = 1; i < core_num; i++) {
+            // printf("intermediate sums at %d is %f\n", i, shared[i]);
+            shared[i] = shared[i-1] + shared[i];
+        }
+    }
+    // if (core_idx == 0) {
+    //     for (size_t i = 0; i < core_num; i++) {
+    //         printf("calculated sums at %d is %f\n", i, shared[i]);
+    //     }
+    // }
+    snrt_cluster_hw_barrier();
+
+    /* Now every core adds the global stuff */
+    // printf("Core %d adds %f\n", core_idx, shared[core_idx-1]);
+    for (unsigned i = 0; i < local_n && core_idx > 0; i++) {
+        result[core_idx * local_n + i] = result[core_idx * local_n + i] + shared[core_idx-1];
+        // printf("Setting result to %f\n", result[core_idx * local_n + i]);
+    }
+    snrt_cluster_hw_barrier();
+
+    if (do_extra) {
+        my_sum = shared[core_num - 1];
+        for (unsigned i = 0; i < n - local_n * core_num; i++) {
+            my_sum += arr[core_num * local_n + i];
+
+            result[core_num * local_n + i] = my_sum;
+        }
+    }
+
+    return 0;
+}
+
+int cumsum_ssr_parallel(const float* arr, const size_t n, volatile float* result) {
+    return 0;
+}
+
+int cumsum_ssr_frep_parallel(const float* arr, const size_t n, volatile float* result) {
+    // TODO
+
 }
