@@ -27,7 +27,7 @@ plotstyle()
 
 
 # Draw plots
-fig, ax = plt.subplots(figsize=(8.0, 8.0))
+fig, ax = plt.subplots(figsize=(10.0, 10.0))
 plt.xscale("log")
 plt.yscale("log")
 
@@ -55,8 +55,29 @@ for func_name in functions:
 
     else:
         try:
-            lines.append(ax.plot(xaxis, yaxis, label=func_name.replace("_"," "), marker="."))
-            # plt.legend()
+            label = func_name.replace("_", " ")
+
+            # decide on color and linestyle
+            linestyle = "solid"
+            color = "black"
+
+            if str(func_name).__contains__("baseline"):
+                pass
+            elif str(func_name).__contains__("simple"):
+                color = "blue"
+            elif str(func_name).__contains__("_ssr_frep"):
+                color = "orange"
+            elif str(func_name).__contains__("_ssr"):
+                color = "limegreen"
+            
+            if str(func_name).__contains__("parallel"):
+                linestyle = "dotted"
+
+            if str(func_name).__contains__("omp"):
+                linestyle = "dashed"
+
+            lines.append(ax.plot(xaxis, yaxis, label=label, linestyle=linestyle, color=color))
+            plt.legend()
         except Exception as e:
             print (f"xaxis: {xaxis} and yaxis: {yaxis}")
             raise e
@@ -70,7 +91,7 @@ ax.set_xscale('log', base=2)
 ax.set_yscale('log', base=2)
 
 no_labels = len(data.keys())
-xlabelpos = np.logspace(np.log2(sorted(global_xaxis)[-3]), np.log2(sorted(global_xaxis)[0]), no_labels, base=2)[1:-1]
+xlabelpos = np.logspace(np.log2(max(global_xaxis)), np.log2(min(global_xaxis)), no_labels, base=2)[1:-1]
 
 # print(f"Max on x-axis: {max(global_xaxis)}")
 labelLines(align=True, yoffsets=0.1, yoffset_logspace=True, xvals=xlabelpos)
