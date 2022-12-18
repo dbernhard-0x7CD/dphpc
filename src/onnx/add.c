@@ -180,7 +180,6 @@ int add_ssr_frep_parallel(float *a, float* b, const size_t n, float* result) {
         result[local_n * core_num + core_idx] = a[local_n * core_num + core_idx] + b[local_n * core_num + core_idx];
     }
 
-    snrt_global_barrier();
     return 0;
 }
 
