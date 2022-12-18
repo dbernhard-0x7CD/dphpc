@@ -21,11 +21,6 @@ int leakyrelu_baseline(float *x,  const size_t n, float alpha, float* result) {
 
 __attribute__((noinline))
 int leakyrelu_ssr(float *x, const size_t n, float alpha, float* result) {
-
-    register volatile float ft0 asm("ft0");
-    register volatile float ft1 asm("ft1");
-    asm volatile("" : "=f"(ft0));
-
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*x));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, x);
@@ -53,7 +48,6 @@ int leakyrelu_ssr(float *x, const size_t n, float alpha, float* result) {
     );
 
     snrt_ssr_disable();
-    asm volatile("" :: "f"(ft1));
 
     return 0;
 }
@@ -61,34 +55,7 @@ int leakyrelu_ssr(float *x, const size_t n, float alpha, float* result) {
 __attribute__((noinline))
 int leakyrelu_ssr_frep(float *x, const size_t n, float alpha, float* result) {
 
-    // register volatile float ft0 asm("ft0");
-    // register volatile float ft1 asm("ft1");
-    // register volatile float ft2 asm("ft2");
-    // asm volatile("" : "=f"(ft0), "=f"(ft1));
+    // Not possible with frep
 
-    // snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*a));
-    // snrt_ssr_repeat(SNRT_SSR_DM0, 1);
-    // snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, a);
-
-    // snrt_ssr_loop_1d(SNRT_SSR_DM1, n, sizeof(*b));
-    // snrt_ssr_repeat(SNRT_SSR_DM1, 1);
-    // snrt_ssr_read(SNRT_SSR_DM1, SNRT_SSR_1D, b);
-
-    // snrt_ssr_loop_1d(SNRT_SSR_DM2, n, sizeof(*result));
-    // snrt_ssr_repeat(SNRT_SSR_DM2, 1);
-    // snrt_ssr_write(SNRT_SSR_DM2, SNRT_SSR_1D, result);
-
-    // snrt_ssr_enable();
-
-    // asm volatile(
-    //     "frep.o %[n_frep], 1, 0, 0 \n"
-    //     "fadd.s ft2, ft0, ft1 \n"
-    //     :: [n_frep] "r"(n - 1) : "ft0", "ft1", "ft2"
-    // );
-
-    // snrt_ssr_disable();
-    // asm volatile("" :: "f"(ft2));
-
-    // return 0;
-    return leakyrelu_baseline(x, n, alpha, result);
+    return 0;
 }
