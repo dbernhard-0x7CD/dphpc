@@ -59,7 +59,7 @@ int main() {
         //     printf("result at index %d is %f ref: %f\n", i, result[i], result_ref[i]);
         // }
         if (core_idx == 0) {
-            verify_vector(result, result_ref, size);
+            verify_vector_approx(result, result_ref, size);
             clear_vector(result, size);
         }
         
