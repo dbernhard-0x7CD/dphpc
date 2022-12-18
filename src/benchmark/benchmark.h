@@ -107,7 +107,7 @@ static inline void verify_vector(const float* value, const float* reference, con
  */
 static inline void verify_vector_approx(const float* value, const float* reference, const size_t n) {
     for (size_t i = 0; i < n; ++i) {
-        if (abs(value[i] - reference[i]) > 0.00001) {
+        if (abs(value[i] - reference[i]) > reference[i]*0.0005) {
             printf("MISMATCH at i=%d: expected %.10f, but got %.10f\n", i, reference[i], value[i]);
         }
     }
