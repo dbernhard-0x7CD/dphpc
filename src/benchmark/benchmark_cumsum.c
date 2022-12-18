@@ -22,7 +22,7 @@ int main() {
 
         srandom(2);
         for (size_t i = 0; i < size; i++) {
-            x[i] = (float)i + 1.0;
+            x[i] = 1.0 * random() / __LONG_MAX__;
         }
 
         // For debugging purposes
