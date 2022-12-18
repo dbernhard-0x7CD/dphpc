@@ -193,16 +193,71 @@ int sin_ssr_parallel(float* arr, const size_t n, float* result) {
 }
 
 /*
- * Naive implementation of sin using a lookup table. Looks up the element-wise sine and stores it in result.
+ * Naive implementation of sin using a an approximation formula.
  */
 __attribute__((noinline)) 
-int sin_baseline_lookup_table(float* arr, const size_t n, float* result, float* lookup_table, const size_t lookup_table_size) {
-    float factor = lookup_table_size / M_PI * 2.0;
+int sin_approx_baseline(float* arr, const size_t n, float* result) {
+    const float Q = 0.775;
+    const float P = 0.225;
+    const float B = 4.0/M_PI;
+    const float C = -4.0/(M_PI*M_PI);
     for (size_t i = 0; i < n; i++) {
-        result[i] = lookup_table[(int)(arr[i] * factor)];
+        float y = (B * arr[i]) + (C * (arr[i] * arr[i]));
+        result[i] = (Q * y) + (P * (y * y));
     }
+    return 0;
 }
 
+__attribute__((noinline)) 
+int sin_approx_ssr(float* arr, const size_t n, float* result) {
+    // Adress pattern configuration
+    register volatile float ft0 asm("ft0"); // input arr
+    register volatile float ft1 asm("ft1"); // output result
+    
+    asm volatile("" : "=f"(ft0));
+
+    // Stream arr into ft0
+    snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*arr));
+    snrt_ssr_repeat(SNRT_SSR_DM0, 1);
+    snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, arr);
+
+    // Stream from ft1 to result
+    snrt_ssr_loop_1d(SNRT_SSR_DM1, n, sizeof(*result));
+    snrt_ssr_repeat(SNRT_SSR_DM1, 1);
+    snrt_ssr_write(SNRT_SSR_DM1, SNRT_SSR_1D, result);
+
+    snrt_ssr_enable();
+
+    volatile size_t i;
+    const float Q = 0.775;
+    const float P = 0.225;
+    const float B = 4.0/M_PI;
+    const float C = -4.0/(M_PI*M_PI);
+
+    asm volatile(
+        "li %[i], 0\n" // i = 0
+        "0: "
+        "fmv.s fa0, ft0\n" // fa0 <- arr[i]
+        "fmul.s fa1, %[B], fa0\n" // fa1 <- B * arr[i]
+        "fmul.s fa0, fa0, fa0\n" // fa0 <- arr[i] * arr[i]
+        "fmul.s fa0, %[C], fa0\n" // fa0 <- C * fa0 = C * arr[i] * arr[i]
+        "fadd.s fa1, fa1, fa0\n" // fa1 <- fa1 + fa0 = B * arr[i] + C * arr[i] * arr[i]
+        "fmul.s fa0, fa1, fa1\n" // fa0 <- fa1 * fa1
+        "fmul.s fa0, %[P], fa0\n" // fa0 <- P * fa0 = P * fa1 * fa1
+        "fmul.s fa1, %[Q], fa1\n" // fa1 <- Q * fa1
+        "fadd.s ft1, fa1, fa0\n" // ft1 <- fa1 + fa0
+        "addi %[i], %[i], 1\n" // i <- i+1
+        "blt %[i], %[n], 0b\n" // go to 0 if i < n
+        : [i] "+r"(i)
+        : [n] "r"(n), [Q] "f"(Q), [P] "f"(P), [B] "f"(B), [C] "f"(C)
+        : "ft0", "ft1", "fa0", "fa0"
+    );
+
+    snrt_ssr_disable();
+    asm volatile("" :: "f"(ft0));
+
+    return 0;
+}
 
 __attribute__((noinline)) 
 int sin_omp(float* arr, const size_t n, float* result) {
@@ -210,42 +265,6 @@ int sin_omp(float* arr, const size_t n, float* result) {
     for (unsigned i = 0; i < n; i++) {
         result[i] = sinf(arr[i]);
     }
-    return 0;
-}
-
-__attribute__((noinline)) 
-int sin_ssr_lookup_table(float* arr, const size_t n, float* result, float* lookup_table, const size_t lookup_table_size) {
-    snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*arr));
-    snrt_ssr_repeat(SNRT_SSR_DM0, 1); // load every element only once
-    snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, arr); // read from arr
-
-    snrt_ssr_loop_1d(SNRT_SSR_DM1, n, sizeof(*result));
-    snrt_ssr_repeat(SNRT_SSR_DM1, 1); // load every element only once
-    snrt_ssr_write(SNRT_SSR_DM1, SNRT_SSR_1D, result); // write to result
-
-    // Enabling stream semantics
-    snrt_ssr_enable();
-
-    // Computation
-    register float factor = lookup_table_size / M_PI * 2.0;
-    size_t index;
-    /*for (size_t i = 0; i < n; i++) {
-        asm volatile(
-            "fmul.s fa1, ft0, %[factor]\n" // fa1 <- arr[i] * factor
-            "fcvt.wu.s %[index], fa1\n" // index <- cast fa1 to int
-            "lw a3, -48(s0)\n" // a3 <- lookup_table
-            "add a3, a3, %[index]\n" // a3 <- lookup_table + index
-            // "flw fa1, 0(a3)\n" // fa1 <- mem(a3) (i.e., lookup_table[index])
-            // "fmv.s ft1, fa1" // ft1 <- fa1
-            : [index] "+r"(index) // index is written to (and also read from)
-            : [factor] "f"(factor) // factor is only read form
-            : "ft0", "ft1", "fa1"
-        ); 
-    }*/
-
-    // Disabling stream semantics
-    snrt_ssr_disable();
-
     return 0;
 }
 

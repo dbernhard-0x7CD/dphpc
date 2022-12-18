@@ -10,9 +10,7 @@
 #   define M_PI 3.14159265358979323846
 #endif
 
-const size_t lookup_table_size = 10000;
-
-float *x, *lookup_table, *result_ref, *result;
+float *x, *result_ref, *result;
 
 int main() {
     uint32_t core_idx = snrt_cluster_core_idx();
@@ -21,13 +19,8 @@ int main() {
         printf("Running benchmark_sin\n");
 
         x = allocate(size, sizeof(float)); // input
-        lookup_table = allocate(lookup_table_size, sizeof(float)); // lookup table for sin
         result_ref = allocate(size, sizeof(float)); // reference output (ground truth)
         result = allocate(size, sizeof(float)); // output of optimized functions
-
-        for (size_t x = 0; x < lookup_table_size; x++) {
-            lookup_table[x] = sinf(M_PI/2.0 * x / lookup_table_size);
-        }
 
         srandom(2); // setting seed 2
         x[0] = 0.0; // sin(0.0) is 0.0
@@ -36,9 +29,14 @@ int main() {
             x[i] = 1.0 * random() / __LONG_MAX__;
         }
 
-        // for(unsigned i = 0; i < size; i++) {
-        //     printf("Input at %d is %f\n", i, x[i]);
-        // }
+        BENCH_VO(sin_approx_baseline, x, size, result_ref);
+
+        BENCH_VO(sin_approx_ssr, x, size, result);
+        verify_vector_approx(result, result_ref, size);
+
+        clear_vector(result, size);
+        clear_vector(result_ref, size);
+
         BENCH_VO(sin_baseline, x, size, result_ref);
         
         BENCH_VO(sin_ssr, x, size, result);
@@ -47,14 +45,6 @@ int main() {
         clear_vector(result, size);
     }
 
-        /*
-        BENCH_VO(sin_baseline_lookup_table, x, size, result, lookup_table, lookup_table_size);
-        BENCH_VO(sin_ssr_lookup_table, x, size, result, lookup_table, lookup_table_size);
-        for(size_t i = 0; i < size; i++) {
-            printf("%f vs. %f\n", x[i]*lookup_table_size / M_PI * 2, result[i]);
-        }
-        
-        verify_vector(result, result_ref, size); */
     /* Benchmark bare metal parallel */
     for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
         uint32_t core_num = snrt_cluster_compute_core_num();

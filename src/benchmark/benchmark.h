@@ -102,6 +102,18 @@ static inline void verify_vector(const float* value, const float* reference, con
 };
 
 /*
+ * (Approximately) compares the vector starting at value element wise with the vector at reference.
+    Prints if they do not match.
+ */
+static inline void verify_vector_approx(const float* value, const float* reference, const size_t n) {
+    for (size_t i = 0; i < n; ++i) {
+        if (abs(value[i] - reference[i]) > 0.00001) {
+            printf("MISMATCH at i=%d: expected %.10f, but got %.10f\n", i, reference[i], value[i]);
+        }
+    }
+};
+
+/*
  * Compares the vector starting at value element wise with the vector at reference. This ignores values that are multiples of the chunk size + 1.
   This comes from the SSR anomaly that they write -inf after the last element.
  */

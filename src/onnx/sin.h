@@ -17,11 +17,10 @@ int sin_parallel(float* arr, const size_t n, float* result);
 int sin_ssr_parallel(float* arr, const size_t n, float* result);
 
 /*
- * Naive implementation of sin using a lookup table. Looks up the element-wise sine and stores it in result.
+ * Naive implementation of sin using a an approximation formula.
  */
-int sin_baseline_lookup_table(float* arr, const size_t n, float* result, float* lookup_table, const size_t lookup_table_size);
-
-int sin_ssr_lookup_table(float* arr, const size_t n, float* result, float* lookup_table, const size_t lookup_table_size);
+int sin_approx_baseline(float* arr, const size_t n, float* result);
+int sin_approx_ssr(float* arr, const size_t n, float* result);
 
 int sin_omp(float* arr, const size_t n, float* result);
 int sin_ssr_omp(float* arr, const size_t n, float* result);
