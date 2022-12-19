@@ -25,10 +25,6 @@ int main() {
         BENCH_VO(leakyrelu_ssr, x, size, alpha, result);
         verify_vector(result, result_ref, size);
         clear_vector(result, size);
-
-        BENCH_VO(leakyrelu_ssr_frep, x, size, alpha, result);
-        verify_vector(result, result_ref, size);
-        clear_vector(result, size);
     }
  
     return 0;
