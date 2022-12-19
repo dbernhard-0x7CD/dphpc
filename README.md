@@ -130,7 +130,7 @@ python3 plots/runtime_plot.py -include abs -exclude frep
 # TODO
 * TEST core count configuration of SIMULATOR
 * Use multiple cores
-    * cumsum, argmax?
+    * argmax?
 * Try OpenMP
     * for BW heavy reduction
     * argmax?
@@ -141,9 +141,9 @@ python3 plots/runtime_plot.py -include abs -exclude frep
 * rnn?
 * parallel transpose
 * fix batchnorm benchmark
-* bar plot
 
 # DONE
+* bar plot
 * barrier wait indefinitely; reduce has "undefined symbol: __kmpc_reduce_nowait" compile error
 * SSR+FREP
     * abs, acos (no frep), acosh (no frep), add, argmax (no frep), asinh (no frep), batchnorm, copy, cumsum, div, dot, dropout, gemm, masked_dropout, max, maxpool, relu, sigmoid, sin, sum, transpose
