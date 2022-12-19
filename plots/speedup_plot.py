@@ -72,17 +72,35 @@ for v in grouping.values():
 plt_len = counter * 1.5
 fig, ax = plt.subplots(figsize=(plt_len, 16.0))
 # plt.xticks(rotation=90, fontsize=24)
-plt.subplots_adjust(bottom=0.25)
+plt.subplots_adjust(bottom=0.3, top=0.95, left=0.05, right=0.95)
 
 width = 0.95
 
-for i in range(max(map(len, grouping.values()))):
-    bar_names = list(map(lambda x: x[i] if len(x) > i else False, grouping.values()))
-    
-    y_axis = [speedups[x] for x in bar_names if x]
-    x_axis = [x_offsets[x] for x in bar_names if x]
+ssr_frep_names = [k for k in data.keys() if "ssr_frep" in k]
+ssr_names = [k for k in data.keys() if "ssr" in k and k not in ssr_frep_names]
 
-    ax.bar(x_axis, y_axis, width=width)
+# for i in range(max(map(len, grouping.values()))):
+#     bar_names = list(map(lambda x: x[i] if len(x) > i else False, grouping.values()))
+    
+#     y_axis = [speedups[x] for x in bar_names if x]
+#     x_axis = [x_offsets[x] for x in bar_names if x]
+
+#     ax.bar(x_axis, y_axis, width=width)
+
+for k in data.keys():
+    if k in baseline_names or k.endswith("_n"):
+        continue
+    
+    y_axis = [speedups[k]]
+    x_axis = [x_offsets[k]]
+
+    c = 'black'
+    if k in ssr_names:
+        c = 'limegreen'
+    elif k in ssr_frep_names:
+        c = 'orange'
+
+    ax.bar(x_axis, y_axis, width=width, color=c)
 
 ax.plot([-width/2, counter-2+(width/2)], [1,1], '--', color='gray')
 
@@ -100,16 +118,18 @@ for label in labels:
         xpos = x_offsets[label]
         ax.text(
             xpos, 
-            2**(-2.6), 
+            -0.25, 
+            # 2**(-), 
             "  {} ({:.2f}x)".format(label, speedups[label]), 
             ha="center", va="top", fontsize=FONTSIZE, rotation=90)
         ax.plot([xpos, xpos], speedup_errs[label], color='red')
     except: pass
 
 ax.set_xticklabels([])
-ax.set_yscale('log', base=2)
+# ax.set_yscale('log', base=2)
 plt.ylabel("Speedup factor (Baseline = 1)", fontsize=FONTSIZE)
 
-plt.title("Speedup Plot (Red line = 5% - 95% quantile)", fontsize=FONTSIZE)
+plt.title("Speedup Plot (Red line = 5% - 95% quantile for 1000 runs)", fontsize=FONTSIZE)
+ax.locator_params(nbins=15, axis='y')
 
 plt.show()
