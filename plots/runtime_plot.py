@@ -20,11 +20,9 @@ if ".git" not in os.listdir(os.getcwd()):
 include, exclude, savepath, _, _ = arg_parse()
 functions, data = load_plot_data(fullpath, include=include, exclude=exclude)
 global_xaxis = set()
-# del data["n"]
 
 # apply similar styling across all plots
 plotstyle()
-
 
 # Draw plots
 fig, ax = plt.subplots(figsize=(10.0, 10.0))
@@ -77,10 +75,10 @@ for func_name in functions:
                 linestyle = "dashed"
 
             lines.append(ax.plot(xaxis, yaxis, label=label, linestyle=linestyle, color=color))
-            plt.legend()
         except Exception as e:
             print (f"xaxis: {xaxis} and yaxis: {yaxis}")
             raise e
+    plt.legend()
 
 print("run e.g '$ python3 plots/runtime_plot.py -include add -exclude parallel' to show the runtime for add excluding parallel")
 
