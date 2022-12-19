@@ -8,11 +8,10 @@ def plotstyle():
     #                 ['#2E604A', '#27223C', '#A35E60',
     #                 '#D1362F', '#541F12', '#957A6D'])
     random.seed(42)
-    c = ["#003f5c", "#7a5195", "#ef5675", "#ffa600"]
-    # c = ["#ff0000", "#00ff00", "#0000ff"]
-    random.shuffle(c)
-    colors = cycler('color',
-                    c)
+    # c = ["r", "g", "b", "#ffa600"]
+    c = ["#ff0000", "#00ff00", "#0000ff"]
+    # random.shuffle(c)
+    colors = cycler('color', c)
     plt.rc('axes', facecolor='#E6E6E6', edgecolor='none',
         axisbelow=True, grid=True, prop_cycle=colors)
     # plt.rc('axes', facecolor='#E6E6E6', edgecolor='none',
