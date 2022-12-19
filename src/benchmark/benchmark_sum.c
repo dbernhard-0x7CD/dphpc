@@ -19,18 +19,19 @@ int main() {
 
         x = allocate(size, sizeof(float));
         for (size_t i = 0; i < size; i++) {
-            x[i] = i;
+            x[i] = 1.0 * random() / __LONG_MAX__;
+            // x[i] = i;
         }
 
         BENCH(sum_baseline, x, size, &result_ref);
         printf("Baseline: %f\n", result_ref);
 
         BENCH(sum_ssr, x, size, &result);
-        VERIFY_INT(result, result_ref, "MISMATCH Expected %f but got %f\n", result_ref, result);
+        VERIFY_INT_APPROX(result, result_ref, "MISMATCH Expected %f but got %f\n", result_ref, result);
         result = -1.0;
 
         BENCH(sum_ssr_frep, x, size, &result);
-        VERIFY_INT(result, result_ref, "MISMATCH Expected %f but got %f\n", result_ref, result);
+        VERIFY_INT_APPROX(result, result_ref, "MISMATCH Expected %f but got %f\n", result_ref, result);
         result = -1.0;
     }
 

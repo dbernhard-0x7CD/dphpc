@@ -89,6 +89,11 @@ volatile size_t runs = LMQ_RUNS;
         printf(__VA_ARGS__);                        \
     } } while(0);
 
+#define VERIFY_INT_APPROX(value, reference, ...)           \
+    do { if (value - reference > reference*0.0005) {                  \
+        printf(__VA_ARGS__);                        \
+    } } while(0);
+
 /*
  * Compares the vector starting at value element wise with the vector at reference.
     Prints if they do not match.
