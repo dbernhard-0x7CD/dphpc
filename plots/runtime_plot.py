@@ -39,6 +39,28 @@ for func_name in functions:
     xlen = min(len(xaxis), len(yaxis))
     # print(func_name)
     # print(len(yaxis))
+
+    label = func_name.replace("_", " ")
+
+    # decide on color and linestyle
+    linestyle = "solid"
+    color = "black"
+
+    if str(func_name).__contains__("baseline"):
+        pass
+    elif str(func_name).__contains__("simple"):
+        color = "blue"
+    elif str(func_name).__contains__("_ssr_frep"):
+        color = "orange"
+    elif str(func_name).__contains__("_ssr"):
+        color = "limegreen"
+    
+    if str(func_name).__contains__("parallel"):
+        linestyle = "dotted"
+
+    if str(func_name).__contains__("omp"):
+        linestyle = "dashed"
+
     if isinstance(data[func_name][0], list):
         q95 = lambda x: np.quantile(x, 0.95)
         q50 = lambda x: np.quantile(x, 0.5)
@@ -53,27 +75,6 @@ for func_name in functions:
 
     else:
         try:
-            label = func_name.replace("_", " ")
-
-            # decide on color and linestyle
-            linestyle = "solid"
-            color = "black"
-
-            if str(func_name).__contains__("baseline"):
-                pass
-            elif str(func_name).__contains__("simple"):
-                color = "blue"
-            elif str(func_name).__contains__("_ssr_frep"):
-                color = "orange"
-            elif str(func_name).__contains__("_ssr"):
-                color = "limegreen"
-            
-            if str(func_name).__contains__("parallel"):
-                linestyle = "dotted"
-
-            if str(func_name).__contains__("omp"):
-                linestyle = "dashed"
-
             lines.append(ax.plot(xaxis, yaxis, label=label, linestyle=linestyle, color=color))
         except Exception as e:
             print (f"xaxis: {xaxis} and yaxis: {yaxis}")
