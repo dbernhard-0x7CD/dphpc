@@ -31,13 +31,6 @@ int unique_baseline(float* arr, const size_t n, float* result) {
 
 __attribute__((noinline)) 
 int unique_ssr(float* arr, const size_t n, float* result) {
-
-    // Adress pattern configuration
-    register volatile float ft0 asm("ft0"); // input arr
-    register volatile float ft1 asm("ft1"); // output result
-    
-    asm volatile("" : "=f"(ft0));
-
     // Stream arr into ft0
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*arr));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
@@ -80,7 +73,6 @@ int unique_ssr(float* arr, const size_t n, float* result) {
     );
 
     snrt_ssr_disable();
-    asm volatile("" :: "f"(ft0));
 
     return 0;
 }
