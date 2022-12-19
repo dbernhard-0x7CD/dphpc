@@ -9,6 +9,7 @@
 #define LMQ_START_SIZE 10
 #endif
 
+// Up to which size we run. We start at LMQ_START_SIZE and double until we're over LMQ_SIZE
 #ifndef LMQ_SIZE
 #define LMQ_SIZE 1024
 #endif
