@@ -201,3 +201,164 @@ int conv2d_ssr_frep(float *a, float* filter, size_t n0, size_t n1, size_t f0, si
     snrt_ssr_disable();
     return 0;
 }
+
+__attribute__((noinline))
+int conv_parallel(float *a, float* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, float* result) {
+    size_t core_num = snrt_cluster_core_num() - 1;
+    size_t core_idx = snrt_cluster_core_idx();
+    size_t out_size = conv_output_size(n, filter_size, stride, dilation);
+
+    // Parallelize over out_size
+    size_t local_n = out_size / core_num;
+
+    if (snrt_is_dm_core()) {
+        return 0;
+    }
+
+    int do_extra = 0;
+    if (core_idx < out_size - local_n * core_num) {
+        do_extra = 1;
+    }
+
+    for (size_t i = 0; i < local_n; ++i) {
+        volatile float acc = 0;
+        for (size_t j = 0; j < filter_size; ++j) {
+            acc += a[stride * (core_idx * local_n + i) + dilation * j] * filter[j];
+        }
+
+        result[core_idx * local_n + i] = acc;
+    }
+
+    if (do_extra) {
+        float acc = 0;
+        for (size_t j = 0; j < filter_size; ++j) {
+            acc += a[stride * (core_num * local_n + core_idx) + dilation * j] * filter[j];
+        }
+
+        result[core_idx + core_num * local_n] = acc;
+    }
+
+    return 0;
+}
+
+int conv_ssr_parallel(float *a, float* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, float* result) {
+    size_t core_num = snrt_cluster_core_num() - 1;
+    size_t core_idx = snrt_cluster_core_idx();
+    size_t out_size = conv_output_size(n, filter_size, stride, dilation);
+
+    // Parallelize over out_size
+    size_t local_n = out_size / core_num;
+
+    if (snrt_is_dm_core()) {
+        return 0;
+    }
+
+    int do_extra = 0;
+    if (core_idx < out_size - local_n * core_num) {
+        do_extra = 1;
+    }
+
+    snrt_ssr_loop_2d(SNRT_SSR_DM0, filter_size, local_n, sizeof(*a) * dilation, sizeof(*a) * stride);
+    snrt_ssr_repeat(SNRT_SSR_DM0, 1);
+    snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_2D, a + stride * local_n * core_idx);
+
+    snrt_ssr_loop_2d(SNRT_SSR_DM1, filter_size, local_n, sizeof(*a), 0);
+    snrt_ssr_repeat(SNRT_SSR_DM1, 1);
+    snrt_ssr_read(SNRT_SSR_DM1, SNRT_SSR_2D, filter);
+
+    snrt_ssr_loop_1d(SNRT_SSR_DM2, local_n, sizeof(*result));
+    snrt_ssr_repeat(SNRT_SSR_DM2, 1);
+    snrt_ssr_write(SNRT_SSR_DM2, SNRT_SSR_1D, result + local_n * core_idx);
+
+    snrt_ssr_enable();
+
+    for (size_t i = 0; i < local_n; ++i) {
+        volatile register float acc = 0.0;
+
+        for (size_t j = 0; j < filter_size; ++j) {
+            asm volatile(
+                "fmadd.s %[acc], ft0, ft1, %[acc] \n"
+                : [acc] "+f" (acc)
+                : 
+                : "ft0", "ft1", "ft2"
+            );
+        }
+        asm volatile(
+            "fmv.s ft2, %[acc] \n"
+            :
+            : [acc] "f" (acc)
+            : "ft0", "ft1", "ft2"
+        );
+
+    }
+
+    snrt_ssr_disable();
+
+    if (do_extra) {
+        float acc = 0;
+        for (size_t j = 0; j < filter_size; ++j) {
+            acc += a[stride * (core_num * local_n + core_idx) + dilation * j] * filter[j];
+        }
+
+        result[core_idx + core_num * local_n] = acc;
+    }
+
+    return 0;
+}
+
+int conv_ssr_frep_parallel(float *a, float* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, float* result) {
+    size_t core_num = snrt_cluster_core_num() - 1;
+    size_t core_idx = snrt_cluster_core_idx();
+    size_t out_size = conv_output_size(n, filter_size, stride, dilation);
+
+    // Parallelize over out_size
+    size_t local_n = out_size / core_num;
+
+    if (snrt_is_dm_core()) {
+        return 0;
+    }
+
+    int do_extra = 0;
+    if (core_idx < out_size - local_n * core_num) {
+        do_extra = 1;
+    }
+
+    snrt_ssr_loop_2d(SNRT_SSR_DM0, filter_size, local_n, sizeof(*a) * dilation, sizeof(*a) * stride);
+    snrt_ssr_repeat(SNRT_SSR_DM0, 1);
+    snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_2D, a + stride * local_n * core_idx);
+
+    snrt_ssr_loop_2d(SNRT_SSR_DM1, filter_size, local_n, sizeof(*a), 0);
+    snrt_ssr_repeat(SNRT_SSR_DM1, 1);
+    snrt_ssr_read(SNRT_SSR_DM1, SNRT_SSR_2D, filter);
+
+    snrt_ssr_loop_1d(SNRT_SSR_DM2, local_n, sizeof(*result));
+    snrt_ssr_repeat(SNRT_SSR_DM2, 1);
+    snrt_ssr_write(SNRT_SSR_DM2, SNRT_SSR_1D, result + local_n * core_idx);
+
+    snrt_ssr_enable();
+
+    for (size_t i = 0; i < local_n; ++i) {
+        volatile register float acc = 0.0;
+        asm volatile(
+            "frep.o %[n_frep], 1, 0, 0\n"
+            "fmadd.s %[acc], ft0, ft1, %[acc]\n"
+            "fmv.s ft2, %[acc] \n"
+            : [acc] "+f" (acc)
+            : [n_frep] "r" (filter_size - 1)
+            : "ft0", "ft1", "ft2"
+        );
+    }
+
+    snrt_ssr_disable();
+
+    if (do_extra) {
+        float acc = 0;
+        for (size_t j = 0; j < filter_size; ++j) {
+            acc += a[stride * (core_num * local_n + core_idx) + dilation * j] * filter[j];
+        }
+
+        result[core_idx + core_num * local_n] = acc;
+    }
+
+    return 0;
+}
