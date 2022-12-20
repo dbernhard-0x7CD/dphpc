@@ -129,19 +129,15 @@ python3 plots/runtime_plot.py -include abs -exclude frep
 
 # TODO
 * TEST core count configuration of SIMULATOR
-* Use multiple cores
-    * argmax
-* Try OpenMP
-    * for BW heavy reduction
-    * argmax?
-* conv2d
-    * also parallel
+* parallelize
+    * conv2d, maxpool, transpose, max
 * scatter/gather
     * here we should not use powers of 2 (they are optimal for trees)
 * rnn?
-* parallel transpose
 
 # DONE
+* Use multiple cores
+    * argmax
 * conv parallel
 * fix batchnorm benchmark
     * manually created as SSR is configured three times and this causes problems
