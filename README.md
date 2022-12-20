@@ -128,14 +128,19 @@ python3 plots/runtime_plot.py -include abs -exclude frep
 * increase core count is not possible as it freezes and has 'branch to unpredicted address' errors (in banshee)
 
 # TODO
-* TEST core count configuration of SIMULATOR
+* plot some theoretical lower bounds
+* calculate theoretical runtime
+* colors/plotstyle consistent
+* comparison of theoretical runtime of problem relative to runtime on x86
+* look into bug of spilling
 * parallelize
-    * conv2d, maxpool, transpose, max
+    * conv2d, maxpool, maxpool2d, transpose, max, unique
 * scatter/gather
     * here we should not use powers of 2 (they are optimal for trees)
 * rnn?
 
 # DONE
+* TEST core count configuration of SIMULATOR
 * Use multiple cores
     * argmax
 * conv parallel
