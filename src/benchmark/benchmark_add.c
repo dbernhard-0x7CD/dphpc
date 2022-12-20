@@ -22,7 +22,6 @@ int main() {
         y = allocate(size, sizeof(float));
         result_ref = allocate(size, sizeof(float));
         result = allocate(size, sizeof(float));
-        cycles_count = allocate(core_num, sizeof(size_t));
 
         for (unsigned i = 0; i < size; i++) {
             x[i] = (float)i;
@@ -45,21 +44,18 @@ int main() {
     for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
         // =========== Parallel benchmarks with barriers ===========
         size_t chunk_size = size / core_num;
-        cycles_count[core_idx] = 0;
         BENCH_VO_PARALLEL(add_parallel, x, y, size, result);
         if (core_idx == 0){
             verify_vector_omp(result, result_ref, size, chunk_size);
             clear_vector(result, size);
         }
 
-        cycles_count[core_idx] = 0;
         BENCH_VO_PARALLEL(add_ssr_parallel, x, y, size, result);
         if (core_idx == 0){
             verify_vector_omp(result, result_ref, size, chunk_size);
             clear_vector(result, size);
         }
 
-        cycles_count[core_idx] = 0;
         BENCH_VO_PARALLEL(add_ssr_frep_parallel, x, y, size, result);
         if (core_idx == 0){
             verify_vector_omp(result, result_ref, size, chunk_size);
