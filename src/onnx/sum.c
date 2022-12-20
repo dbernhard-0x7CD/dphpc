@@ -72,10 +72,6 @@ int sum_parallel(float *arr, const size_t n, float* result) {
     size_t core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
 
-    /*
-     * We need this array to store the result of each core.
-     * As a reduction cannot be compiled (results in endless loop)
-     */
     if (core_idx == 0) {
         result_arr = allocate(core_num , sizeof(float));
     }
@@ -123,10 +119,6 @@ int sum_ssr_parallel(float *arr, const size_t n, float* result) {
     size_t core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
 
-    /*
-     * We need this array to store the result of each core.
-     * As a reduction cannot be compiled (results in endless loop)
-     */
     if (core_idx == 0) {
         result_arr = allocate(core_num , sizeof(float));
     }
@@ -185,10 +177,6 @@ int sum_ssr_frep_parallel(float *arr, const size_t n, float* result) {
     size_t core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
 
-    /*
-     * We need this array to store the result of each core.
-     * As a reduction cannot be compiled (results in endless loop)
-     */
     if (core_idx == 0) {
         result_arr = allocate(core_num , sizeof(float));
     }
