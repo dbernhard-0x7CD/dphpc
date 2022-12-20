@@ -34,19 +34,19 @@ export run
 
 # Builds locally
 build() {
-    cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE .. && cmake --build . -j && cd ..
+    cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE .. && cmake --build . -j
 }
 export build
 
 # Builds against the vlt simulator (clean before running this)
 build_sim() {
-    cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE -DCLUSTER_SIM=1 .. && cmake --build . -j && cd ..
+    cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE -DCLUSTER_SIM=1 .. && cmake --build . -j
 }
 export build_sim
 
 # Builds against the vlt simulator (clean before running this) with a given size for the benchmark
 build_sim_size() {
-    cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE -DCLUSTER_SIM=1 -DLMQ_SIZE=$1 .. && cmake --build . -j && cd ..
+    cd $PROOT/build && cmake -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_LLVM_FILE -DCLUSTER_SIM=1 -DLMQ_SIZE=$1 .. && cmake --build . -j
 }
 export build_sim_size
 
