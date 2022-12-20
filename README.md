@@ -134,7 +134,7 @@ python3 plots/runtime_plot.py -include abs -exclude frep
 * Try OpenMP
     * for BW heavy reduction
     * argmax?
-* conv
+* conv2d
     * also parallel
 * scatter/gather
     * here we should not use powers of 2 (they are optimal for trees)
@@ -142,6 +142,7 @@ python3 plots/runtime_plot.py -include abs -exclude frep
 * parallel transpose
 
 # DONE
+* conv parallel
 * fix batchnorm benchmark
     * manually created as SSR is configured three times and this causes problems
 * bar plot
