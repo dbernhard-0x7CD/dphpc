@@ -21,7 +21,7 @@ git submodule update --init
 ```
 
 ## Load aliases
-After installing everthing you can source env.sh inside the **project root directory**: 
+After installing everthing you can source `env.sh` inside the **project root directory**:
 ```bash
 source ./scripts/env.sh
 ```
@@ -85,6 +85,17 @@ Now you can simulate the built applications with:
 run ./build/hello_world
 ```
 
+# Implemented
+* SSR
+    * abs, acos, acosh, add, argmax, asinh, batchnorm, conv, conv2d, copy, cumsum, div, dot, dropout, gemm, masked_dropout, max, maxpool, maxpool2d, relu, sigmoid, sin, sum, transpose, unique
+* FREP
+    * abs, add, batchnorm, conv, conv2d, copy, cumsum, div, dot, dropout, gemm, masked_dropout, max, maxpool, maxpool2d, relu, sigmoid, sin, sum, transpose
+* Parallelised (w/o any helpers except barriers)
+    * abs, add, argmax, conv, gemm, sin, sum
+* OMP
+    * add, add, gemm, sin, sum
+
+
 # Running benchmarks and generating Plots
 Note: To use the python-benchmarker, you need banshee and python3 set up.
 
@@ -133,8 +144,6 @@ python3 plots/runtime_plot.py -include abs -exclude frep
 
 # Report notes
 * Publish repository and add link to it in the report
-* Say why we have no error bars; Give confidence interval for OMP and bare metal parallelism
-* Bar plot of speedup per function
 * increase core count is not possible as it freezes and has 'branch to unpredicted address' errors (in banshee)
 
 # TODO
