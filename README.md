@@ -1,7 +1,7 @@
 
 # DPHPC - Lightning McQueens
 
-The goal of our project is to develop optimized operators (from the ONNX standard) for the snitch architecture.
+The goal of our project is to develop optimized operators from the ONNX standard for the snitch architecture.
 
 # Requirements
 * Either:
@@ -53,11 +53,14 @@ cd snitch/hw/system/snitch_cluster/
 make bin/snitch_cluster.vlt
 ```
 
-## Install riscv compiler (if you install the environment yourself and do not want to use docker)
+## Install a riscv compiler
+If you want to install the environment yourself and do not want to use docker. This allows you to use `build` and `build_size`.
 
 First define `$RISCV` to point to the directory you want to have the toolchain installed to.
 
 ```
+export RISCV=$HOME/.local/llvm-riscv
+
 curl -Ls --progress-bar -o riscv-llvm.tar.gz https://sourceforge.net/projects/pulp-llvm-project/files/nightly/riscv32-pulp-llvm-ubuntu2004.tar.gz/download
 
 tar -C $RISCV -xf riscv-llvm.tar.gz --strip-components=1
@@ -65,9 +68,16 @@ tar -C $RISCV -xf riscv-llvm.tar.gz --strip-components=1
 for file in riscv64-*; do ln -s $file $(echo "$file" | sed 's/^riscv64/riscv32/g'); done
 ```
 
-# Building
-* First run `source ./scripts/env.sh`
-* `dbuild` for docker
+## Building banshee
+To build banshee you have to execute the following commands:
+```bash
+cd ./snitch/sw/banshee
+cargo install --path .
+```
+
+# Building the project
+* First run `source ./scripts/env.sh` if you have not done so already
+* `dbuild` for docker (or `build`)
     * The build files should then be in `./build`
 
 Now you can simulate the built applications with:
@@ -133,6 +143,7 @@ python3 plots/runtime_plot.py -include abs -exclude frep
 * colors/plotstyle consistent
 * comparison of theoretical runtime of problem relative to runtime on x86
 * look into bug of spilling
+* look into bug of multiple SSR configurations
 * parallelize
     * conv2d, maxpool, maxpool2d, transpose, max, unique
 * scatter/gather
