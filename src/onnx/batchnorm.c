@@ -47,6 +47,8 @@ int batchnorm_ssr(float *a, const size_t n, float* result) {
         snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*a));
         snrt_ssr_repeat(SNRT_SSR_DM0, 1);
         snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, a);
+        
+        snrt_ssr_loop_1d(SNRT_SSR_DM1, 0, 0);
 
         snrt_ssr_enable();
 
@@ -67,6 +69,8 @@ int batchnorm_ssr(float *a, const size_t n, float* result) {
         snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*a));
         snrt_ssr_repeat(SNRT_SSR_DM0, 1);
         snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, a);
+        
+        snrt_ssr_loop_1d(SNRT_SSR_DM1, 0, 0);
 
         snrt_ssr_enable();
 
@@ -119,6 +123,8 @@ int batchnorm_ssr_frep(float *a, const size_t n, float* result) {
         snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*a));
         snrt_ssr_repeat(SNRT_SSR_DM0, 1);
         snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, a);
+        
+        snrt_ssr_loop_1d(SNRT_SSR_DM1, 0, 0);
 
         snrt_ssr_enable();
 
@@ -138,6 +144,8 @@ int batchnorm_ssr_frep(float *a, const size_t n, float* result) {
         snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*a));
         snrt_ssr_repeat(SNRT_SSR_DM0, 1);
         snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, a);
+
+        snrt_ssr_loop_1d(SNRT_SSR_DM1, 0, 0);
 
         snrt_ssr_enable();
 

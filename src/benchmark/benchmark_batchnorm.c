@@ -29,6 +29,10 @@ int main() {
 
         // The tests are split in two binaries as if they run together the later one writes out wrong values (for some reason)
 
+        BENCH_VO(batchnorm_ssr, x, size, result);
+        verify_vector(result, result_ref, size);
+        clear_vector(result, size);
+
         BENCH_VO(batchnorm_ssr_frep, x, size, result);
         verify_vector(result, result_ref, size);
         clear_vector(result, size);
