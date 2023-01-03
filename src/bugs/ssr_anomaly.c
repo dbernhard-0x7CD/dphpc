@@ -1,5 +1,4 @@
 #include "printf.h"
-#include <math.h>
 #include <stdlib.h>
 
 #include "lmq.h"
@@ -45,11 +44,8 @@ int main() {
             "addi x5, zero, 0\n"    // x5 <-- 0
             "fcvt.s.w ft1, x5\n"    // ft1 <-- float(x5)
             "fmv.s ft0, ft1\n"      // ft0 <-- ft1 (write to x[i])
-            : 
-            :
-            : "ft0", "ft1", "x5"
+            ::: "ft0", "ft1", "x5"
         );
-        // printf("Writing\n");
     }
     snrt_ssr_disable();
 
