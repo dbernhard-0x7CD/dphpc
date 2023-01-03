@@ -11,6 +11,7 @@ The goal of our project is to develop optimized operators from the ONNX standard
     * verilator
     * riscv compiler
     * dependencies of `snitch/python-requirements.txt` and `snitch/apt-requirements.txt`
+* cmake and gcc
 
 # Setup - Development Environment
 
@@ -96,11 +97,11 @@ run ./build/hello_world
     * add, add, gemm, sin, sum
 
 
-# Running benchmarks and generating Plots
+# Running benchmarks and generating plots
 Note: To use the python-benchmarker, you need banshee and python3 set up.
 
-First install the python dependencies found in `file://plots/requirements.txt`. We recommend doing this in a virtual environment.
-To set up the virtual python environment, run the following commands from the project root.
+First install the python dependencies found in `plots/requirements.txt`. We recommend doing this in a virtual environment.
+To set up the virtual python environment, run the following commands from the project root:
 ```bash
 python3 -m venv plots/.venv
 source ./plots/.venv/bin/activate
