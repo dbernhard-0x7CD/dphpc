@@ -80,11 +80,24 @@ def load_plot_dataframe(abspath, include=[], exclude=[]):
     data = tmp
 
     data = pd.json_normalize(
-    data,
-    record_path=['data'],
-    meta=['implementation name'],
-    errors='ignore')
+        data,
+        record_path=['data'],
+        meta=['implementation name'],
+        errors='ignore')
     
+    data["parallelism"] = data["implementation name"].apply(
+        lambda x: 'OMP' if 'omp' in x else \
+            'HW-barrier' if 'parallel' in x else \
+                'sequential'
+    )
+
+    data["optimization"] = data["implementation name"].apply(
+        lambda x: 'frep' if 'frep' in x else \
+            'ssr' if 'ssr' in x else \
+                'none'
+    )
+
+
     functions = arg_filter(functions, include, exclude)
     print("[    DATA LOADER]     loaded data for the plots {}".format(func_names))
     return functions, data
