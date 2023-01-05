@@ -86,8 +86,8 @@ def load_plot_dataframe(abspath, include=[], exclude=[]):
         errors='ignore')
     
     data["parallelism"] = data["implementation name"].apply(
-        lambda x: 'OMP' if 'omp' in x else \
-            'HW-barrier' if 'parallel' in x else \
+        lambda x: 'OpenMP' if 'omp' in x else \
+            'Multi-core' if 'parallel' in x else \
                 'sequential'
     )
 
