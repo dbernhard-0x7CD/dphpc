@@ -11,7 +11,7 @@
         2560,
         5120
     ],
-    "copy_baseline": [
+    "copy_snitch": [
         75,
         105,
         165,
@@ -23,7 +23,7 @@
         6605,
         13165
     ],
-    "copy_simple": [
+    "copy_baseline": [
         69,
         129,
         249,

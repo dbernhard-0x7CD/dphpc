@@ -28,7 +28,7 @@ int main() {
 
         BENCH_VO(copy_baseline, x, size, result_ref);
         
-        BENCH_VO(copy_simple, x, size, result);
+        BENCH_VO(copy_snitch, x, size, result);
         verify_vector(result, result_ref, size);
         clear_vector(result, size);
 

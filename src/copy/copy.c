@@ -6,14 +6,14 @@
 #include "printf.h"
 
 __attribute__((noinline))
-int copy_baseline(float* source, const size_t n, float* target) {
+int copy_snitch(float* source, const size_t n, float* target) {
     snrt_memcpy(target, source, n * sizeof(float));
 
     return 0;
 }
 
 __attribute__((noinline))
-int copy_simple(float* source, const size_t n, float* target) {
+int copy_baseline(float* source, const size_t n, float* target) {
 
     for (uint32_t i = 0; i < n; i++) {
         target[i] = source[i];
