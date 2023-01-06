@@ -8,7 +8,6 @@ plt.style.use('seaborn-darkgrid')
 import seaborn as sns
 # sns.set(rc = {'figure.figsize':(16,12)})
 
-from plotstyle import plotstyle
 from plotloader import load_plot_dataframe, arg_parse
 from collections import defaultdict
 
