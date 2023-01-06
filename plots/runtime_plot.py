@@ -25,7 +25,9 @@ plt.xscale('log', base=2)
 plt.yscale('log', base=2)
 
 sns.set_style("dark")
-ax = sns.lineplot(data, x='n', y='cycles', 
+ax = sns.lineplot(data,
+    x='n',
+    y='cycles',
     hue="optimization", 
     style="parallelism",
     markers=True, 
