@@ -19,7 +19,7 @@ int main() {
             x[i] = random() % (size / 2);  // add every element multiple times
         }
 
-        // Count number of unique lements (so we know the size of the result):
+        // Count number of unique elements (so we know the size of the result):
         size_t n_unique = 0;
         for(size_t i = 0; i < size; i++) {
             int unique = 1;
