@@ -8,7 +8,7 @@ The goal of our project is to develop optimized operators from the ONNX standard
     * docker/podman
 * or ("local")
     * bender
-    * verilator
+    * verilator (exactly version 4.200; 5.004 does not work for me)
     * riscv compiler
     * dependencies of `snitch/python-requirements.txt` and `snitch/apt-requirements.txt`
 * cmake and gcc
