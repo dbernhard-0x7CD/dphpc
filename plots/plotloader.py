@@ -85,11 +85,16 @@ def load_plot_dataframe(abspath, include=[], exclude=[]):
         meta=['implementation name'],
         errors='ignore')
     
-    data["parallelism"] = data["implementation name"].apply(
-        lambda x: 'OpenMP' if 'omp' in x else \
-            'Multi-core' if 'parallel' in x else \
-                'sequential'
-    )
+    def impl_to_parallelism(x):
+        if "omp" in x: return "OpenMP"
+        elif "parallel" in x: return "Multi-core"
+        elif "baseline" in x: return "sequential"
+        # now follow some special cases:
+        elif "copy_snitch" in x: return "snrt_memcpy"
+        else:
+            return "sequential"
+
+    data["parallelism"] = data["implementation name"].apply(impl_to_parallelism)
 
     data["optimization"] = data["implementation name"].apply(
         lambda x: 'frep' if 'frep' in x else \
