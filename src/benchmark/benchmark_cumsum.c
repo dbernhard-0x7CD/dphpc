@@ -48,8 +48,20 @@ int main() {
 
     /* Benchmark parallel */
     for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
+        if (core_idx == 0) {
+            x = allocate(size, sizeof(float));
+            result = allocate(size, sizeof(float));
+            result_ref = allocate(size, sizeof(float));
+
+            for (size_t i = 0; core_idx == 0 && i < size; i++) {
+                x[i] = 1.0 * i;
+            }
+            cumsum_baseline(x, size, result_ref);
+        }
+
+        snrt_cluster_hw_barrier();
+
         size_t chunk_size = size / core_num;
-        cumsum_baseline(x, size, result_ref);
         // for (size_t i = 0; core_idx == 0 && i < size; i++) {
         //     printf("Output at index %d is %f\n", i, result_ref[i]);
         // }
@@ -63,19 +75,29 @@ int main() {
             clear_vector(result, size);
         }
         
-        // BENCH_VO_PARALLEL(cumsum_ssr_parallel, x, size, result);
+        // cumsum_ssr_parallel has the bug that the streams get mixed and thus the results are wrong, so no verification here
+        BENCH_VO_PARALLEL(cumsum_ssr_parallel, x, size, result);
         // for (size_t i = 0; core_idx == 0 && i < size; i++) {
         //     printf("result at index %d is %f ref: %f\n", i, result[i], result_ref[i]);
         // }
-        // if (core_idx == 0) {
-        //     verify_vector_omp(result, result_ref, size, chunk_size);
-        //     clear_vector(result, size);
+        // for (size_t i = 0; core_idx == 0 && i < size; i++) {
+        //     printf("input at index %d is %f\n", i, x[i]);
         // }
-
-        // BENCH_VO_PARALLEL(fabs_ssr_frep_parallel, x, size, result);
-        // if (core_idx == 0) {
+        if (core_idx == 0) {
         //     verify_vector_omp(result, result_ref, size, chunk_size);
-        //     clear_vector(result, size);
+            clear_vector(result, size);
+        }
+
+        BENCH_VO_PARALLEL(cumsum_ssr_frep_parallel, x, size, result);
+        if (core_idx == 0) {
+        //     verify_vector_omp(result, result_ref, size, chunk_size);
+            clear_vector(result, size);
+        }
+        // for (size_t i = 0; core_idx == 0 && i < size; i++) {
+        //     printf("result at index %d is %f ref: %f\n", i, result[i], result_ref[i]);
+        // }
+        // for (size_t i = 0; core_idx == 0 && i < size; i++) {
+        //     printf("input at index %d is %f\n", i, x[i]);
         // }
     }
 
