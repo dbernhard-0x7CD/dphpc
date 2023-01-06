@@ -30,7 +30,7 @@ ax = sns.lineplot(data, x='n', y='cycles',
     style="parallelism",
     markers=True, 
     estimator=np.median, 
-    errorbar=lambda x:(np.quantile(x, 0.10), np.quantile(x, 0.90)))
+    errorbar=lambda x:(np.quantile(x, 0.05), np.quantile(x, 0.95)))
 
 ax.set(xlabel='input size', ylabel='runtime [cycles]')
 
