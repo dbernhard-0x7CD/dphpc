@@ -27,12 +27,21 @@ int sum_ssr(float *arr, const size_t n, float* result) {
     snrt_ssr_enable();
 
     volatile register float s = 0.0;
-    for (size_t i = 0; i < n; i++) {
-        asm volatile(
-            "fadd.s %[s], ft0, %[s] \n"
-            : [s] "+f"(s) :: "ft0"
-        );
-    }
+    // i need my own loop
+    asm volatile(
+        "addi a0, zero, 0\n"      // a0 counts
+        "addi a1, zero, 0\n"
+        "fcvt.s.w ft1, a1\n"     // ft1 stores the cumulative sum. Set it to 0.0
+        "1:\n"
+            "addi a0, a0, 1\n"
+            "fadd.s ft1, ft0, ft1\n" // ft1 <- ft0 (streamed arr[i]) + ft1
+        "3:"
+        "blt a0, %[n], 1b\n"
+        "fmv.s %[target], ft1\n"
+        : [target] "=f" (s)
+        : [n] "r"(n) 
+        : "ft0", "ft1", "ft2", "a0", "a1"
+    );
 
     snrt_ssr_disable();
 
