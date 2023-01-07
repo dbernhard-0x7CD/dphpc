@@ -8,7 +8,7 @@
 /*
  * Find the unique elements of the input array.
  * The output 'result' contains all unique values of the 'arr'.
- * The other (otpional) outputs are ommitted.
+ * The other (otpional) outputs are omitted.
  */
 __attribute__((noinline)) 
 int unique_baseline(float* arr, const size_t n, float* result) {
