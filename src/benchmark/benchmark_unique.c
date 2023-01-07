@@ -19,8 +19,8 @@ int main() {
             x[i] = random() % (size / 2);  // add every element multiple times
         }
 
-        // Count number of unique lements (so we know the size of the result):
-        size_t n_unique = 0;
+        // Count number of unique elements (so we know the size of the result):
+        /*size_t n_unique = 0;
         for(size_t i = 0; i < size; i++) {
             int unique = 1;
             for(size_t j = i+1; j < size; j++) {
@@ -29,11 +29,12 @@ int main() {
                 }
             }
             n_unique += unique;
-        }
+        }*/
+        // NO LONGER NEEDED
 
 
-        float* result_ref = allocate(n_unique, sizeof(float));
-        float* result = allocate(n_unique, sizeof(float));
+        float* result_ref = allocate(size, sizeof(float));
+        float* result = allocate(size, sizeof(float));
 
         // Prepare x for ssr:
         float* x_for_ssr = allocate(size + (size * (size - 1) / 2), sizeof(float));
@@ -50,7 +51,7 @@ int main() {
 
         BENCH_VO(unique_ssr, x_for_ssr, size, result);
 
-        verify_vector(result, result_ref, n_unique);
+        verify_vector(result, result_ref, size);
     }
 
     return 0;

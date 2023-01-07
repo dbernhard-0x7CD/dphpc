@@ -6,13 +6,17 @@
 #include <float.h>
 
 /*
- * Find the unique elements of the input array.
- * The output 'result' contains all unique values of the 'arr'.
+ * Find the unique elements of the input 'arr'.
+ * The output 'result' is an array of the same size, where
+ * result[i] may contain the following:
+ * - arr[i] if it is unique
+ * - -1 if arr[i] is not unique
+ * (Note that this specification is slightly modified but does 
+ * not change the work while directly allowing parallelization).
  * The other (optional) outputs are omitted.
  */
 __attribute__((noinline)) 
 int unique_baseline(float* arr, const size_t n, float* result) {
-    size_t curr_n_unique_elements = 0;
     for(size_t i = 0; i < n; i++) {
         int unique = 1;
         for(size_t j = i+1; j < n; j++) {
@@ -22,8 +26,10 @@ int unique_baseline(float* arr, const size_t n, float* result) {
         }
         if(unique == 1) {
             // Found a new unique value
-            result[curr_n_unique_elements] = arr[i];
-            curr_n_unique_elements++;
+            result[i] = arr[i];
+        } else {
+            // Value is not unique
+            result[i] = -1.0;
         }
     }
     return 0;
@@ -47,6 +53,7 @@ int unique_ssr(float* arr, const size_t n, float* result) {
     volatile size_t j;
     volatile int unique;
     volatile int comp;
+    const float minusone = -1.0;
 
     asm volatile(
         "li %[i], 0\n" // i = 0
@@ -55,20 +62,23 @@ int unique_ssr(float* arr, const size_t n, float* result) {
         "li %[unique], 1\n" // unique <- 1
         "addi %[j], %[i], 1\n" // j <- i+1
         "1: "
-        "fmv.s fa1, ft0\n" // fa1 <- arr[j]
-        "feq.s %[comp], fa0, fa1\n" // compute result of fa0 == fa1, i.e., arr[i] == arr[j] and store in comp
-        "beq %[comp], zero, 2f\n" // go to 2 if arr[i] != arr[j]
-        "li %[unique], 0\n" // unique <- 0
+            "fmv.s fa1, ft0\n" // fa1 <- arr[j]
+            "feq.s %[comp], fa0, fa1\n" // compute result of fa0 == fa1, i.e., arr[i] == arr[j] and store in comp
+            "beq %[comp], zero, 2f\n" // go to 2 if arr[i] != arr[j]
+            "li %[unique], 0\n" // unique <- 0
         "2: "
-        "addi %[j], %[j], 1\n" // j <- j+1
-        "blt %[j], %[n], 1b\n" // go to 1 if j < n
-        "beq %[unique], zero, 3f\n" // go to 3 if unique != 1
-        "fmv.s ft1, fa0\n" // ft1 <- fa0
+            "addi %[j], %[j], 1\n" // j <- j+1
+            "blt %[j], %[n], 1b\n" // go to 1 if j < n
+            "beq %[unique], zero, 3f\n" // go to 3 if unique != 1
+            "fmv.s ft1, fa0\n" // ft1 <- fa0
+            "j 4f\n" // go to 4
         "3: "
+            "fmv.s ft1, %[minusone]\n" // ft1 <- -1.0
+        "4: "
         "addi %[i], %[i], 1\n" // i <- i+1
         "blt %[i], %[n], 0b\n" // go to 0 if i < n
         : [i] "+r"(i), [j] "+r"(j), [unique] "+r"(unique), [comp] "+r"(comp)
-        : [n] "r"(n)
+        : [n] "r"(n), [minusone] "f"(minusone)
         : "ft0", "ft1", "fa0", "fa1"
     );
 
@@ -76,4 +86,3 @@ int unique_ssr(float* arr, const size_t n, float* result) {
 
     return 0;
 }
-
