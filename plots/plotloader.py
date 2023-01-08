@@ -3,6 +3,8 @@ import os
 import json
 from itertools import compress
 import pandas as pd
+from Levenshtein import distance
+
 
 '''
 Loads all *.json files in abspath and returns a list of functions and a dictionary with all runtime-cycles.
@@ -72,6 +74,7 @@ def load_plot_dataframe(abspath, include=[], exclude=[]):
     # filter keys according to inclue/exclude
     func_names = list(data.keys())
     func_names = arg_filter(func_names, include, exclude)
+    baseline_names = list(filter(lambda x: x.endswith("baseline"), func_names))
     tmp = []
     # tmp["n"] = data["n"]
     for fn in func_names:
@@ -96,12 +99,33 @@ def load_plot_dataframe(abspath, include=[], exclude=[]):
 
     data["parallelism"] = data["implementation name"].apply(impl_to_parallelism)
 
-    data["optimization"] = data["implementation name"].apply(
-        lambda x: 'frep' if 'frep' in x else \
-            'ssr' if 'ssr' in x else \
-                'none'
-    )
+    def impl_to_optimization(x):
+        if "frep" in x: return "ssr+frep"
+        elif "ssr" in x: return "ssr"
+        else: return "none"
 
+    data["optimization"] = data["implementation name"].apply(impl_to_optimization)
+    
+    def impl_to_baseline_name(x):
+        return min(baseline_names, key=lambda y:distance(x, y))
+    
+    data["baseline"] = data["implementation name"].apply(impl_to_baseline_name)
+
+    # queries are expensive, so I use a simple cache to reduce the number of queries
+    baseline_cache = {}
+    def compute_speedup(row):
+        k = str(row["baseline"])+str(row["n"]) 
+        if k not in baseline_cache.keys():
+            baseline_cycles = data.query(
+                "`implementation name` == '" + str(row["baseline"]) +
+                "' & n == " + str(row["n"])
+                ).iloc[0]["cycles"]
+            baseline_cache[k] = baseline_cycles
+        else:
+            baseline_cycles = baseline_cache[k]
+        return baseline_cycles / row["cycles"]
+    
+    data["speedup"] = data.apply(compute_speedup, axis=1)
 
     functions = arg_filter(functions, include, exclude)
     print("[    DATA LOADER]     loaded data for the plots {}".format(func_names))
