@@ -4,7 +4,7 @@ import json
 from itertools import compress
 import pandas as pd
 from Levenshtein import distance
-
+import re
 
 '''
 Loads all *.json files in abspath and returns a list of functions and a dictionary with all runtime-cycles.
@@ -110,6 +110,16 @@ def load_plot_dataframe(abspath, include=[], exclude=[]):
         return min(baseline_names, key=lambda y:distance(x, y))
     
     data["baseline"] = data["implementation name"].apply(impl_to_baseline_name)
+
+    def impl_to_category(x):
+        x = x.replace("frep", "")
+        x = x.replace("ssr", "")
+        x = x.replace("baseline", "")
+        x = re.sub("_+", "_", x)
+        x = x.rstrip("_")
+        return x
+    
+    data["category"] = data["implementation name"].apply(impl_to_category)
 
     # queries are expensive, so I use a simple cache to reduce the number of queries
     baseline_cache = {}
