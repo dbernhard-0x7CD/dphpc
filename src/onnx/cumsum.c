@@ -24,6 +24,12 @@ int cumsum_baseline(const float* arr, const size_t n, float* result) {
 
 __attribute__((noinline))
 int cumsum_ssr(const float* arr, const size_t n, volatile float* result) {
+    register volatile float ft0 asm("ft0");
+    register volatile float ft2 asm("ft2");
+
+    // ft0 is input
+    asm volatile("" : "=f"(ft0));
+
     // stream arr into ft0
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*arr));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
@@ -53,11 +59,19 @@ int cumsum_ssr(const float* arr, const size_t n, volatile float* result) {
 
     snrt_ssr_disable();
 
+    asm volatile("" :: "f"(ft2));
+
     return 0;
 }
 
 __attribute__((noinline))
 int cumsum_ssr_frep(const float* arr, const size_t n, volatile float* result) {
+    register volatile float ft0 asm("ft0");
+    register volatile float ft2 asm("ft2");
+
+    // ft0 is input
+    asm volatile("" : "=f"(ft0));
+
     // stream arr into ft0
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*arr));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
@@ -82,6 +96,8 @@ int cumsum_ssr_frep(const float* arr, const size_t n, volatile float* result) {
 
     snrt_ssr_disable();
     
+    asm volatile("" :: "f"(ft2));
+
     return 0;
 }
 

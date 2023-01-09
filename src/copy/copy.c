@@ -24,6 +24,9 @@ int copy_baseline(float* source, const size_t n, float* target) {
 
 __attribute__((noinline))
 int copy_ssr(float* source, const size_t n, float* target) {
+    register volatile float ft0 asm("ft0");
+    register volatile float ft2 asm("ft2");
+
     // stream into ft0
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*source));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
@@ -43,11 +46,18 @@ int copy_ssr(float* source, const size_t n, float* target) {
         );
     }
     snrt_ssr_disable();
+    asm volatile("" :: "f"(ft2));
     
     return 0;
 }
 __attribute__((noinline))
 int copy_ssr_frep(float* source, const size_t n, float* target) {
+    register volatile float ft0 asm("ft0");
+    register volatile float ft2 asm("ft2");
+    
+    // input is ft0; TODO: Why is this needed?
+    asm volatile("" : "=f"(ft0));
+
     // stream into register ft0 the source
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*source));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
@@ -67,6 +77,9 @@ int copy_ssr_frep(float* source, const size_t n, float* target) {
     );
     
     snrt_ssr_disable();
+
+    // Output is ft2; TODO: Why is this needed?
+    asm volatile("" :: "f"(ft2), "f"(ft0));
     
     return 0;
 }

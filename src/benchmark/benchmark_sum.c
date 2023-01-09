@@ -47,21 +47,21 @@ int main() {
 
         BENCH_VO_PARALLEL(sum_parallel, x, size, &result);
         if (core_idx == 0) {
-            VERIFY_INT_APPROX(result, result_ref, "MISMATCH Expected %f but got %f\n", result_ref, result);
+            VERIFY_INT(result, result_ref, "MISMATCH Expected %f but got %f\n", result_ref, result);
             printf("sum_parallel result: %f\n", result);
             result = -1.0;
         }
 
         BENCH_VO_PARALLEL(sum_ssr_parallel, x, size, &result);
         if (core_idx == 0) {
-            VERIFY_INT_APPROX(result, result_ref, "MISMATCH Expected %f but got %f\n", result_ref, result);
+            VERIFY_INT(result, result_ref, "MISMATCH Expected %f but got %f\n", result_ref, result);
             printf("sum_ssr_parallel result: %f\n", result);
             result = -1.0;
         }
     
         BENCH_VO_PARALLEL(sum_ssr_frep_parallel, x, size, &result);
         if (core_idx == 0) {
-            VERIFY_INT_APPROX(result, result_ref, "MISMATCH Expected %f but got %f\n", result_ref, result);
+            VERIFY_INT(result, result_ref, "MISMATCH Expected %f but got %f\n", result_ref, result);
             printf("sum_ssr_frep_parallel result: %f\n", result);
         }
     }
