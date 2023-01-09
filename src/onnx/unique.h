@@ -5,11 +5,18 @@
 
 
 /*
- * Find the unique elements of the input array.
- * The output 'result' contains all unique values of the 'arr'.
- * The other (otpional) outputs are ommitted.
+ * Find the unique elements of the input 'arr'.
+ * The output 'result' is an array of the same size, where
+ * result[i] may contain the following:
+ * - arr[i] if it is unique
+ * - -1 if arr[i] is not unique
+ * (Note that this specification is slightly modified but does 
+ * not change the work while directly allowing parallelization).
+ * The other (optional) outputs are omitted.
  */
 int unique_baseline(float* arr, const size_t n, float* result);
 int unique_ssr(float* arr, const size_t n, float* result);
+int unique_frep(float* arr, const size_t n, float* result);
+int unique_parallel(float* arr, const size_t n, float* result);
 
 #endif

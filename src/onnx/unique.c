@@ -65,7 +65,7 @@ int unique_ssr(float* arr, const size_t n, float* result) {
             "fmv.s fa1, ft0\n" // fa1 <- arr[j]
             "feq.s %[comp], fa0, fa1\n" // compute result of fa0 == fa1, i.e., arr[i] == arr[j] and store in comp
             "beq %[comp], zero, 2f\n" // go to 2 if arr[i] != arr[j]
-            "li %[unique], 0\n" // unique <- 0
+            "li %[unique], 0\n" // unique <- 0 (we cannot directly jump to 3 here because we must consume the input)
         "2: "
             "addi %[j], %[j], 1\n" // j <- j+1
             "blt %[j], %[n], 1b\n" // go to 1 if j < n
@@ -84,5 +84,60 @@ int unique_ssr(float* arr, const size_t n, float* result) {
 
     snrt_ssr_disable();
 
+    return 0;
+}
+
+__attribute__((noinline)) 
+int unique_frep(float* arr, const size_t n, float* result) {
+    
+    /**
+     * unique needs several branches each iteration, so using FREP
+     * is not possible.
+    */
+    return 0;
+}
+
+int unique_parallel(float* arr, const size_t n, float* result) {
+    unsigned core_num = snrt_cluster_core_num() - 1;
+    unsigned core_idx = snrt_cluster_core_idx();
+    size_t local_n = n / core_num;
+
+    // Calculate which core does one more to account for the leftovers
+    int do_extra = 0;
+    if (core_idx < n - local_n * core_num) {
+        do_extra = 1;
+    }
+
+    for(size_t i = local_n*core_idx; i < local_n*(core_idx+1); i++) {
+        int unique = 1;
+        for(size_t j = i+1; j < n; j++) {
+            if(arr[i] == arr[j]) {
+                unique = 0;
+            }
+        }
+        if(unique == 1) {
+            // Found a new unique value
+            result[i] = arr[i];
+        } else {
+            // Value is not unique
+            result[i] = -1.0;
+        }
+    }
+
+    if(do_extra) {
+        size_t i = local_n * core_num + core_idx;
+        int unique = 1;
+        for(size_t j = i+1; j < n; j++) {
+            if(arr[i] == arr[j]) {
+                unique = 0;
+            }
+        }
+        if(unique == 1) {
+            result[i] = arr[i];
+        } else {
+            result[i] = -1.0;
+        }
+    }
+    
     return 0;
 }

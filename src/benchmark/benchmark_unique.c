@@ -7,14 +7,21 @@
 
 __attribute__((noinline)) int unique_baseline(float* arr, const size_t n, float* result);
 __attribute__((noinline)) int unique_ssr(float* arr, const size_t n, float* result);
+__attribute__((noinline)) int unique_parallel(float* arr, const size_t n, float* result);
+
+float *x, *result, *result_ref;
 
 int main() {
+
     uint32_t core_idx = snrt_global_core_idx();
+    uint32_t core_num = snrt_cluster_core_num()-1; // -1 as there is one DM core 
+
+    printf("Running benchmark_unique\n");
 
     for (size_t size = LMQ_START_SIZE; core_idx == 0 && size <= LMQ_SIZE; size *= 2) {
-        // Initialize the input data
-        float* x = allocate(size, sizeof(float));
 
+        // Initialize the input data
+        x = allocate(size, sizeof(float));
         for (size_t i = 0; i < size; i++) {
             x[i] = random() % (size / 2);  // add every element multiple times
         }
@@ -33,12 +40,11 @@ int main() {
         // NO LONGER NEEDED
 
 
-        float* result_ref = allocate(size, sizeof(float));
-        float* result = allocate(size, sizeof(float));
+        result = allocate(size, sizeof(float));
+        result_ref = allocate(size, sizeof(float));
 
         // Prepare x for ssr:
         float* x_for_ssr = allocate(size + (size * (size - 1) / 2), sizeof(float));
-
         size_t index = 0;
         for (size_t i = 0; i < size; i++) {
             x_for_ssr[index++] = x[i];
@@ -52,6 +58,38 @@ int main() {
         BENCH_VO(unique_ssr, x_for_ssr, size, result);
 
         verify_vector(result, result_ref, size);
+        clear_vector(result, size);
+        clear_vector(result_ref, size);
+    }
+
+
+    snrt_cluster_hw_barrier();
+    
+    for (size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2) {
+
+        size_t chunk_size = size / core_num;
+        
+        if(core_idx == 0) {
+            
+            /* Since the function generates different results based on size
+             * (even with the same input), we must ensure that it doesn't 
+             * get overridden before we verify below, thus we always want to 
+             * run the baseline by core 0:
+             */
+            unique_baseline(x, size, result_ref);
+
+        }
+
+        snrt_cluster_hw_barrier();
+        
+        BENCH_VO_PARALLEL(unique_parallel, x, size, result);
+        
+        if(core_idx == 0) {
+
+            verify_vector_omp(result, result_ref, size, chunk_size);
+            clear_vector(result, size);
+
+        }
     }
 
     return 0;
