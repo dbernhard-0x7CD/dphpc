@@ -153,7 +153,6 @@ python3 plots/runtime_plot.py -include abs -exclude frep
 * colors/plotstyle consistent
 * comparison of theoretical runtime of problem relative to runtime on x86
 * look into bug of spilling
-* look into bug of multiple SSR configurations
 * parallelize
     * conv2d, maxpool, maxpool2d, transpose, max, unique
 * scatter/gather
@@ -161,6 +160,8 @@ python3 plots/runtime_plot.py -include abs -exclude frep
 * rnn?
 
 # DONE
+* look into bug of multiple SSR configurations
+    * previous SSR configuration for writing was still active
 * TEST core count configuration of SIMULATOR
 * Use multiple cores
     * argmax
