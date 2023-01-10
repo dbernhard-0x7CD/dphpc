@@ -125,15 +125,18 @@ def load_plot_dataframe(abspath, include=[], exclude=[]):
     baseline_cache = {}
     def compute_speedup(row):
         k = str(row["baseline"])+str(row["n"]) 
+        n = row["n"]
         if k not in baseline_cache.keys():
+            # cache miss
             baseline_cycles = data.query(
                 "`implementation name` == '" + str(row["baseline"]) +
                 "' & n == " + str(row["n"])
                 ).iloc[0]["cycles"]
             baseline_cache[k] = baseline_cycles
         else:
+            # cache hit
             baseline_cycles = baseline_cache[k]
-        return baseline_cycles / row["cycles"]
+        return n * (10**5) + baseline_cycles / row["cycles"]
     
     data["speedup"] = data.apply(compute_speedup, axis=1)
 
