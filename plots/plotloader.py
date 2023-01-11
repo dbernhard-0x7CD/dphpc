@@ -5,6 +5,7 @@ from itertools import compress
 import pandas as pd
 from Levenshtein import distance
 import re
+from pprint import pprint
 
 '''
 Loads all *.json files in abspath and returns a list of functions and a dictionary with all runtime-cycles.
@@ -48,7 +49,6 @@ def load_plot_data(abspath, include=[], exclude=[]):
 def load_plot_dataframe(abspath, include=[], exclude=[]):
     files = list()
     data = dict()
-    functions = list()
 
     assert(os.path.isabs(abspath))
     # load all json files into list
@@ -63,7 +63,6 @@ def load_plot_dataframe(abspath, include=[], exclude=[]):
     for json_file in files:
         for func_name in json_file.keys():
             if func_name == "n": continue
-            functions.append(func_name)
             if isinstance(json_file[func_name][0], list):
                 x = [{"n": int(ni), "cycles": int(ci)} for (ni, cii) in zip(json_file["n"], json_file[func_name]) for ci in cii]
                 data[func_name] = x
@@ -71,7 +70,7 @@ def load_plot_dataframe(abspath, include=[], exclude=[]):
                 x = [{"n": int(ni), "cycles": int(ci)} for (ni, ci) in zip(json_file["n"], json_file[func_name])]
                 data[func_name] = x
     
-    # filter keys according to inclue/exclude
+    # filter keys according to include/exclude
     func_names = list(data.keys())
     func_names = arg_filter(func_names, include, exclude)
     baseline_names = list(filter(lambda x: x.endswith("baseline"), func_names))
@@ -107,7 +106,11 @@ def load_plot_dataframe(abspath, include=[], exclude=[]):
     data["optimization"] = data["implementation name"].apply(impl_to_optimization)
     
     def impl_to_baseline_name(x):
-        return min(baseline_names, key=lambda y:distance(x, y))
+        # return min(baseline_names, key=lambda y:distance(x, y))
+        return max(baseline_names, key = lambda y: \
+            (1 if x.startswith(y.replace("_baseline", "")) else 0) \
+            * len(y)
+        )
     
     data["baseline"] = data["implementation name"].apply(impl_to_baseline_name)
 
@@ -120,7 +123,6 @@ def load_plot_dataframe(abspath, include=[], exclude=[]):
         return x
     
     data["category"] = data["implementation name"].apply(impl_to_category)
-
     # queries are expensive, so I use a simple cache to reduce the number of queries
     baseline_cache = {}
     def compute_speedup(row):
@@ -137,12 +139,12 @@ def load_plot_dataframe(abspath, include=[], exclude=[]):
             # cache hit
             baseline_cycles = baseline_cache[k]
         return n * (10**5) + baseline_cycles / row["cycles"]
-    
+
+    # print(data.to_string())
     data["speedup"] = data.apply(compute_speedup, axis=1)
 
-    functions = arg_filter(functions, include, exclude)
     print("[    DATA LOADER]     loaded data for the plots {}".format(func_names))
-    return functions, data
+    return func_names, data
 
 def arg_parse():
     # add argparse to specify function names that should either be included or excluded
