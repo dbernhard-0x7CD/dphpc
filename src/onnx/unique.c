@@ -16,7 +16,7 @@
  * The other (optional) outputs are omitted.
  */
 __attribute__((noinline)) 
-int unique_baseline(float* arr, const size_t n, float* result) {
+int unique_baseline(double* arr, const size_t n, double* result) {
     for(size_t i = 0; i < n; i++) {
         int unique = 1;
         for(size_t j = i+1; j < n; j++) {
@@ -36,7 +36,7 @@ int unique_baseline(float* arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline)) 
-int unique_ssr(float* arr, const size_t n, float* result) {
+int unique_ssr(double* arr, const size_t n, double* result) {
     // Stream arr into ft0
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*arr));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
@@ -53,27 +53,27 @@ int unique_ssr(float* arr, const size_t n, float* result) {
     volatile size_t j;
     volatile int unique;
     volatile int comp;
-    const float minusone = -1.0;
+    const double minusone = -1.0;
 
     asm volatile(
         "li %[i], 0\n" // i = 0
         "0: "
-        "fmv.s fa0, ft0\n" // fa0 <- arr[i]
+        "fmv.d fa0, ft0\n" // fa0 <- arr[i]
         "li %[unique], 1\n" // unique <- 1
         "addi %[j], %[i], 1\n" // j <- i+1
         "1: "
-            "fmv.s fa1, ft0\n" // fa1 <- arr[j]
-            "feq.s %[comp], fa0, fa1\n" // compute result of fa0 == fa1, i.e., arr[i] == arr[j] and store in comp
+            "fmv.d fa1, ft0\n" // fa1 <- arr[j]
+            "feq.d %[comp], fa0, fa1\n" // compute result of fa0 == fa1, i.e., arr[i] == arr[j] and store in comp
             "beq %[comp], zero, 2f\n" // go to 2 if arr[i] != arr[j]
             "li %[unique], 0\n" // unique <- 0 (we cannot directly jump to 3 here because we must consume the input)
         "2: "
             "addi %[j], %[j], 1\n" // j <- j+1
             "blt %[j], %[n], 1b\n" // go to 1 if j < n
             "beq %[unique], zero, 3f\n" // go to 3 if unique != 1
-            "fmv.s ft1, fa0\n" // ft1 <- fa0
+            "fmv.d ft1, fa0\n" // ft1 <- fa0
             "j 4f\n" // go to 4
         "3: "
-            "fmv.s ft1, %[minusone]\n" // ft1 <- -1.0
+            "fmv.d ft1, %[minusone]\n" // ft1 <- -1.0
         "4: "
         "addi %[i], %[i], 1\n" // i <- i+1
         "blt %[i], %[n], 0b\n" // go to 0 if i < n
@@ -88,7 +88,7 @@ int unique_ssr(float* arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline)) 
-int unique_frep(float* arr, const size_t n, float* result) {
+int unique_frep(double* arr, const size_t n, double* result) {
     
     /**
      * unique needs several branches each iteration, so using FREP
@@ -97,7 +97,7 @@ int unique_frep(float* arr, const size_t n, float* result) {
     return 0;
 }
 
-int unique_parallel(float* arr, const size_t n, float* result) {
+int unique_parallel(double* arr, const size_t n, double* result) {
     unsigned core_num = snrt_cluster_core_num() - 1;
     unsigned core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;

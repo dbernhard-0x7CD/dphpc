@@ -10,14 +10,14 @@ int main() {
     // only run on 1 core
     for(size_t size=LMQ_START_SIZE; core_idx == 0 && size<=LMQ_SIZE;size*=2){
         // memory
-        float* memory_x = allocate(size, sizeof(float));
-        float* memory_target = allocate(size, sizeof(float));
-        float* l1_x = snrt_l1alloc(size * sizeof(float));
-        float* l1_target = snrt_l1alloc(size * sizeof(float));
+        double* memory_x = allocate(size, sizeof(double));
+        double* memory_target = allocate(size, sizeof(double));
+        double* l1_x = snrt_l1alloc(size * sizeof(double));
+        double* l1_target = snrt_l1alloc(size * sizeof(double));
         
         for (int i = 0; i < size; i++) {
-            memory_x[i] = (float)i - 20.0;
-            l1_x[i] = (float)i - 20.0;
+            memory_x[i] = (double)i - 20.0;
+            l1_x[i] = (double)i - 20.0;
         }
         
         // copy mem -> mem

@@ -9,10 +9,10 @@ size_t conv_output_size(size_t n, size_t filter_size, size_t stride, size_t dila
 }
 
 __attribute__((noinline))
-int conv_baseline(float *a, float* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, float* result) {
+int conv_baseline(double *a, double* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, double* result) {
     size_t out_size = conv_output_size(n, filter_size, stride, dilation);
     for (size_t i = 0; i < out_size; ++i) {
-        float acc = 0;
+        double acc = 0;
         for (size_t j = 0; j < filter_size; ++j) {
             acc += a[stride * i + dilation * j] * filter[j];
         }
@@ -23,7 +23,7 @@ int conv_baseline(float *a, float* filter, size_t n, size_t filter_size, size_t 
 
 
 __attribute__((noinline))
-int conv_ssr(float *a, float* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, float* result) {
+int conv_ssr(double *a, double* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, double* result) {
     size_t out_size = conv_output_size(n, filter_size, stride, dilation);
 
     snrt_ssr_loop_2d(SNRT_SSR_DM0, filter_size, out_size, sizeof(*a) * dilation, sizeof(*a) * stride);
@@ -49,14 +49,14 @@ int conv_ssr(float *a, float* filter, size_t n, size_t filter_size, size_t strid
         );
         for (size_t j = 0; j < filter_size; ++j) {
             asm volatile(
-                "fmadd.s ft3, ft0, ft1, ft3 \n"
+                "fmadd.d ft3, ft0, ft1, ft3 \n"
                 :
                 :
                 : "ft0", "ft1", "ft2", "ft3"
             );
         }
         asm volatile(
-            "fmv.s ft2, ft3 \n"
+            "fmv.d ft2, ft3 \n"
             :
             :
             : "ft0", "ft1", "ft2", "ft3"
@@ -68,7 +68,7 @@ int conv_ssr(float *a, float* filter, size_t n, size_t filter_size, size_t strid
 }
 
 __attribute__((noinline))
-int conv_ssr_frep(float *a, float* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, float* result) {
+int conv_ssr_frep(double *a, double* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, double* result) {
     size_t out_size = conv_output_size(n, filter_size, stride, dilation);
 
     snrt_ssr_loop_2d(SNRT_SSR_DM0, filter_size, out_size, sizeof(*a) * dilation, sizeof(*a) * stride);
@@ -89,8 +89,8 @@ int conv_ssr_frep(float *a, float* filter, size_t n, size_t filter_size, size_t 
         asm volatile(
             "fmv.w.x ft3, zero \n"
             "frep.o %[n_frep], 1, 0, 0 \n"
-            "fmadd.s ft3, ft0, ft1, ft3 \n"
-            "fmv.s ft2, ft3 \n"
+            "fmadd.d ft3, ft0, ft1, ft3 \n"
+            "fmv.d ft2, ft3 \n"
             :
             : [n_frep] "r"(filter_size - 1)
             : "ft0", "ft1", "ft2", "ft3"
@@ -102,13 +102,13 @@ int conv_ssr_frep(float *a, float* filter, size_t n, size_t filter_size, size_t 
 }
 
 __attribute__((noinline))
-int conv2d_baseline(float *a, float* filter, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, size_t d0, size_t d1, float* result) {
+int conv2d_baseline(double *a, double* filter, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, size_t d0, size_t d1, double* result) {
     size_t outn0 = conv_output_size(n0, f0, s0, d0);
     size_t outn1 = conv_output_size(n1, f1, s1, d1);
 
     for (size_t i = 0; i < outn1; ++i) {
         for (size_t j = 0; j < outn0; ++j) {
-            float acc = 0;
+            double acc = 0;
             for (size_t k = 0; k < f1; ++k) {
                 for (size_t l = 0; l < f0; ++l) {
                     acc += a[n0 * (s1 * i + k * d1) + s0 * j + l * d0] * filter[k * f0 + l];
@@ -122,7 +122,7 @@ int conv2d_baseline(float *a, float* filter, size_t n0, size_t n1, size_t f0, si
 
 
 __attribute__((noinline))
-int conv2d_ssr(float *a, float* filter, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, size_t d0, size_t d1, float* result) {
+int conv2d_ssr(double *a, double* filter, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, size_t d0, size_t d1, double* result) {
     size_t outn0 = conv_output_size(n0, f0, s0, d0);
     size_t outn1 = conv_output_size(n1, f1, s1, d1);
 
@@ -149,14 +149,14 @@ int conv2d_ssr(float *a, float* filter, size_t n0, size_t n1, size_t f0, size_t 
         );
         for (size_t j = 0; j < f0 * f1; ++j) {
             asm volatile(
-                "fmadd.s ft3, ft0, ft1, ft3 \n"
+                "fmadd.d ft3, ft0, ft1, ft3 \n"
                 :
                 :
                 : "ft0", "ft1", "ft2", "ft3"
             );
         }
         asm volatile(
-            "fmv.s ft2, ft3 \n"
+            "fmv.d ft2, ft3 \n"
             :
             :
             : "ft0", "ft1", "ft2", "ft3"
@@ -168,7 +168,7 @@ int conv2d_ssr(float *a, float* filter, size_t n0, size_t n1, size_t f0, size_t 
 }
 
 __attribute__((noinline))
-int conv2d_ssr_frep(float *a, float* filter, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, size_t d0, size_t d1, float* result) {
+int conv2d_ssr_frep(double *a, double* filter, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, size_t d0, size_t d1, double* result) {
     size_t outn0 = conv_output_size(n0, f0, s0, d0);
     size_t outn1 = conv_output_size(n1, f1, s1, d1);
 
@@ -190,8 +190,8 @@ int conv2d_ssr_frep(float *a, float* filter, size_t n0, size_t n1, size_t f0, si
         asm volatile(
             "fmv.w.x ft3, zero \n"
             "frep.o %[n_frep], 1, 0, 0 \n"
-            "fmadd.s ft3, ft0, ft1, ft3 \n"
-            "fmv.s ft2, ft3 \n"
+            "fmadd.d ft3, ft0, ft1, ft3 \n"
+            "fmv.d ft2, ft3 \n"
             :
             : [n_frep] "r"(f0 * f1 - 1)
             : "ft0", "ft1", "ft2", "ft3"
@@ -203,7 +203,7 @@ int conv2d_ssr_frep(float *a, float* filter, size_t n0, size_t n1, size_t f0, si
 }
 
 __attribute__((noinline))
-int conv_parallel(float *a, float* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, float* result) {
+int conv_parallel(double *a, double* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, double* result) {
     size_t core_num = snrt_cluster_core_num() - 1;
     size_t core_idx = snrt_cluster_core_idx();
     size_t out_size = conv_output_size(n, filter_size, stride, dilation);
@@ -221,7 +221,7 @@ int conv_parallel(float *a, float* filter, size_t n, size_t filter_size, size_t 
     }
 
     for (size_t i = 0; i < local_n; ++i) {
-        volatile float acc = 0;
+        volatile double acc = 0;
         for (size_t j = 0; j < filter_size; ++j) {
             acc += a[stride * (core_idx * local_n + i) + dilation * j] * filter[j];
         }
@@ -230,7 +230,7 @@ int conv_parallel(float *a, float* filter, size_t n, size_t filter_size, size_t 
     }
 
     if (do_extra) {
-        float acc = 0;
+        double acc = 0;
         for (size_t j = 0; j < filter_size; ++j) {
             acc += a[stride * (core_num * local_n + core_idx) + dilation * j] * filter[j];
         }
@@ -241,7 +241,7 @@ int conv_parallel(float *a, float* filter, size_t n, size_t filter_size, size_t 
     return 0;
 }
 
-int conv_ssr_parallel(float *a, float* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, float* result) {
+int conv_ssr_parallel(double *a, double* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, double* result) {
     size_t core_num = snrt_cluster_core_num() - 1;
     size_t core_idx = snrt_cluster_core_idx();
     size_t out_size = conv_output_size(n, filter_size, stride, dilation);
@@ -273,18 +273,18 @@ int conv_ssr_parallel(float *a, float* filter, size_t n, size_t filter_size, siz
     snrt_ssr_enable();
 
     for (size_t i = 0; i < local_n; ++i) {
-        volatile register float acc = 0.0;
+        volatile register double acc = 0.0;
 
         for (size_t j = 0; j < filter_size; ++j) {
             asm volatile(
-                "fmadd.s %[acc], ft0, ft1, %[acc] \n"
+                "fmadd.d %[acc], ft0, ft1, %[acc] \n"
                 : [acc] "+f" (acc)
                 : 
                 : "ft0", "ft1", "ft2"
             );
         }
         asm volatile(
-            "fmv.s ft2, %[acc] \n"
+            "fmv.d ft2, %[acc] \n"
             :
             : [acc] "f" (acc)
             : "ft0", "ft1", "ft2"
@@ -295,7 +295,7 @@ int conv_ssr_parallel(float *a, float* filter, size_t n, size_t filter_size, siz
     snrt_ssr_disable();
 
     if (do_extra) {
-        float acc = 0;
+        double acc = 0;
         for (size_t j = 0; j < filter_size; ++j) {
             acc += a[stride * (core_num * local_n + core_idx) + dilation * j] * filter[j];
         }
@@ -306,7 +306,7 @@ int conv_ssr_parallel(float *a, float* filter, size_t n, size_t filter_size, siz
     return 0;
 }
 
-int conv_ssr_frep_parallel(float *a, float* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, float* result) {
+int conv_ssr_frep_parallel(double *a, double* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, double* result) {
     size_t core_num = snrt_cluster_core_num() - 1;
     size_t core_idx = snrt_cluster_core_idx();
     size_t out_size = conv_output_size(n, filter_size, stride, dilation);
@@ -338,11 +338,11 @@ int conv_ssr_frep_parallel(float *a, float* filter, size_t n, size_t filter_size
     snrt_ssr_enable();
 
     for (size_t i = 0; i < local_n; ++i) {
-        volatile register float acc = 0.0;
+        volatile register double acc = 0.0;
         asm volatile(
             "frep.o %[n_frep], 1, 0, 0\n"
-            "fmadd.s %[acc], ft0, ft1, %[acc]\n"
-            "fmv.s ft2, %[acc] \n"
+            "fmadd.d %[acc], ft0, ft1, %[acc]\n"
+            "fmv.d ft2, %[acc] \n"
             : [acc] "+f" (acc)
             : [n_frep] "r" (filter_size - 1)
             : "ft0", "ft1", "ft2"
@@ -352,7 +352,7 @@ int conv_ssr_frep_parallel(float *a, float* filter, size_t n, size_t filter_size
     snrt_ssr_disable();
 
     if (do_extra) {
-        float acc = 0;
+        double acc = 0;
         for (size_t j = 0; j < filter_size; ++j) {
             acc += a[stride * (core_num * local_n + core_idx) + dilation * j] * filter[j];
         }

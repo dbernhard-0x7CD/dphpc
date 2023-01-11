@@ -9,7 +9,7 @@
  * arr is in row major format and has dimensions (r, s)
  */
 __attribute__((noinline))
-int transpose_baseline(const float* arr, const size_t r, const size_t s, float* result) {
+int transpose_baseline(const double* arr, const size_t r, const size_t s, double* result) {
     
     for (size_t i = 0; i < r; i++) {
         for (size_t j = 0; j < s; j++) {
@@ -21,7 +21,7 @@ int transpose_baseline(const float* arr, const size_t r, const size_t s, float* 
 }
 
 __attribute__((noinline))
-int transpose_ssr(const float* arr, const size_t r, const size_t s, float* result) {
+int transpose_ssr(const double* arr, const size_t r, const size_t s, double* result) {
     // stream arr into ft0
 
     // arr is in row major form
@@ -37,7 +37,7 @@ int transpose_ssr(const float* arr, const size_t r, const size_t s, float* resul
 
     for (size_t i = 0; i < r*s; i++) {
         asm volatile(
-            "fmv.s ft1, ft0\n"
+            "fmv.d ft1, ft0\n"
             ::: "ft0"
         );
     }
@@ -48,15 +48,15 @@ int transpose_ssr(const float* arr, const size_t r, const size_t s, float* resul
 }
 
 __attribute__((noinline))
-int transpose_ssr_frep(const float* arr, const size_t r, const size_t s, float* result) {
+int transpose_ssr_frep(const double* arr, const size_t r, const size_t s, double* result) {
     // stream arr into ft0
 
     // arr is in row major form
     // args:
     // r: #iterations the inner loop
     // r*s: #iterations total
-    // sizeof(float) * s: inner loop jump size
-    // sizeof(float): size of one element
+    // sizeof(double) * s: inner loop jump size
+    // sizeof(double): size of one element
     snrt_ssr_loop_2d(SNRT_SSR_DM0, r, s * r, sizeof(*arr) * s, sizeof(*arr));
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_2D, arr);
 
@@ -66,11 +66,11 @@ int transpose_ssr_frep(const float* arr, const size_t r, const size_t s, float* 
 
     snrt_ssr_enable();
 
-    register float temp;
+    register double temp;
 
     asm volatile(
         "frep.o %[n_frep], 1, 0, 0\n"
-        "fmv.s ft1, ft0\n"
+        "fmv.d ft1, ft0\n"
         :: [n_frep] "r"(r*s-1)
         : "ft0"
     );

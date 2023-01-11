@@ -6,23 +6,23 @@
 #include "benchmark.h"
 
 __attribute__((noinline))
-int batchnorm_baseline(float *a, const size_t n, float* result);
+int batchnorm_baseline(double *a, const size_t n, double* result);
 __attribute__((noinline))
-int batchnorm_ssr(float *a, const size_t n, float* result);
+int batchnorm_ssr(double *a, const size_t n, double* result);
 __attribute__((noinline))
-int batchnorm_ssr_frep(float *a, const size_t n, float* result);
+int batchnorm_ssr_frep(double *a, const size_t n, double* result);
 
 int main() {
     uint32_t core_idx = snrt_global_core_idx();
 
     for(size_t size=LMQ_START_SIZE; core_idx == 0 && size<=LMQ_SIZE;size*=2){
         // Initialize the input data
-        float* x = allocate(size, sizeof(float));
-        float* result_ref = allocate(size, sizeof(float));
-        float* result = allocate(size, sizeof(float));
+        double* x = allocate(size, sizeof(double));
+        double* result_ref = allocate(size, sizeof(double));
+        double* result = allocate(size, sizeof(double));
 
         for (size_t i = 0; i < size; i++) {
-            x[i] = (float)i;
+            x[i] = (double)i;
         }
         
         BENCH_VO(batchnorm_baseline, x, size, result_ref);

@@ -7,7 +7,7 @@
 #include "benchmark.h"
 
 // x is input; result is output of the optimized functions
-float *x, *result, *result_ref;
+double *x, *result, *result_ref;
 
 int main() {
     uint32_t core_idx = snrt_cluster_core_idx();
@@ -15,9 +15,9 @@ int main() {
     if (core_idx == 0) {
         printf("Running benchmark_acos\n");
 
-        x = allocate(size, sizeof(float));
-        result = allocate(size, sizeof(float));
-        result_ref = allocate(size, sizeof(float));
+        x = allocate(size, sizeof(double));
+        result = allocate(size, sizeof(double));
+        result_ref = allocate(size, sizeof(double));
 
         srandom(2);
         x[0] = 0.0; // acos(0.0) is 1.57 (PI/2)

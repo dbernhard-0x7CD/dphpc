@@ -12,7 +12,7 @@
  * Naive implementation of sin. Computes the element-wise sine and stores it in result.
  */
 __attribute__((noinline)) 
-int sin_baseline(float* arr, const size_t n, float* result) {
+int sin_baseline(double* arr, const size_t n, double* result) {
     for (size_t i = 0; i < n; i++) {
         result[i] = sinf(arr[i]);
     }
@@ -20,7 +20,7 @@ int sin_baseline(float* arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline)) 
-int sin_ssr(float* arr, const size_t n, float* result) {
+int sin_ssr(double* arr, const size_t n, double* result) {
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*arr));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1); // load every element only once
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, arr); // read from arr
@@ -48,7 +48,7 @@ int sin_ssr(float* arr, const size_t n, float* result) {
     // Computation
     for (size_t i = 0; i < n; i++) {
         asm volatile(
-            "fmv.s fa0, ft0\n" // fa0 <- ft0
+            "fmv.d fa0, ft0\n" // fa0 <- ft0
             ::: "fa0", "ft0"
         );
 
@@ -79,7 +79,7 @@ int sin_ssr(float* arr, const size_t n, float* result) {
         __builtin_ssr_enable();
         
         asm volatile(
-            "fmv.s ft1, fa0" // ft1 <- fa0
+            "fmv.d ft1, fa0" // ft1 <- fa0
             ::: "ft1", "fa0"
         );
     }
@@ -91,7 +91,7 @@ int sin_ssr(float* arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline)) 
-int sin_ssr_frep(float* arr, const size_t n, float* result) {
+int sin_ssr_frep(double* arr, const size_t n, double* result) {
 
     /*
      * I do not think we can optimize anything with FREP.
@@ -104,7 +104,7 @@ int sin_ssr_frep(float* arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline)) 
-int sin_parallel(float* arr, const size_t n, float* result) {
+int sin_parallel(double* arr, const size_t n, double* result) {
     size_t core_num = snrt_cluster_core_num() - 1;
     size_t core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
@@ -126,7 +126,7 @@ int sin_parallel(float* arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline)) 
-int sin_ssr_parallel(float* arr, const size_t n, float* result) {
+int sin_ssr_parallel(double* arr, const size_t n, double* result) {
     size_t core_num = snrt_cluster_core_num() - 1;
     size_t core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
@@ -136,17 +136,17 @@ int sin_ssr_parallel(float* arr, const size_t n, float* result) {
         do_extra = 1;
     }
 
-    snrt_ssr_loop_1d(SNRT_SSR_DM0, local_n, sizeof(float));
+    snrt_ssr_loop_1d(SNRT_SSR_DM0, local_n, sizeof(double));
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, arr + core_idx * local_n);
 
-    snrt_ssr_loop_1d(SNRT_SSR_DM1, local_n, sizeof(float));
+    snrt_ssr_loop_1d(SNRT_SSR_DM1, local_n, sizeof(double));
     snrt_ssr_write(SNRT_SSR_DM1, SNRT_SSR_1D, result + core_idx * local_n);
 
     snrt_ssr_enable();
 
     for (size_t i = 0; i < local_n; i++) {
         asm volatile(
-            "fmv.s fa0, ft0\n" // fa0 <- ft0
+            "fmv.d fa0, ft0\n" // fa0 <- ft0
             ::: "fa0", "ft0"
         );
 
@@ -177,7 +177,7 @@ int sin_ssr_parallel(float* arr, const size_t n, float* result) {
         snrt_ssr_enable();
 
         asm volatile(
-            "fmv.s ft1, fa0" // ft1 <- fa0
+            "fmv.d ft1, fa0" // ft1 <- fa0
             ::: "ft1", "fa0"
         );
     }
@@ -196,23 +196,23 @@ int sin_ssr_parallel(float* arr, const size_t n, float* result) {
  * Naive implementation of sin using a an approximation formula.
  */
 __attribute__((noinline)) 
-int sin_approx_baseline(float* arr, const size_t n, float* result) {
-    const float Q = 0.775;
-    const float P = 0.225;
-    const float B = 4.0/M_PI;
-    const float C = -4.0/(M_PI*M_PI);
+int sin_approx_baseline(double* arr, const size_t n, double* result) {
+    const double Q = 0.775;
+    const double P = 0.225;
+    const double B = 4.0/M_PI;
+    const double C = -4.0/(M_PI*M_PI);
     for (size_t i = 0; i < n; i++) {
-        float y = (B * arr[i]) + (C * (arr[i] * arr[i]));
+        double y = (B * arr[i]) + (C * (arr[i] * arr[i]));
         result[i] = (Q * y) + (P * (y * y));
     }
     return 0;
 }
 
 __attribute__((noinline)) 
-int sin_approx_ssr(float* arr, const size_t n, float* result) {
+int sin_approx_ssr(double* arr, const size_t n, double* result) {
     // Adress pattern configuration
-    register volatile float ft0 asm("ft0"); // input arr
-    register volatile float ft1 asm("ft1"); // output result
+    register volatile double ft0 asm("ft0"); // input arr
+    register volatile double ft1 asm("ft1"); // output result
     
     asm volatile("" : "=f"(ft0));
 
@@ -229,23 +229,23 @@ int sin_approx_ssr(float* arr, const size_t n, float* result) {
     snrt_ssr_enable();
 
     volatile size_t i;
-    const float Q = 0.775;
-    const float P = 0.225;
-    const float B = 4.0/M_PI;
-    const float C = -4.0/(M_PI*M_PI);
+    const double Q = 0.775;
+    const double P = 0.225;
+    const double B = 4.0/M_PI;
+    const double C = -4.0/(M_PI*M_PI);
 
     asm volatile(
         "li %[i], 0\n" // i = 0
         "0: "
-        "fmv.s fa0, ft0\n" // fa0 <- arr[i]
-        "fmul.s fa1, %[B], fa0\n" // fa1 <- B * arr[i]
-        "fmul.s fa0, fa0, fa0\n" // fa0 <- arr[i] * arr[i]
-        "fmul.s fa0, %[C], fa0\n" // fa0 <- C * fa0 = C * arr[i] * arr[i]
-        "fadd.s fa1, fa1, fa0\n" // fa1 <- fa1 + fa0 = B * arr[i] + C * arr[i] * arr[i]
-        "fmul.s fa0, fa1, fa1\n" // fa0 <- fa1 * fa1
-        "fmul.s fa0, %[P], fa0\n" // fa0 <- P * fa0 = P * fa1 * fa1
-        "fmul.s fa1, %[Q], fa1\n" // fa1 <- Q * fa1
-        "fadd.s ft1, fa1, fa0\n" // ft1 <- fa1 + fa0
+        "fmv.d fa0, ft0\n" // fa0 <- arr[i]
+        "fmul.d fa1, %[B], fa0\n" // fa1 <- B * arr[i]
+        "fmul.d fa0, fa0, fa0\n" // fa0 <- arr[i] * arr[i]
+        "fmul.d fa0, %[C], fa0\n" // fa0 <- C * fa0 = C * arr[i] * arr[i]
+        "fadd.d fa1, fa1, fa0\n" // fa1 <- fa1 + fa0 = B * arr[i] + C * arr[i] * arr[i]
+        "fmul.d fa0, fa1, fa1\n" // fa0 <- fa1 * fa1
+        "fmul.d fa0, %[P], fa0\n" // fa0 <- P * fa0 = P * fa1 * fa1
+        "fmul.d fa1, %[Q], fa1\n" // fa1 <- Q * fa1
+        "fadd.d ft1, fa1, fa0\n" // ft1 <- fa1 + fa0
         "addi %[i], %[i], 1\n" // i <- i+1
         "blt %[i], %[n], 0b\n" // go to 0 if i < n
         : [i] "+r"(i)
@@ -260,7 +260,7 @@ int sin_approx_ssr(float* arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline)) 
-int sin_omp(float* arr, const size_t n, float* result) {
+int sin_omp(double* arr, const size_t n, double* result) {
     #pragma omp parallel for schedule(static) // in the following line it's necessary to use 'signed'
     for (unsigned i = 0; i < n; i++) {
         result[i] = sinf(arr[i]);
@@ -268,7 +268,7 @@ int sin_omp(float* arr, const size_t n, float* result) {
     return 0;
 }
 
-int sin_ssr_omp(float* arr, const size_t n, float* result) {
+int sin_ssr_omp(double* arr, const size_t n, double* result) {
     // The last thread is not used in OpenMP.
     // I do not know why.
     unsigned core_num = snrt_cluster_core_num() - 1;
@@ -303,7 +303,7 @@ int sin_ssr_omp(float* arr, const size_t n, float* result) {
 
         for (size_t i = 0; i < local_n; i++) {
             asm volatile(
-                "fmv.s fa0, ft0\n" // fa0 <- ft0
+                "fmv.d fa0, ft0\n" // fa0 <- ft0
                 ::: "fa0", "ft0"
             );
 
@@ -334,7 +334,7 @@ int sin_ssr_omp(float* arr, const size_t n, float* result) {
             __builtin_ssr_enable();
 
             asm volatile(
-                "fmv.s ft1, fa0" // ft1 <- fa0
+                "fmv.d ft1, fa0" // ft1 <- fa0
                 ::: "ft1", "fa0"
             );
         }

@@ -13,11 +13,11 @@ int main() {
         printf("Running benchmark_dropout\n");
 
         // x is input; result is output of the optimized functions
-        float* x = allocate(size, sizeof(float));
-        float* result_ref = allocate(size, sizeof(float));
-        float* result = allocate(size, sizeof(float));
+        double* x = allocate(size, sizeof(double));
+        double* result_ref = allocate(size, sizeof(double));
+        double* result = allocate(size, sizeof(double));
 
-        const float ratio = 0.5; // probability of dropout
+        const double ratio = 0.5; // probability of dropout
 
         srandom(2);
         for (size_t i = 0; i < size; i++) {

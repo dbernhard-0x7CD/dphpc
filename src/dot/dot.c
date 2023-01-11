@@ -11,11 +11,11 @@
  * Writes back the result to the result pointer.
  */
 __attribute__((noinline))
-int dot_baseline(const float* a,
-                 const float* b,
+int dot_baseline(const double* a,
+                 const double* b,
                  const size_t n,
-                 float* result) {
-    float sum = 0.0;
+                 double* result) {
+    double sum = 0.0;
 
     for (size_t i = 0; i < n; i++) {
         sum += a[i] * b[i];
@@ -27,10 +27,10 @@ int dot_baseline(const float* a,
 }
 
 __attribute__((noinline))
-int dot_ssr(const float* a,
-            const float* b,
+int dot_ssr(const double* a,
+            const double* b,
             const size_t n,
-            float* result) {
+            double* result) {
     // stream arr into ft0
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*a));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
@@ -41,19 +41,19 @@ int dot_ssr(const float* a,
     snrt_ssr_repeat(SNRT_SSR_DM1, 1);
     snrt_ssr_read(SNRT_SSR_DM1, SNRT_SSR_1D, b);
 
-    volatile register float out;
+    volatile register double out;
 
     snrt_ssr_enable();
 
     asm volatile(
         "addi a0, zero, 0\n"  // a0 <- 0; a0 is the index
-        "fcvt.s.w ft3, zero\n"
+        "fcvt.d.w ft3, zero\n"
         "1:\n"
         "addi a0, a0, 1\n"
-        "fmadd.s ft3, ft1, ft0, ft3\n"
+        "fmadd.d ft3, ft1, ft0, ft3\n"
         "3:"
         "blt a0, %[n], 1b\n"
-        "fmv.s %[out], ft3\n"
+        "fmv.d %[out], ft3\n"
         : [out] "=f"(out)
         : [n] "r"(n)
         : "ft0", "ft1", "ft2", "ft3", "a0");
@@ -67,10 +67,10 @@ int dot_ssr(const float* a,
 }
 
 __attribute__((noinline))
-int dot_ssr_frep(const float* a,
-                 const float* b,
+int dot_ssr_frep(const double* a,
+                 const double* b,
                  const size_t n,
-                 float* result) {
+                 double* result) {
     // stream arr into ft0
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*a));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
@@ -81,15 +81,15 @@ int dot_ssr_frep(const float* a,
     snrt_ssr_repeat(SNRT_SSR_DM1, 1);
     snrt_ssr_read(SNRT_SSR_DM1, SNRT_SSR_1D, b);
 
-    volatile register float out;
+    volatile register double out;
 
     snrt_ssr_enable();
 
     asm volatile(
-        "fcvt.s.w ft3, zero\n"
+        "fcvt.d.w ft3, zero\n"
         "frep.o %[n], 1, 0, 0\n"
-        "fmadd.s ft3, ft1, ft0, ft3\n"
-        "fmv.s %[out], ft3\n"
+        "fmadd.d ft3, ft1, ft0, ft3\n"
+        "fmv.d %[out], ft3\n"
         : [out] "=f"(out)
         : [n] "r"(n - 1)
         : "ft0", "ft1", "ft3");
@@ -103,10 +103,10 @@ int dot_ssr_frep(const float* a,
 }
 
 __attribute__((noinline))
-int ssr_dvec_dvec_dotpf(const float* const vals_a,
-                        const float* const vals_b,
+int ssr_dvec_dvec_dotpf(const double* const vals_a,
+                        const double* const vals_b,
                         const size_t len,
-                        float* const res) {
+                        double* const res) {
     if (len == 0)
         return -1;
 
@@ -122,25 +122,25 @@ int ssr_dvec_dvec_dotpf(const float* const vals_a,
 
     asm volatile(
         // Setup zero register
-        "fcvt.s.w   ft3, zero           \n"
+        "fcvt.d.w   ft3, zero           \n"
 
         // Init target registers
-        "fmv.s      ft4, ft3            \n"
-        "fmv.s      ft5, ft3            \n"
-        "fmv.s      ft6, ft3            \n"
-        "fmv.s      ft7, ft3            \n"
-        "fmv.s      fs0, ft3            \n"
+        "fmv.d      ft4, ft3            \n"
+        "fmv.d      ft5, ft3            \n"
+        "fmv.d      ft6, ft3            \n"
+        "fmv.d      ft7, ft3            \n"
+        "fmv.d      fs0, ft3            \n"
 
         // Computation
         "frep.o %[ldec], 1, 0b101, 0b1001   \n"
-        "fmadd.s    ft3, ft1, ft0, ft3  \n"
+        "fmadd.d    ft3, ft1, ft0, ft3  \n"
 
         // Reduction
-        "fadd.s     ft9, ft6, ft7       \n"
-        "fadd.s     ft6, ft4, ft5       \n"
-        "fadd.s     ft7, fs0, ft3       \n"
-        "fadd.s     ft4, ft6, ft7       \n"
-        "fadd.s     ft8, ft4, ft9       \n"
+        "fadd.d     ft9, ft6, ft7       \n"
+        "fadd.d     ft6, ft4, ft5       \n"
+        "fadd.d     ft7, fs0, ft3       \n"
+        "fadd.d     ft4, ft6, ft7       \n"
+        "fadd.d     ft8, ft4, ft9       \n"
         // Writeback
         "fsd        ft8, 0(%[res])      \n"
         "bne t0,    zero, 9f            \n9:" ::[res] "r"(res),

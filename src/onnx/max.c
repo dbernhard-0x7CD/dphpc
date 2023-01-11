@@ -9,8 +9,8 @@
  * Naive implementation of max. Calculates the argmax of n elements starting at arr.
  */
 __attribute__((noinline))
-int max_baseline(const float* arr, const size_t n, float* result) {
-    float mv = FLT_MIN;
+int max_baseline(const double* arr, const size_t n, double* result) {
+    double mv = FLT_MIN;
 
     for (size_t i = 0; i < n; i++) {
         mv = fmaxf(mv, arr[i]);
@@ -22,10 +22,10 @@ int max_baseline(const float* arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline))
-int max_ssr(const float* arr, const size_t n, float* result) {
-    register volatile float ft0 asm("ft0");
+int max_ssr(const double* arr, const size_t n, double* result) {
+    register volatile double ft0 asm("ft0");
 
-    register volatile float max;
+    register volatile double max;
     max = FLT_MIN;
 
     // ft0 is input
@@ -40,10 +40,10 @@ int max_ssr(const float* arr, const size_t n, float* result) {
 
     asm volatile(
         "addi a0, zero, 0\n"                // a0 <- 0; a0 is the index
-        "fmv.s ft1, %[m]\n"        // ft1 stores the max
+        "fmv.d ft1, %[m]\n"        // ft1 stores the max
         "1:\n"
             "addi a0, a0, 1\n"
-            "fmax.s %[m], %[m], ft0\n"
+            "fmax.d %[m], %[m], ft0\n"
         "3:"
         "blt a0, %[n], 1b\n"
         "2:\n" // exit
@@ -60,10 +60,10 @@ int max_ssr(const float* arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline))
-int max_ssr_frep(const float* arr, const size_t n, float* result) {
-    register volatile float ft0 asm("ft0");
+int max_ssr_frep(const double* arr, const size_t n, double* result) {
+    register volatile double ft0 asm("ft0");
 
-    register volatile float max;
+    register volatile double max;
     max = FLT_MIN;
 
     // ft0 is input
@@ -78,7 +78,7 @@ int max_ssr_frep(const float* arr, const size_t n, float* result) {
 
     asm volatile(
     "frep.o %[n], 1, 0, 0\n"
-        "fmax.s %[m], %[m], ft0\n"
+        "fmax.d %[m], %[m], ft0\n"
     : [m] "+f" (max)
     : [n] "r"(n-1)
     : "ft0", "ft1"

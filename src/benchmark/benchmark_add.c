@@ -6,7 +6,7 @@
 #include "benchmark.h"
 #include <math.h>
 
-float *x, *y, *result_ref, *result;
+double *x, *y, *result_ref, *result;
 
 int main() {
     uint32_t core_idx = snrt_cluster_core_idx();
@@ -18,14 +18,14 @@ int main() {
         printf("Running benchmark_add\n");
 
         // Initialize the input data
-        x = allocate(size, sizeof(float));
-        y = allocate(size, sizeof(float));
-        result_ref = allocate(size, sizeof(float));
-        result = allocate(size, sizeof(float));
+        x = allocate(size, sizeof(double));
+        y = allocate(size, sizeof(double));
+        result_ref = allocate(size, sizeof(double));
+        result = allocate(size, sizeof(double));
 
         for (unsigned i = 0; i < size; i++) {
-            x[i] = (float)i;
-            y[i] = (float)i;
+            x[i] = (double)i;
+            y[i] = (double)i;
         }
         
         BENCH_VO(add_baseline, x, y, size, result_ref);

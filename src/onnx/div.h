@@ -4,8 +4,8 @@
 
 #include <snrt.h>
 
-float div_baseline(float *x, float *y, const size_t n, float *result);
-float div_ssr(float *x, float *y, const size_t n, float *result);
-float div_ssr_frep(float *x, float *y, const size_t n, float *result);
+double div_baseline(double *x, double *y, const size_t n, double *result);
+double div_ssr(double *x, double *y, const size_t n, double *result);
+double div_ssr_frep(double *x, double *y, const size_t n, double *result);
 
 #endif

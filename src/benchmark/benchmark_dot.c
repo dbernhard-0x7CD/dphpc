@@ -13,14 +13,14 @@ int main() {
         printf("Running benchmark_dot\n");
 
         // x,y,xd,yd is input
-        float* x = allocate(size, sizeof(float));
-        float* y = allocate(size, sizeof(float));
+        double* x = allocate(size, sizeof(double));
+        double* y = allocate(size, sizeof(double));
 
         double* xd = allocate(size, sizeof(double));
         double* yd = allocate(size, sizeof(double));
         
-        float result = 0.0;
-        float result_ref = 0.0;
+        double result = 0.0;
+        double result_ref = 0.0;
 
         double resultd = 0.0;
         double result_refd = 0.0;
@@ -28,8 +28,8 @@ int main() {
         srandom(2);
         for (size_t i = 0; i < size; i++) {
             // x[i] = 1.0 * random() / __LONG_MAX__;
-            x[i] = (float)i + 1.0;
-            y[i] = (float)i + 1.0;
+            x[i] = (double)i + 1.0;
+            y[i] = (double)i + 1.0;
             xd[i] = (double)i + 1.0;
             yd[i] = (double)i + 1.0;
         }

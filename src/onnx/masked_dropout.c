@@ -9,7 +9,7 @@
  * Naive implementation of masked dropout.
  */
 __attribute__((noinline))
-int masked_dropout_baseline(const float* arr,  const float* mask, const size_t n, const float ratio, float* result) {
+int masked_dropout_baseline(const double* arr,  const double* mask, const size_t n, const double ratio, double* result) {
     for (size_t i = 0; i < n; i++) {
         result[i] = 1.0 / (1.0 - ratio) * mask[i] * arr[i];
     }
@@ -18,10 +18,10 @@ int masked_dropout_baseline(const float* arr,  const float* mask, const size_t n
 }
 
 __attribute__((noinline))
-int masked_dropout_ssr(const float* arr, const float* mask, const size_t n, const float ratio, float* result) {
-    register volatile float ft0 asm("ft0");
-    register volatile float ft1 asm("ft1");
-    register volatile float ft2 asm("ft2");
+int masked_dropout_ssr(const double* arr, const double* mask, const size_t n, const double ratio, double* result) {
+    register volatile double ft0 asm("ft0");
+    register volatile double ft1 asm("ft1");
+    register volatile double ft2 asm("ft2");
     
     asm volatile("" : "=f"(ft0), "=f"(ft1));
 
@@ -41,12 +41,12 @@ int masked_dropout_ssr(const float* arr, const float* mask, const size_t n, cons
     snrt_ssr_write(SNRT_SSR_DM2, SNRT_SSR_1D, result);
 
     snrt_ssr_enable();
-    register float fa0 = 1.0 / (1. - ratio); // register containing the factor  
+    register double fa0 = 1.0 / (1. - ratio); // register containing the factor  
 
     for (size_t i = 0; i < n; i++) {
         asm volatile(
-            "fmul.s fa1, ft0, %[fa0]\n" // fa1 <- arr[i] * fa0
-            "fmul.s ft2, ft1, fa1\n" // fa1 <- mask[i] * fa1
+            "fmul.d fa1, ft0, %[fa0]\n" // fa1 <- arr[i] * fa0
+            "fmul.d ft2, ft1, fa1\n" // fa1 <- mask[i] * fa1
             :
             : [fa0] "f"(fa0)
             : "ft0", "ft1", "ft2", "fa1"
@@ -59,10 +59,10 @@ int masked_dropout_ssr(const float* arr, const float* mask, const size_t n, cons
 }
 
 __attribute__((noinline))
-int masked_dropout_ssr_frep(const float* arr, const float* mask, const size_t n, float ratio, float* result) {
-    register volatile float ft0 asm("ft0");
-    register volatile float ft1 asm("ft1");
-    register volatile float ft2 asm("ft2");
+int masked_dropout_ssr_frep(const double* arr, const double* mask, const size_t n, double ratio, double* result) {
+    register volatile double ft0 asm("ft0");
+    register volatile double ft1 asm("ft1");
+    register volatile double ft2 asm("ft2");
     
     asm volatile("" : "=f"(ft0), "=f"(ft1));
 
@@ -82,12 +82,12 @@ int masked_dropout_ssr_frep(const float* arr, const float* mask, const size_t n,
     snrt_ssr_write(SNRT_SSR_DM2, SNRT_SSR_1D, result);
 
     snrt_ssr_enable();
-    register float fa0 = 1.0 / (1. - ratio); // register containing the factor  
+    register double fa0 = 1.0 / (1. - ratio); // register containing the factor  
     // TODO: Figure out how we can ue a register (i.e. fa1) to read nd write from when we re doing frep
     asm volatile(
         "frep.o %[n_frep], 2, 0, 0\n"
-        "fmul.s fa1, ft0, %[fa0]\n" // fa1 <- arr[i] * fa0
-        "fmul.s ft2, ft1, fa1\n" // fa1 <- mask[i] * fa1
+        "fmul.d fa1, ft0, %[fa0]\n" // fa1 <- arr[i] * fa0
+        "fmul.d ft2, ft1, fa1\n" // fa1 <- mask[i] * fa1
         :
         : [n_frep] "r"(n - 1), [ fa0 ] "f"(fa0)
         : "ft0", "ft1", "ft2", "fa1"

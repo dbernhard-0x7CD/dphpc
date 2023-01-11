@@ -4,16 +4,16 @@
 
 #include <snrt.h>
 
-int add_baseline(float *a, float *b, const size_t n, float *result);
-int add_ssr(float *a, float *b, const size_t n, float *result);
-int add_ssr_frep(float *a, float *b, const size_t n, float *result);
+int add_baseline(double* a, double* b, const size_t n, double* result);
+int add_ssr(double *a, double *b, const size_t n, double *result);
+int add_ssr_frep(double *a, double *b, const size_t n, double *result);
 
-int add_parallel(float *a, float *b, const size_t n, float *result);
-int add_ssr_parallel(float *a, float *b, const size_t n, float *result);
-int add_ssr_frep_parallel(float *a, float *b, const size_t n, float *result);
+int add_parallel(double *a, double *b, const size_t n, double *result);
+int add_ssr_parallel(double *a, double *b, const size_t n, double *result);
+int add_ssr_frep_parallel(double *a, double *b, const size_t n, double *result);
 
-int add_omp(float *a, float *b, const size_t n, float *result);
-int add_ssr_omp(float *a, float *b, const size_t n, float *result);
-int add_ssr_frep_omp(float *a, float *b, const size_t n, float *result);
+int add_omp(double *a, double *b, const size_t n, double *result);
+int add_ssr_omp(double *a, double *b, const size_t n, double *result);
+int add_ssr_frep_omp(double *a, double *b, const size_t n, double *result);
 
 #endif

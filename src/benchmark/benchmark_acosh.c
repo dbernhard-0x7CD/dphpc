@@ -15,9 +15,9 @@ int main() {
     printf("Running benchmark_acosh\n");
     for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
         // x is input; result is output of the optimized functions
-        float *x = allocate(size, sizeof(float));
-        float *result_ref = allocate(size, sizeof(float));
-        float *result  = allocate(size, sizeof(float));
+        double *x = allocate(size, sizeof(double));
+        double *result_ref = allocate(size, sizeof(double));
+        double *result  = allocate(size, sizeof(double));
 
         srandom(2);
         x[0] = 1.0; // acosh(1.0) is 0

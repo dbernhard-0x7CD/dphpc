@@ -8,7 +8,7 @@
  * Naive implementation of asinh. Calculates the acos of n elements starting at arr.
  */
 __attribute__((noinline))
-int asinh_baseline(const float* arr, const size_t n, float* result) {
+int asinh_baseline(const double* arr, const size_t n, double* result) {
     for (size_t i = 0; i < n; i++) {
         result[i] = asinhf(arr[i]);
     }
@@ -17,9 +17,9 @@ int asinh_baseline(const float* arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline))
-int asinh_ssr(const float* arr, const size_t n, float* result) {
-    register volatile float ft0 asm("ft0");
-    register volatile float ft1 asm("ft1");
+int asinh_ssr(const double* arr, const size_t n, double* result) {
+    register volatile double ft0 asm("ft0");
+    register volatile double ft1 asm("ft1");
 
     asm volatile("" : "=f"(ft0));
 
@@ -37,7 +37,7 @@ int asinh_ssr(const float* arr, const size_t n, float* result) {
 
     for (size_t i = 0; i < n; i++) {
         asm volatile(
-            "fmv.s fa0, ft0\n" // fa0 <- ft0
+            "fmv.d fa0, ft0\n" // fa0 <- ft0
             ::: "fa0", "ft0"
         );
 
@@ -56,7 +56,7 @@ int asinh_ssr(const float* arr, const size_t n, float* result) {
         __builtin_ssr_enable();
         
         asm volatile(
-            "fmv.s ft1, fa0" // ft1 <- fa0
+            "fmv.d ft1, fa0" // ft1 <- fa0
             ::: "ft1", "fa0"
         );
     }
@@ -68,7 +68,7 @@ int asinh_ssr(const float* arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline))
-int asinh_ssr_frep(const float* arr, const size_t n, float* result) {
+int asinh_ssr_frep(const double* arr, const size_t n, double* result) {
     // asinh does not benefit from frep
     // fall back to ssr
     asinh_ssr(arr, n, result);

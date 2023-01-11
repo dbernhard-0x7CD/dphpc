@@ -8,9 +8,9 @@
  * Naive implementation of abs. Calculates for each element in x its absolute value and stores it in result
  */
 __attribute__((noinline))
-int fabs_baseline(float *arr,  const size_t n, float* result) {
+int fabs_baseline(double *arr,  const size_t n, double* result) {
     for (size_t i = 0; i < n; i++) {
-        result[i] = fabsf(arr[i]);
+        result[i] = fabs(arr[i]);
     }
 
     return 0;
@@ -18,10 +18,10 @@ int fabs_baseline(float *arr,  const size_t n, float* result) {
 
 
 __attribute__((noinline))
-int fabs_ssr(float *arr, const size_t n, float* result) {
+int fabs_ssr(double *arr, const size_t n, double* result) {
 
-    register volatile float ft0 asm("ft0");
-    register volatile float ft1 asm("ft1");
+    register volatile double ft0 asm("ft0");
+    register volatile double ft1 asm("ft1");
     asm volatile("" : "=f"(ft0));
 
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*arr));
@@ -36,7 +36,7 @@ int fabs_ssr(float *arr, const size_t n, float* result) {
 
     for (size_t i = 0; i < n; i++) {
         asm volatile(
-            "fabs.s ft1, ft0 \n"
+            "fabs.d ft1, ft0 \n"
             ::: "ft0", "ft1"
         );
     }
@@ -48,7 +48,7 @@ int fabs_ssr(float *arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline))
-int fabs_ssr_frep(float *x, const size_t n, float* result) {
+int fabs_ssr_frep(double *x, const size_t n, double* result) {
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*x));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, x);
@@ -61,7 +61,7 @@ int fabs_ssr_frep(float *x, const size_t n, float* result) {
 
     asm volatile(
         "frep.o %[n], 1, 0, 0\n"
-        "fabs.s ft1, ft0 \n"
+        "fabs.d ft1, ft0 \n"
         :: [n]"r"(n - 1)
         : "ft0", "ft1"
     );
@@ -72,7 +72,7 @@ int fabs_ssr_frep(float *x, const size_t n, float* result) {
 }
 
 __attribute__((noinline))
-int fabs_parallel(float *arr, const size_t n, float *result) {
+int fabs_parallel(double *arr, const size_t n, double *result) {
     size_t core_num = snrt_cluster_core_num() - 1;
     size_t core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
@@ -94,7 +94,7 @@ int fabs_parallel(float *arr, const size_t n, float *result) {
 }
 
 __attribute__((noinline))
-int fabs_ssr_parallel(float *arr, const size_t n, float *result) {
+int fabs_ssr_parallel(double *arr, const size_t n, double *result) {
     size_t core_num = snrt_cluster_core_num() - 1;
     size_t core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
@@ -104,17 +104,17 @@ int fabs_ssr_parallel(float *arr, const size_t n, float *result) {
         do_extra = 1;
     }
 
-    snrt_ssr_loop_1d(SNRT_SSR_DM0, local_n, sizeof(float));
+    snrt_ssr_loop_1d(SNRT_SSR_DM0, local_n, sizeof(double));
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, arr + core_idx * local_n);
 
-    snrt_ssr_loop_1d(SNRT_SSR_DM1, local_n, sizeof(float));
+    snrt_ssr_loop_1d(SNRT_SSR_DM1, local_n, sizeof(double));
     snrt_ssr_write(SNRT_SSR_DM1, SNRT_SSR_1D, result + core_idx * local_n);
     
     snrt_ssr_enable();
 
     for (size_t i = 0; i < local_n; i++) {
         asm volatile(
-            "fabs.s ft1, ft0 \n"
+            "fabs.d ft1, ft0 \n"
             ::: "ft0", "ft1"
         );
     }
@@ -129,7 +129,7 @@ int fabs_ssr_parallel(float *arr, const size_t n, float *result) {
 }
 
 __attribute__((noinline))
-int fabs_ssr_frep_parallel(float *arr, const size_t n, float *result) {
+int fabs_ssr_frep_parallel(double *arr, const size_t n, double *result) {
     size_t core_num = snrt_cluster_core_num() - 1;
     size_t core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
@@ -139,17 +139,17 @@ int fabs_ssr_frep_parallel(float *arr, const size_t n, float *result) {
         do_extra = 1;
     }
 
-    snrt_ssr_loop_1d(SNRT_SSR_DM0, local_n, sizeof(float));
+    snrt_ssr_loop_1d(SNRT_SSR_DM0, local_n, sizeof(double));
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, arr + core_idx * local_n);
 
-    snrt_ssr_loop_1d(SNRT_SSR_DM1, local_n, sizeof(float));
+    snrt_ssr_loop_1d(SNRT_SSR_DM1, local_n, sizeof(double));
     snrt_ssr_write(SNRT_SSR_DM1, SNRT_SSR_1D, result + core_idx * local_n);
     
     snrt_ssr_enable();
 
     asm (
         "frep.o %[n_frep], 1, 0, 0 \n"
-        "fabs.s ft1, ft0 \n"
+        "fabs.d ft1, ft0 \n"
         :: [n_frep] "r"(local_n - 1) : "ft0", "ft2"
     );
     
@@ -163,7 +163,7 @@ int fabs_ssr_frep_parallel(float *arr, const size_t n, float *result) {
 }
 
 __attribute__((noinline))
-int fabs_omp(float *arr, const size_t n, float *result) {
+int fabs_omp(double *arr, const size_t n, double *result) {
 #pragma omp parallel for
     for (size_t i = 0; i < n; i++) {
         result[i] = fabsf(arr[i]);
@@ -172,7 +172,7 @@ int fabs_omp(float *arr, const size_t n, float *result) {
     return 0;
 }
 
-int fabs_ssr_omp(float *arr, const size_t n, float *result) {
+int fabs_ssr_omp(double *arr, const size_t n, double *result) {
     // The last thread is not used in OpenMP.
     // This is probably the DM core.
     unsigned core_num = snrt_cluster_core_num() - 1;
@@ -200,7 +200,7 @@ int fabs_ssr_omp(float *arr, const size_t n, float *result) {
 
         for (size_t i = 0; i < local_n; i++) {
             asm volatile(
-                "fabs.s ft2, ft0 \n"
+                "fabs.d ft2, ft0 \n"
                 ::: "ft0", "ft2"
             );
         }
@@ -216,7 +216,7 @@ int fabs_ssr_omp(float *arr, const size_t n, float *result) {
     return 0;
 }
 
-int fabs_ssr_frep_omp(float *arr, const size_t n, float *result) {
+int fabs_ssr_frep_omp(double *arr, const size_t n, double *result) {
     // The last thread is not used in OpenMP.
     // This is probably the DM core.
     unsigned core_num = snrt_cluster_core_num() - 1;
@@ -244,7 +244,7 @@ int fabs_ssr_frep_omp(float *arr, const size_t n, float *result) {
 
         asm (
             "frep.o %[n_frep], 1, 0, 0 \n"
-            "fabs.s ft2, ft0 \n"
+            "fabs.d ft2, ft0 \n"
             :: [n_frep] "r"(local_n - 1) : "ft0", "ft2"
         );
         
@@ -252,7 +252,7 @@ int fabs_ssr_frep_omp(float *arr, const size_t n, float *result) {
 
         // Could also be done in ssr, but this only adds O(number of threads) which we assume is low.
         if (do_extra) {
-            result[local_n * core_num + core_idx] = fabsf(arr[local_n * core_num + core_idx]);
+            result[local_n * core_num + core_idx] = fabs(arr[local_n * core_num + core_idx]);
         }
     }
 

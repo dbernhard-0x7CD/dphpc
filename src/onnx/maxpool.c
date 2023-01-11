@@ -8,12 +8,12 @@ size_t pool_output_size(size_t n, size_t filter_size, size_t stride) {
 }
 
 __attribute__((noinline))
-int maxpool_baseline(float *a, size_t n, size_t filter_size, size_t stride, float* result) {
+int maxpool_baseline(double *a, size_t n, size_t filter_size, size_t stride, double* result) {
     size_t out_size = pool_output_size(n, filter_size, stride);
     for (size_t i = 0; i < out_size; ++i) {
-        float max = a[stride * i];
+        double max = a[stride * i];
         for (size_t j = 1; j < filter_size; ++j) {
-            float val = a[stride * i + j];
+            double val = a[stride * i + j];
             if (val > max) {
                 max = val;
             }
@@ -25,7 +25,7 @@ int maxpool_baseline(float *a, size_t n, size_t filter_size, size_t stride, floa
 
 
 __attribute__((noinline))
-int maxpool_ssr(float *a, size_t n, size_t filter_size, size_t stride, float* result) {
+int maxpool_ssr(double *a, size_t n, size_t filter_size, size_t stride, double* result) {
     size_t out_size = pool_output_size(n, filter_size, stride);
     snrt_ssr_loop_2d(SNRT_SSR_DM0, filter_size, out_size, sizeof(*a), sizeof(*a) * stride);
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
@@ -39,21 +39,21 @@ int maxpool_ssr(float *a, size_t n, size_t filter_size, size_t stride, float* re
 
     for (size_t i = 0; i < out_size; ++i) {
         asm volatile(
-            "fmv.s ft2, ft0 \n"
+            "fmv.d ft2, ft0 \n"
             :
             :
             : "ft0", "ft2"
         );
         for (size_t j = 1; j < filter_size; ++j) {
             asm volatile(
-                "fmax.s ft2, ft2, ft0 \n"
+                "fmax.d ft2, ft2, ft0 \n"
                 :
                 :
                 : "ft0", "ft2"
             );
         }
         asm volatile(
-            "fmv.s ft1, ft2 \n"
+            "fmv.d ft1, ft2 \n"
             :
             :
             : "ft1", "ft2"
@@ -65,7 +65,7 @@ int maxpool_ssr(float *a, size_t n, size_t filter_size, size_t stride, float* re
 }
 
 __attribute__((noinline))
-int maxpool_ssr_frep(float *a, size_t n, size_t filter_size, size_t stride, float* result) {
+int maxpool_ssr_frep(double *a, size_t n, size_t filter_size, size_t stride, double* result) {
     size_t out_size = pool_output_size(n, filter_size, stride);
     if (filter_size == 1) {
         return 0;
@@ -82,10 +82,10 @@ int maxpool_ssr_frep(float *a, size_t n, size_t filter_size, size_t stride, floa
 
     for (size_t i = 0; i < out_size; ++i) {
         asm volatile(
-            "fmv.s ft2, ft0 \n"
+            "fmv.d ft2, ft0 \n"
             "frep.o %[n_frep], 1, 0, 0 \n"
-            "fmax.s ft2, ft2, ft0 \n"
-            "fmv.s ft1, ft2 \n"
+            "fmax.d ft2, ft2, ft0 \n"
+            "fmv.d ft1, ft2 \n"
             :
             : [n_frep] "r"(filter_size - 2), [n_outer_frep] "r"(out_size - 1)
             : "ft0", "ft2"
@@ -97,16 +97,16 @@ int maxpool_ssr_frep(float *a, size_t n, size_t filter_size, size_t stride, floa
 }
 
 __attribute__((noinline))
-int maxpool2d_baseline(float *a, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, float* result) {
+int maxpool2d_baseline(double *a, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, double* result) {
     size_t outn0 = pool_output_size(n0, f0, s0);
     size_t outn1 = pool_output_size(n1, f1, s1);
 
     for (size_t i = 0; i < outn1; ++i) {
         for (size_t j = 0; j < outn0; ++j) {
-            float max = a[n0 * s1 * i + s0 * j];
+            double max = a[n0 * s1 * i + s0 * j];
             for (size_t k = 0; k < f1; ++k) {
                 for (size_t l = 0; l < f0; ++l) {
-                    float val = a[n0 * (s1 * i + k) + s0 * j + l];
+                    double val = a[n0 * (s1 * i + k) + s0 * j + l];
                     if (val > max) {
                         max = val;
                     }
@@ -120,7 +120,7 @@ int maxpool2d_baseline(float *a, size_t n0, size_t n1, size_t f0, size_t f1, siz
 
 
 __attribute__((noinline))
-int maxpool2d_ssr(float *a, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, float* result) {
+int maxpool2d_ssr(double *a, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, double* result) {
     size_t outn0 = pool_output_size(n0, f0, s0);
     size_t outn1 = pool_output_size(n1, f1, s1);
 
@@ -136,21 +136,21 @@ int maxpool2d_ssr(float *a, size_t n0, size_t n1, size_t f0, size_t f1, size_t s
 
     for (size_t i = 0; i < outn0 * outn1; ++i) {
         asm volatile(
-            "fmv.s ft2, ft0 \n"
+            "fmv.d ft2, ft0 \n"
             :
             :
             : "ft0", "ft2"
         );
         for (size_t k = 1; k < f0 * f1; ++k) {
             asm volatile(
-                "fmax.s ft2, ft2, ft0 \n"
+                "fmax.d ft2, ft2, ft0 \n"
                 :
                 :
                 : "ft0", "ft2"
             );
         }
         asm volatile(
-            "fmv.s ft1, ft2 \n"
+            "fmv.d ft1, ft2 \n"
             :
             :
             : "ft1", "ft2"
@@ -162,7 +162,7 @@ int maxpool2d_ssr(float *a, size_t n0, size_t n1, size_t f0, size_t f1, size_t s
 }
 
 __attribute__((noinline))
-int maxpool2d_ssr_frep(float *a, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, float* result) {
+int maxpool2d_ssr_frep(double *a, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, double* result) {
     if (f0 * f1 == 1) {
         return 1;
     }
@@ -182,10 +182,10 @@ int maxpool2d_ssr_frep(float *a, size_t n0, size_t n1, size_t f0, size_t f1, siz
 
     for (size_t i = 0; i < outn0 * outn1; ++i) {
         asm volatile(
-            "fmv.s ft2, ft0 \n"
+            "fmv.d ft2, ft0 \n"
             "frep.o %[n_frep], 1, 0, 0 \n"
-            "fmax.s ft2, ft2, ft0 \n"
-            "fmv.s ft1, ft2 \n"
+            "fmax.d ft2, ft2, ft0 \n"
+            "fmv.d ft1, ft2 \n"
             :
             : [n_frep] "r"(f0 * f1 - 2)
             : "ft0", "ft2"

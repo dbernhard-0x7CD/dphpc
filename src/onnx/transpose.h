@@ -10,10 +10,10 @@
  * Naive implementation of transpose.
  * arr is in row major format and has dimensions (r, s)
  */
-int transpose_baseline(const float* arr, const size_t r, const size_t s, float* result);
+int transpose_baseline(const double* arr, const size_t r, const size_t s, double* result);
 
-int transpose_ssr(const float* arr, const size_t r, const size_t s, float* result);
+int transpose_ssr(const double* arr, const size_t r, const size_t s, double* result);
 
-int transpose_ssr_frep(const float* arr, const size_t r, const size_t s, float* result);
+int transpose_ssr_frep(const double* arr, const size_t r, const size_t s, double* result);
 
 #endif

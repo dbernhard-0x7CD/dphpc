@@ -9,8 +9,8 @@
  * Naive implementation of argmax. Calculates the argmax of n elements starting at arr.
  */
 __attribute__((noinline))
-int argmax_baseline(const float* arr, const size_t n, int* result) {
-    float max = FLT_MIN;
+int argmax_baseline(const double* arr, const size_t n, int* result) {
+    double max = FLT_MIN;
     size_t index = -1;
 
     for (size_t i = 0; i < n; i++) {
@@ -26,8 +26,8 @@ int argmax_baseline(const float* arr, const size_t n, int* result) {
 }
 
 __attribute__((noinline))
-int argmax_ssr(const float* arr, const size_t n, int* result) {
-    register float max asm("ft1");
+int argmax_ssr(const double* arr, const size_t n, int* result) {
+    register double max asm("ft1");
     max = FLT_MIN;
 
     register int max_index;
@@ -45,10 +45,10 @@ int argmax_ssr(const float* arr, const size_t n, int* result) {
         "addi a1, zero, -1\n"           // a1 stores the max_index
         "1:\n"
             "addi a0, a0, 1\n"
-            "fmv.s fa0, ft0\n"
-            "fle.s a2, %[max], fa0\n"
+            "fmv.d fa0, ft0\n"
+            "fle.d a2, %[max], fa0\n"
             "beqz a2, 3f\n"
-            "fmv.s %[max], fa0\n"
+            "fmv.d %[max], fa0\n"
             "mv a1, a0\n"
         "3:"
         "blt a0, %[n], 1b\n"
@@ -67,7 +67,7 @@ int argmax_ssr(const float* arr, const size_t n, int* result) {
 }
 
 __attribute__((noinline))
-int argmax_ssr_frep(const float* arr, const size_t n, int* result) {
+int argmax_ssr_frep(const double* arr, const size_t n, int* result) {
 
     /**
      * Using FREP we would need the same code repeated, but argmax
@@ -78,9 +78,9 @@ int argmax_ssr_frep(const float* arr, const size_t n, int* result) {
 }
 
 // To allow IPC
-float* shared_max;
+double* shared_max;
 size_t* shared_indices;
-int argmax_parallel(float* arr, const size_t n, int* result) {
+int argmax_parallel(double* arr, const size_t n, int* result) {
     size_t core_num = snrt_cluster_core_num() - 1;
     size_t core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
@@ -89,11 +89,11 @@ int argmax_parallel(float* arr, const size_t n, int* result) {
     if (core_idx < n - local_n * core_num) {
         do_extra = 1;
     }
-    float priv_max = FLT_MIN;
+    double priv_max = FLT_MIN;
     size_t priv_max_index = -1;
 
     if (core_idx == 0) {
-        shared_max = allocate(core_num , sizeof(float));
+        shared_max = allocate(core_num , sizeof(double));
         shared_indices = allocate(core_num , sizeof(size_t));
     }
     snrt_cluster_hw_barrier();
@@ -117,7 +117,7 @@ int argmax_parallel(float* arr, const size_t n, int* result) {
     snrt_cluster_hw_barrier();
 
     if (core_idx == 0) {
-        float max = FLT_MIN;
+        double max = FLT_MIN;
         size_t index = -1;
         for (size_t i = 0; i < core_num; i++) {
             if (shared_max[i] > max) {
@@ -131,7 +131,7 @@ int argmax_parallel(float* arr, const size_t n, int* result) {
     return 0;
 }
 
-int argmax_ssr_parallel(float* arr, const size_t n, int* result) {
+int argmax_ssr_parallel(double* arr, const size_t n, int* result) {
     size_t core_num = snrt_cluster_core_num() - 1;
     size_t core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
@@ -148,11 +148,11 @@ int argmax_ssr_parallel(float* arr, const size_t n, int* result) {
         do_extra = 1;
     }
 
-    float priv_max = FLT_MIN;
+    double priv_max = FLT_MIN;
     volatile int priv_max_index = -1;
 
     if (core_idx == 0) {
-        shared_max = allocate(core_num , sizeof(float));
+        shared_max = allocate(core_num , sizeof(double));
         shared_indices = allocate(core_num , sizeof(size_t));
     }
     snrt_cluster_hw_barrier();
@@ -169,10 +169,10 @@ int argmax_ssr_parallel(float* arr, const size_t n, int* result) {
         "addi a1, zero, -1\n"           // a1 stores the max_index
         "1:\n"
             "addi a0, a0, 1\n"
-            "fmv.s fa0, ft0\n"
-            "fle.s a2, %[max], fa0\n"
+            "fmv.d fa0, ft0\n"
+            "fle.d a2, %[max], fa0\n"
             "beqz a2, 3f\n"
-            "fmv.s %[max], fa0\n"
+            "fmv.d %[max], fa0\n"
             "mv a1, a0\n"
         "3:"
         "blt a0, %[n], 1b\n"
@@ -199,7 +199,7 @@ int argmax_ssr_parallel(float* arr, const size_t n, int* result) {
 
     // This is not using SSR, but this is O(#cores) which is low
     if (core_idx == 0) {
-        float max = FLT_MIN;
+        double max = FLT_MIN;
         size_t index = -1;
         for (size_t i = 0; i < core_num; i++) {
             if (shared_max[i] > max) {

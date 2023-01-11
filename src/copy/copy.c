@@ -6,14 +6,14 @@
 #include "printf.h"
 
 __attribute__((noinline))
-int copy_snitch(float* source, const size_t n, float* target) {
-    snrt_memcpy(target, source, n * sizeof(float));
+int copy_snitch(double* source, const size_t n, double* target) {
+    snrt_memcpy(target, source, n * sizeof(double));
 
     return 0;
 }
 
 __attribute__((noinline))
-int copy_baseline(float* source, const size_t n, float* target) {
+int copy_baseline(double* source, const size_t n, double* target) {
 
     for (uint32_t i = 0; i < n; i++) {
         target[i] = source[i];
@@ -23,9 +23,9 @@ int copy_baseline(float* source, const size_t n, float* target) {
 }
 
 __attribute__((noinline))
-int copy_ssr(float* source, const size_t n, float* target) {
-    register volatile float ft0 asm("ft0");
-    register volatile float ft2 asm("ft2");
+int copy_ssr(double* source, const size_t n, double* target) {
+    register volatile double ft0 asm("ft0");
+    register volatile double ft2 asm("ft2");
 
     // stream into ft0
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*source));
@@ -41,7 +41,7 @@ int copy_ssr(float* source, const size_t n, float* target) {
 
     for (size_t i = 0; i < n; i++) {
         asm volatile(
-           "fmv.s ft2, ft0 \n"
+           "fmv.d ft2, ft0 \n"
            ::: "ft0", "ft2"
         );
     }
@@ -51,9 +51,9 @@ int copy_ssr(float* source, const size_t n, float* target) {
     return 0;
 }
 __attribute__((noinline))
-int copy_ssr_frep(float* source, const size_t n, float* target) {
-    register volatile float ft0 asm("ft0");
-    register volatile float ft2 asm("ft2");
+int copy_ssr_frep(double* source, const size_t n, double* target) {
+    register volatile double ft0 asm("ft0");
+    register volatile double ft2 asm("ft2");
     
     // input is ft0; TODO: Why is this needed?
     asm volatile("" : "=f"(ft0));
@@ -72,7 +72,7 @@ int copy_ssr_frep(float* source, const size_t n, float* target) {
 
     asm (
         "frep.o %[n_frep], 1, 0, 0 \n"
-        "fmv.s ft2, ft0 \n"
+        "fmv.d ft2, ft0 \n"
         :: [n_frep] "r"(n - 1) : "ft0", "ft2"
     );
     
@@ -85,7 +85,7 @@ int copy_ssr_frep(float* source, const size_t n, float* target) {
 }
 
 __attribute__((noinline))
-int copy_parallel(float* source, const size_t n, float* target) {
+int copy_parallel(double* source, const size_t n, double* target) {
     size_t core_num = snrt_cluster_core_num() - 1;
     size_t core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
@@ -107,7 +107,7 @@ int copy_parallel(float* source, const size_t n, float* target) {
 }
 
 __attribute__((noinline))
-int copy_ssr_parallel(float* source, const size_t n, float* target) {
+int copy_ssr_parallel(double* source, const size_t n, double* target) {
     size_t core_num = snrt_cluster_core_num() - 1;
     size_t core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
@@ -117,17 +117,17 @@ int copy_ssr_parallel(float* source, const size_t n, float* target) {
         do_extra = 1;
     }
 
-    snrt_ssr_loop_1d(SNRT_SSR_DM0, local_n, sizeof(float));
+    snrt_ssr_loop_1d(SNRT_SSR_DM0, local_n, sizeof(double));
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, source + core_idx * local_n);
 
-    snrt_ssr_loop_1d(SNRT_SSR_DM1, local_n, sizeof(float));
+    snrt_ssr_loop_1d(SNRT_SSR_DM1, local_n, sizeof(double));
     snrt_ssr_write(SNRT_SSR_DM1, SNRT_SSR_1D, target + core_idx * local_n);
     
     snrt_ssr_enable();
 
     for (unsigned i = 0; i < local_n; i++) {
         asm volatile(
-            "fmv.s ft1, ft0\n"
+            "fmv.d ft1, ft0\n"
             ::: "ft0", "ft1"
         );
     }
@@ -142,7 +142,7 @@ int copy_ssr_parallel(float* source, const size_t n, float* target) {
 }
 
 __attribute__((noinline))
-int copy_ssr_frep_parallel(float* source, const size_t n, float* target) {
+int copy_ssr_frep_parallel(double* source, const size_t n, double* target) {
     size_t core_num = snrt_cluster_core_num() - 1;
     size_t core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
@@ -152,17 +152,17 @@ int copy_ssr_frep_parallel(float* source, const size_t n, float* target) {
         do_extra = 1;
     }
 
-    snrt_ssr_loop_1d(SNRT_SSR_DM0, local_n, sizeof(float));
+    snrt_ssr_loop_1d(SNRT_SSR_DM0, local_n, sizeof(double));
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, source + core_idx * local_n);
 
-    snrt_ssr_loop_1d(SNRT_SSR_DM1, local_n, sizeof(float));
+    snrt_ssr_loop_1d(SNRT_SSR_DM1, local_n, sizeof(double));
     snrt_ssr_write(SNRT_SSR_DM1, SNRT_SSR_1D, target + core_idx * local_n);
     
     snrt_ssr_enable();
     
     asm (
         "frep.o %[n_frep], 1, 0, 0 \n"
-        "fmv.s ft1, ft0 \n"
+        "fmv.d ft1, ft0 \n"
         :: [n_frep] "r"(local_n - 1) : "ft0", "ft1"
     );
     
@@ -175,7 +175,7 @@ int copy_ssr_frep_parallel(float* source, const size_t n, float* target) {
     return 0;
 }
 
-int copy_omp(float* source, const size_t n, float* target) {
+int copy_omp(double* source, const size_t n, double* target) {
 
 #pragma omp parallel for
     for (size_t i = 0; i < n; i++) {
@@ -185,7 +185,7 @@ int copy_omp(float* source, const size_t n, float* target) {
     return 0;
 }
 
-int copy_ssr_omp(float* source, const size_t n, float* target) {
+int copy_ssr_omp(double* source, const size_t n, double* target) {
     // The last thread is not used in OpenMP.
     // This is probably the DM core.
     unsigned core_num = snrt_cluster_core_num() - 1;
@@ -213,7 +213,7 @@ int copy_ssr_omp(float* source, const size_t n, float* target) {
 
         for (size_t i = 0; i < local_n; i++) {
             asm volatile(
-                "fmv.s ft2, ft0 \n"
+                "fmv.d ft2, ft0 \n"
                 ::: "ft0", "ft2"
             );
         }
@@ -229,7 +229,7 @@ int copy_ssr_omp(float* source, const size_t n, float* target) {
     return 0;
 }
 
-int copy_ssr_frep_omp(float* source, const size_t n, float* target) {
+int copy_ssr_frep_omp(double* source, const size_t n, double* target) {
     // The last thread is not used in OpenMP.
     // This is probably the DM core.
     unsigned core_num = snrt_cluster_core_num() - 1;
@@ -257,7 +257,7 @@ int copy_ssr_frep_omp(float* source, const size_t n, float* target) {
 
         asm (
             "frep.o %[n_frep], 1, 0, 0 \n"
-            "fmv.s ft2, ft0 \n"
+            "fmv.d ft2, ft0 \n"
             :: [n_frep] "r"(local_n - 1) : "ft0", "ft2"
         );
         

@@ -7,7 +7,7 @@
  * Naive implementation of div. Divides a and b element wise into result.
  */
 __attribute__((noinline))
-int div_baseline(float *a, float* b, const size_t n, float* result) {
+int div_baseline(double *a, double* b, const size_t n, double* result) {
     for (size_t i = 0; i < n; i++) {
         result[i] = a[i] / b[i];
     }
@@ -16,11 +16,11 @@ int div_baseline(float *a, float* b, const size_t n, float* result) {
 
 
 __attribute__((noinline))
-int div_ssr(float *a, float* b, const size_t n, float* result) {
+int div_ssr(double *a, double* b, const size_t n, double* result) {
 
-    register volatile float ft0 asm("ft0");
-    register volatile float ft1 asm("ft1");
-    register volatile float ft2 asm("ft2");
+    register volatile double ft0 asm("ft0");
+    register volatile double ft1 asm("ft1");
+    register volatile double ft2 asm("ft2");
     asm volatile("" : "=f"(ft0), "=f"(ft1));
 
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*a));
@@ -39,7 +39,7 @@ int div_ssr(float *a, float* b, const size_t n, float* result) {
 
     for (size_t i = 0; i < n; i++) {
         asm volatile(
-            "fdiv.s ft2, ft0, ft1 \n"
+            "fdiv.d ft2, ft0, ft1 \n"
             ::: "ft0", "ft1", "ft2"
         );
     }
@@ -51,7 +51,7 @@ int div_ssr(float *a, float* b, const size_t n, float* result) {
 }
 
 __attribute__((noinline))
-int div_ssr_frep(float *a, float* b, const size_t n, float* result) {
+int div_ssr_frep(double *a, double* b, const size_t n, double* result) {
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*a));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, a);
@@ -68,7 +68,7 @@ int div_ssr_frep(float *a, float* b, const size_t n, float* result) {
 
     asm volatile(
         "frep.o %[n_frep], 1, 0, 0 \n"
-        "fdiv.s ft2, ft0, ft1 \n"
+        "fdiv.d ft2, ft0, ft1 \n"
         :: [n_frep] "r"(n - 1) : "ft0", "ft1", "ft2"
     );
 

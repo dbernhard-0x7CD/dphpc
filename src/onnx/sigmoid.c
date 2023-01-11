@@ -7,7 +7,7 @@
  * Naive implementation of sigmoid. Calculates the sigmoid of n elements starting at arr.
  */
 __attribute__((noinline))
-int sigmoid_baseline(const float* arr, const size_t n, float* result) {
+int sigmoid_baseline(const double* arr, const size_t n, double* result) {
     for (size_t i = 0; i < n; i++) {
         result[i] = 1 / (1 + expf(-arr[i]));
         // result[i] = 1 + expf(-arr[i]);
@@ -17,9 +17,9 @@ int sigmoid_baseline(const float* arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline))
-int sigmoid_ssr(const float* arr, const size_t n, float* result) {
-    register volatile float ft0 asm("ft0");
-    register volatile float ft1 asm("ft1");
+int sigmoid_ssr(const double* arr, const size_t n, double* result) {
+    register volatile double ft0 asm("ft0");
+    register volatile double ft1 asm("ft1");
 
     asm volatile("" : "=f"(ft0));
 
@@ -37,7 +37,7 @@ int sigmoid_ssr(const float* arr, const size_t n, float* result) {
 
     for (size_t i = 0; i < n; i++) {
         asm volatile(
-            "fneg.s fa0, ft0\n" // fa0 <- neg(ft0)
+            "fneg.d fa0, ft0\n" // fa0 <- neg(ft0)
             ::: "fa0", "ft0"
         );
 
@@ -68,9 +68,9 @@ int sigmoid_ssr(const float* arr, const size_t n, float* result) {
         __builtin_ssr_enable();
         
         asm volatile(
-            "fdiv.s ft2, fa0, fa0\n" // ft2 <- 1. TODO change it
-            "fadd.s fa0, ft2, fa0\n" // fa0 <- fa0 + 1
-            "fdiv.s ft1, ft2, fa0\n" // ft1 <- 1 / fa0
+            "fdiv.d ft2, fa0, fa0\n" // ft2 <- 1. TODO change it
+            "fadd.d fa0, ft2, fa0\n" // fa0 <- fa0 + 1
+            "fdiv.d ft1, ft2, fa0\n" // ft1 <- 1 / fa0
             ::: "ft1", "fa0", "ft2"
         );
     }
@@ -82,7 +82,7 @@ int sigmoid_ssr(const float* arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline))
-int sigmoid_ssr_frep(const float* arr, const size_t n, float* result) {
+int sigmoid_ssr_frep(const double* arr, const size_t n, double* result) {
     /*
      * I do not think we can optimize anything with FREP.
      * As we have a call to another function which consists of many more

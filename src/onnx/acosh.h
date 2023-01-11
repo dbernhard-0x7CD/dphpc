@@ -9,8 +9,8 @@
 /*
  * Naive implementation of acosh. Calculates the acosh of n elements starting at arr.
  */
-int acosh_baseline(float* arr, const size_t n, float* result);
-int acosh_ssr(float* arr, const size_t n, float* result);
-int acosh_ssr_frep(float* arr, const size_t n, float* result);
+int acosh_baseline(double* arr, const size_t n, double* result);
+int acosh_ssr(double* arr, const size_t n, double* result);
+int acosh_ssr_frep(double* arr, const size_t n, double* result);
 
 #endif

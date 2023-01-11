@@ -16,9 +16,9 @@ int main() {
         int cols = ox;
 
         // x is input; result is output of the optimized functions
-        float* x = allocate(rows * cols, sizeof(float));
-        float* result_ref = allocate(rows * cols, sizeof(float));
-        float* result = allocate(rows * cols, sizeof(float));
+        double* x = allocate(rows * cols, sizeof(double));
+        double* result_ref = allocate(rows * cols, sizeof(double));
+        double* result = allocate(rows * cols, sizeof(double));
 
         for (size_t i = 0; i < rows; i++) {
             for (size_t j = 0; j < cols; j++) {

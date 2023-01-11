@@ -6,8 +6,8 @@
 #include "omp.h"
 
 __attribute__((noinline)) 
-int sum_baseline(float *arr, const size_t n, float* result) {
-    float s = 0;
+int sum_baseline(double* arr, const size_t n, double* result) {
+    double s = 0;
 
     for (size_t i = 0; i < n; i++) {
         s += arr[i];
@@ -19,17 +19,17 @@ int sum_baseline(float *arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline)) 
-int sum_ssr(float *arr, const size_t n, float* result) {
+int sum_ssr(double *arr, const size_t n, double* result) {
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*arr));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, arr);
 
     snrt_ssr_enable();
 
-    volatile register float s = 0.0;
+    volatile register double s = 0.0;
     for (size_t i = 0; i < n; i++) {
         asm volatile(
-            "fadd.s %[s], ft0, %[s] \n"
+            "fadd.d %[s], ft0, %[s] \n"
             : [s] "+f"(s) :: "ft0"
         );
     }
@@ -42,19 +42,19 @@ int sum_ssr(float *arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline)) 
-int sum_ssr_frep(float *arr, const size_t n, float* result) {
+int sum_ssr_frep(double *arr, const size_t n, double* result) {
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*arr));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, arr);
 
     snrt_ssr_enable();
 
-    float s;
+    double s;
     asm volatile(
         "addi x5, zero, 0\n"
-        "fcvt.s.w %[s], x5\n" // sets s to zero
+        "fcvt.d.w %[s], x5\n" // sets s to zero
         "frep.o %[n_frep], 1, 0, 0 \n"
-        "fadd.s %[s], ft0, %[s] \n"
+        "fadd.d %[s], ft0, %[s] \n"
         : [s] "+f"(s) : [n_frep] "r"(n - 1) : "ft0"
     );
 
@@ -65,15 +65,15 @@ int sum_ssr_frep(float *arr, const size_t n, float* result) {
     return 0;
 }
 
-float* result_arr;
+double* result_arr;
 __attribute__((noinline)) 
-int sum_parallel(float *arr, const size_t n, float* result) {
+int sum_parallel(double *arr, const size_t n, double* result) {
     size_t core_num = snrt_cluster_core_num() - 1;
     size_t core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
 
     if (core_idx == 0) {
-        result_arr = allocate(core_num , sizeof(float));
+        result_arr = allocate(core_num , sizeof(double));
     }
 
     // sum parallel
@@ -81,7 +81,7 @@ int sum_parallel(float *arr, const size_t n, float* result) {
     if (core_idx < n - local_n * core_num) {
         do_extra = 1;
     }
-    float priv_sum = 0.0;
+    double priv_sum = 0.0;
 
     for (unsigned i = local_n * core_idx; i < local_n * (core_idx + 1); i++) {
         priv_sum += arr[i];
@@ -101,7 +101,7 @@ int sum_parallel(float *arr, const size_t n, float* result) {
     snrt_cluster_hw_barrier();
     
     if (core_idx == 0) {
-        float sum = 0.0;
+        double sum = 0.0;
         for (uint32_t i = 0; i < core_num; i++) {
             sum += result_arr[i];
             // printf("Core %d has sum: %f\n", i, result_arr[i]);
@@ -114,13 +114,13 @@ int sum_parallel(float *arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline)) 
-int sum_ssr_parallel(float *arr, const size_t n, float* result) {
+int sum_ssr_parallel(double *arr, const size_t n, double* result) {
     size_t core_num = snrt_cluster_core_num() - 1;
     size_t core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
 
     if (core_idx == 0) {
-        result_arr = allocate(core_num , sizeof(float));
+        result_arr = allocate(core_num , sizeof(double));
     }
     
     // sum parallel
@@ -135,10 +135,10 @@ int sum_ssr_parallel(float *arr, const size_t n, float* result) {
 
     snrt_ssr_enable();
 
-    register float priv_sum = 0;
+    register double priv_sum = 0;
     for (size_t i = 0; i < local_n; i++) {
         asm volatile(
-            "fadd.s %[s], ft0, %[s] \n"
+            "fadd.d %[s], ft0, %[s] \n"
             : [s] "+f"(priv_sum) :: "ft0"
         );
     }
@@ -159,7 +159,7 @@ int sum_ssr_parallel(float *arr, const size_t n, float* result) {
     snrt_cluster_hw_barrier();
     
     if (core_idx == 0) {
-        float sum = 0.0;
+        double sum = 0.0;
         for (int i = 0; i < core_num; i++) {
             sum += result_arr[i];
             // printf("Core %d has sum: %f\n", i, result_arr[i]);
@@ -172,13 +172,13 @@ int sum_ssr_parallel(float *arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline)) 
-int sum_ssr_frep_parallel(float *arr, const size_t n, float* result) {
+int sum_ssr_frep_parallel(double *arr, const size_t n, double* result) {
     size_t core_num = snrt_cluster_core_num() - 1;
     size_t core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
 
     if (core_idx == 0) {
-        result_arr = allocate(core_num , sizeof(float));
+        result_arr = allocate(core_num , sizeof(double));
     }
     
     // sum parallel
@@ -193,12 +193,12 @@ int sum_ssr_frep_parallel(float *arr, const size_t n, float* result) {
 
     snrt_ssr_enable();
 
-    register float priv_sum;
+    register double priv_sum;
     asm volatile(
         "addi x5, zero, 0\n"
-        "fcvt.s.w %[s], x5\n" // sets s to zero
+        "fcvt.d.w %[s], x5\n" // sets s to zero
         "frep.o %[n_frep], 1, 0, 0 \n"
-        "fadd.s %[s], ft0, %[s] \n"
+        "fadd.d %[s], ft0, %[s] \n"
         : [s] "+f"(priv_sum) : [n_frep] "r"(local_n - 1) : "ft0"
     );
 
@@ -218,7 +218,7 @@ int sum_ssr_frep_parallel(float *arr, const size_t n, float* result) {
     snrt_cluster_hw_barrier();
     
     if (core_idx == 0) {
-        float sum = 0.0;
+        double sum = 0.0;
         for (int i = 0; i < core_num; i++) {
             sum += result_arr[i];
             // printf("Core %d has sum: %f\n", i, result_arr[i]);
@@ -231,8 +231,8 @@ int sum_ssr_frep_parallel(float *arr, const size_t n, float* result) {
 }
 
 // __attribute__((noinline)) 
-// int sum_omp_fail(float *arr, const size_t n, float* result) {
-//     float sum = 0.0;
+// int sum_omp_fail(double *arr, const size_t n, double* result) {
+//     double sum = 0.0;
 // 
 // #pragma omp parallel for reduction(+:sum)
 //     for (unsigned i = 0; i < n; i++) {
@@ -243,16 +243,16 @@ int sum_ssr_frep_parallel(float *arr, const size_t n, float* result) {
 // }
 
 __attribute__((noinline)) 
-int sum_omp(float *arr, const size_t n, float* result) {
+int sum_omp(double *arr, const size_t n, double* result) {
     unsigned core_num = snrt_cluster_core_num() - 1;
     /*
      * We need this array to store the result of each core.
      * As a reduction cannot be compiled (results in endless loop)
      */
-    float* result_arr = allocate(snrt_cluster_core_num(), sizeof(float));
+    double* result_arr = allocate(snrt_cluster_core_num(), sizeof(double));
 #pragma omp parallel
     {
-        float priv_sum = 0.0;
+        double priv_sum = 0.0;
         unsigned core_idx = snrt_cluster_core_idx();
         // printf("HERE %d\n", core_idx);
         size_t local_n = n / core_num;
@@ -273,7 +273,7 @@ int sum_omp(float *arr, const size_t n, float* result) {
     }
 
     // Core 0 is alone again, or is he not?
-    float sum = 0.0;
+    double sum = 0.0;
     for (int i = 0; i < core_num; i++) {
         sum += result_arr[i];
     }
@@ -283,18 +283,18 @@ int sum_omp(float *arr, const size_t n, float* result) {
     return 0;
 }
 
-float* result_arr;
+double* result_arr;
 __attribute__((noinline)) 
-int sum_ssr_omp(float *arr, const size_t n, float* result) {
+int sum_ssr_omp(double *arr, const size_t n, double* result) {
     unsigned core_num = snrt_cluster_core_num() - 1;
     /*
      * We need this array to store the result of each core.
      * As a reduction cannot be compiled (results in endless loop)
      */
-    float* result_arr = allocate(snrt_cluster_core_num(), sizeof(float));
+    result_arr = allocate(snrt_cluster_core_num(), sizeof(double));
 #pragma omp parallel
     {
-        register float priv_sum = 0.0;
+        register double priv_sum = 0.0;
         unsigned core_idx = snrt_cluster_core_idx();
         // printf("HERE %d\n", core_idx);
         size_t local_n = n / core_num;
@@ -311,7 +311,7 @@ int sum_ssr_omp(float *arr, const size_t n, float* result) {
 
         for (size_t i = 0; i < local_n; i++) {
             asm volatile(
-                "fadd.s %[s], ft0, %[s] \n"
+                "fadd.d %[s], ft0, %[s] \n"
                 : [s] "+f"(priv_sum) :: "ft0"
             );
         }
@@ -326,7 +326,7 @@ int sum_ssr_omp(float *arr, const size_t n, float* result) {
     }
 
     // Core 0 is alone again, or is he not?
-    float sum = 0.0;
+    double sum = 0.0;
     for (int i = 0; i < core_num; i++) {
         printf("Core %d sum: %f\n", i, result_arr[i]);
         sum += result_arr[i];
@@ -338,7 +338,7 @@ int sum_ssr_omp(float *arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline)) 
-int sum_ssr_frep_omp(float *arr, const size_t n, float* result) {
+int sum_ssr_frep_omp(double *arr, const size_t n, double* result) {
 
     return 0;
 }

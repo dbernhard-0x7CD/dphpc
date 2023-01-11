@@ -8,7 +8,7 @@
  * Naive implementation of add. Adds a and b element wise into result.
  */
 __attribute__((noinline))
-int add_baseline(float *a, float* b, const size_t n, float* result) {
+int add_baseline(double *a, double* b, const size_t n, double* result) {
     for (size_t i = 0; i < n; i++) {
         result[i] = a[i] + b[i];
     }
@@ -17,7 +17,7 @@ int add_baseline(float *a, float* b, const size_t n, float* result) {
 
 
 __attribute__((noinline))
-int add_ssr(float *a, float* b, const size_t n, float* result) {
+int add_ssr(double *a, double* b, const size_t n, double* result) {
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*a));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, a);
@@ -34,7 +34,7 @@ int add_ssr(float *a, float* b, const size_t n, float* result) {
 
     for (size_t i = 0; i < n; i++) {
         asm volatile(
-            "fadd.s ft2, ft0, ft1 \n"
+            "fadd.d ft2, ft0, ft1 \n"
             ::: "ft0", "ft1", "ft2"
         );
     }
@@ -45,7 +45,7 @@ int add_ssr(float *a, float* b, const size_t n, float* result) {
 }
 
 __attribute__((noinline))
-int add_ssr_frep(float *a, float* b, const size_t n, float* result) {
+int add_ssr_frep(double *a, double* b, const size_t n, double* result) {
     snrt_ssr_loop_1d(SNRT_SSR_DM0, n, sizeof(*a));
     snrt_ssr_repeat(SNRT_SSR_DM0, 1);
     snrt_ssr_read(SNRT_SSR_DM0, SNRT_SSR_1D, a);
@@ -62,7 +62,7 @@ int add_ssr_frep(float *a, float* b, const size_t n, float* result) {
 
     asm volatile(
         "frep.o %[n_frep], 1, 0, 0 \n"
-        "fadd.s ft2, ft0, ft1 \n"
+        "fadd.d ft2, ft0, ft1 \n"
         :: [n_frep] "r"(n - 1) : "ft0", "ft1", "ft2"
     );
 
@@ -72,7 +72,7 @@ int add_ssr_frep(float *a, float* b, const size_t n, float* result) {
 }
 
 __attribute__((noinline))
-int add_parallel(float *a, float *b, const size_t n, float *result) {
+int add_parallel(double *a, double *b, const size_t n, double *result) {
     unsigned core_num = snrt_cluster_core_num() - 1;
     unsigned core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
@@ -95,7 +95,7 @@ int add_parallel(float *a, float *b, const size_t n, float *result) {
 }
 
 __attribute__((noinline))
-int add_ssr_parallel(float *a, float* b, const size_t n, float* result) {
+int add_ssr_parallel(double *a, double* b, const size_t n, double* result) {
     // The last thread is not used in OpenMP.
     // This is probably the DM core.
     unsigned core_num = snrt_cluster_core_num() - 1;
@@ -124,7 +124,7 @@ int add_ssr_parallel(float *a, float* b, const size_t n, float* result) {
 
     for (signed i = 0; i < local_n; i++) {
         asm volatile(
-            "fadd.s ft2, ft0, ft1 \n"
+            "fadd.d ft2, ft0, ft1 \n"
             ::: "ft0", "ft1", "ft2"
         );
     }
@@ -140,7 +140,7 @@ int add_ssr_parallel(float *a, float* b, const size_t n, float* result) {
 }
 
 __attribute__((noinline))
-int add_ssr_frep_parallel(float *a, float* b, const size_t n, float* result) {
+int add_ssr_frep_parallel(double *a, double* b, const size_t n, double* result) {
     // The last thread is not used in OpenMP.
     // I do not know why.
     unsigned core_num = snrt_cluster_core_num() - 1;
@@ -169,7 +169,7 @@ int add_ssr_frep_parallel(float *a, float* b, const size_t n, float* result) {
 
     asm volatile(
         "frep.o %[n_frep], 1, 0, 0 \n"
-        "fadd.s ft2, ft0, ft1 \n"
+        "fadd.d ft2, ft0, ft1 \n"
         :: [n_frep] "r"(local_n - 1) : "ft0", "ft1", "ft2"
     );
     
@@ -184,7 +184,7 @@ int add_ssr_frep_parallel(float *a, float* b, const size_t n, float* result) {
 }
 
 __attribute__((noinline)) 
-int add_omp(float *a, float *b, const size_t n, float *result) {
+int add_omp(double *a, double *b, const size_t n, double *result) {
 
 #pragma omp parallel for schedule(static) // in the following line it's necessary to use 'signed'
     for (unsigned i = 0; i < n; i++) {
@@ -195,7 +195,7 @@ int add_omp(float *a, float *b, const size_t n, float *result) {
 }
 
 __attribute__((noinline)) 
-int add_ssr_omp(float *a, float *b, const size_t n, float *result) {
+int add_ssr_omp(double *a, double *b, const size_t n, double *result) {
     // The last thread is not used in OpenMP.
     // This is probably the DM core.
     unsigned core_num = snrt_cluster_core_num() - 1;
@@ -227,7 +227,7 @@ int add_ssr_omp(float *a, float *b, const size_t n, float *result) {
 
         for (signed i = 0; i < local_n; i++) {
             asm volatile(
-                "fadd.s ft2, ft0, ft1 \n"
+                "fadd.d ft2, ft0, ft1 \n"
                 ::: "ft0", "ft1", "ft2"
             );
         }
@@ -244,7 +244,7 @@ int add_ssr_omp(float *a, float *b, const size_t n, float *result) {
 }
 
 __attribute__((noinline)) 
-int add_ssr_frep_omp(float *a, float *b, const size_t n, float *result) {
+int add_ssr_frep_omp(double *a, double *b, const size_t n, double *result) {
     // The last thread is not used in OpenMP.
     // I do not know why.
     unsigned core_num = snrt_cluster_core_num() - 1;
@@ -276,7 +276,7 @@ int add_ssr_frep_omp(float *a, float *b, const size_t n, float *result) {
 
         asm volatile(
             "frep.o %[n_frep], 1, 0, 0 \n"
-            "fadd.s ft2, ft0, ft1 \n"
+            "fadd.d ft2, ft0, ft1 \n"
             :: [n_frep] "r"(local_n - 1) : "ft0", "ft1", "ft2"
         );
         

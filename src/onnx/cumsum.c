@@ -10,8 +10,8 @@
  * Naive implementation of cumulative sum. Calculates the cumulative sum of n elements starting at arr.
  */
 __attribute__((noinline))
-int cumsum_baseline(const float* arr, const size_t n, float* result) {
-    float sum = 0.0;
+int cumsum_baseline(const double* arr, const size_t n, double* result) {
+    double sum = 0.0;
 
     for (size_t i = 0; i < n; i++) {
         sum += arr[i];
@@ -23,9 +23,9 @@ int cumsum_baseline(const float* arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline))
-int cumsum_ssr(const float* arr, const size_t n, volatile float* result) {
-    register volatile float ft0 asm("ft0");
-    register volatile float ft2 asm("ft2");
+int cumsum_ssr(const double* arr, const size_t n, volatile double* result) {
+    register volatile double ft0 asm("ft0");
+    register volatile double ft2 asm("ft2");
 
     // ft0 is input
     asm volatile("" : "=f"(ft0));
@@ -46,11 +46,11 @@ int cumsum_ssr(const float* arr, const size_t n, volatile float* result) {
     asm volatile(
         "addi a0, zero, 0\n"      // a0 counts
         "addi a1, zero, 0\n"
-        "fcvt.s.w ft1, a1\n"     // ft1 stores the cumulative sum. Set it to 0.0
+        "fcvt.d.w ft1, a1\n"     // ft1 stores the cumulative sum. Set it to 0.0
         "1:\n"
             "addi a0, a0, 1\n"
-            "fadd.s ft1, ft0, ft1\n" // ft1 <- ft0 (streamed arr[i]) + ft1
-            "fmv.s ft2, ft1\n"
+            "fadd.d ft1, ft0, ft1\n" // ft1 <- ft0 (streamed arr[i]) + ft1
+            "fmv.d ft2, ft1\n"
         "3:"
         "blt a0, %[n], 1b\n"
         :: [n] "r"(n) 
@@ -65,9 +65,9 @@ int cumsum_ssr(const float* arr, const size_t n, volatile float* result) {
 }
 
 __attribute__((noinline))
-int cumsum_ssr_frep(const float* arr, const size_t n, volatile float* result) {
-    register volatile float ft0 asm("ft0");
-    register volatile float ft2 asm("ft2");
+int cumsum_ssr_frep(const double* arr, const size_t n, volatile double* result) {
+    register volatile double ft0 asm("ft0");
+    register volatile double ft2 asm("ft2");
 
     // ft0 is input
     asm volatile("" : "=f"(ft0));
@@ -86,10 +86,10 @@ int cumsum_ssr_frep(const float* arr, const size_t n, volatile float* result) {
 
     asm volatile(
         "addi a1, zero, 0\n"
-        "fcvt.s.w ft1, a1\n"        // ft1 stores the cumulative sum. set it to 0.0
+        "fcvt.d.w ft1, a1\n"        // ft1 stores the cumulative sum. set it to 0.0
         "frep.o %[n], 2, 0, 0 \n"
-            "fadd.s ft1, ft0, ft1\n" // ft1 <- fa0 + ft1
-            "fmv.s ft2, ft1\n"
+            "fadd.d ft1, ft0, ft1\n" // ft1 <- fa0 + ft1
+            "fmv.d ft2, ft1\n"
         :: [n] "r"(n-1)
         : "ft0", "ft1", "ft2", "a0", "a1"
     );
@@ -101,8 +101,8 @@ int cumsum_ssr_frep(const float* arr, const size_t n, volatile float* result) {
     return 0;
 }
 
-float* shared;
-int cumsum_parallel(const float* arr, const size_t n, float* result) {
+double* shared;
+int cumsum_parallel(const double* arr, const size_t n, double* result) {
     size_t core_num = snrt_cluster_core_num() - 1;
     size_t core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
@@ -116,10 +116,10 @@ int cumsum_parallel(const float* arr, const size_t n, float* result) {
         return 0;
     }
 
-    volatile float my_sum = arr[core_idx * local_n];
+    volatile double my_sum = arr[core_idx * local_n];
 
     if (core_idx == 0) {
-        shared = allocate(core_num, sizeof(float));
+        shared = allocate(core_num, sizeof(double));
     }
     snrt_cluster_hw_barrier();
 
@@ -172,7 +172,7 @@ int cumsum_parallel(const float* arr, const size_t n, float* result) {
     return 0;
 }
 
-int cumsum_ssr_parallel(const float* arr, const size_t n, volatile float* result) {
+int cumsum_ssr_parallel(const double* arr, const size_t n, volatile double* result) {
     size_t core_num = snrt_cluster_core_num() - 1;
     size_t core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
@@ -183,13 +183,12 @@ int cumsum_ssr_parallel(const float* arr, const size_t n, volatile float* result
         snrt_cluster_hw_barrier();
         snrt_cluster_hw_barrier();
         snrt_cluster_hw_barrier();
-        snrt_cluster_hw_barrier();
         return 0;
     }
 
     snrt_cluster_hw_barrier();
     if (core_idx == 0) {
-        shared = allocate(core_num, sizeof(float));
+        shared = allocate(core_num, sizeof(double));
     }
     snrt_cluster_hw_barrier();
 
@@ -215,18 +214,18 @@ int cumsum_ssr_parallel(const float* arr, const size_t n, volatile float* result
     snrt_ssr_enable();
 
     // // i need my own loop
-    volatile register float my_sum = 0.0;
+    volatile register double my_sum = 0.0;
     asm volatile(
         "addi a0, zero, 0\n"      // a0 counts
         "addi a1, zero, 0\n"
-        "fcvt.s.w ft1, a1\n"     // ft1 stores the cumulative sum. Set it to 0.0
+        "fcvt.d.w ft1, a1\n"     // ft1 stores the cumulative sum. Set it to 0.0
         "1:\n"
             "addi a0, a0, 1\n"
-            "fadd.s ft1, ft0, ft1\n" // ft1 <- ft0 (streamed arr[i]) + ft1
-            "fmv.s ft2, ft1\n"
+            "fadd.d ft1, ft0, ft1\n" // ft1 <- ft0 (streamed arr[i]) + ft1
+            "fmv.d ft2, ft1\n"
         "3:"
         "blt a0, %[n], 1b\n"
-        "fmv.s %[target], ft1\n"
+        "fmv.d %[target], ft1\n"
         : [target] "=f"(my_sum)
         : [n] "r"(local_n) 
         : "ft0", "ft1", "ft2", "a0", "a1"
@@ -273,7 +272,7 @@ int cumsum_ssr_parallel(const float* arr, const size_t n, volatile float* result
     return 0;
 }
 
-int cumsum_ssr_frep_parallel(const float* arr, const size_t n, volatile float* result) {
+int cumsum_ssr_frep_parallel(const double* arr, const size_t n, volatile double* result) {
     size_t core_num = snrt_cluster_core_num() - 1;
     size_t core_idx = snrt_cluster_core_idx();
     size_t local_n = n / core_num;
@@ -290,7 +289,7 @@ int cumsum_ssr_frep_parallel(const float* arr, const size_t n, volatile float* r
 
     snrt_cluster_hw_barrier();
     if (core_idx == 0) {
-        shared = allocate(core_num, sizeof(float));
+        shared = allocate(core_num, sizeof(double));
     }
     snrt_cluster_hw_barrier();
 
@@ -316,14 +315,14 @@ int cumsum_ssr_frep_parallel(const float* arr, const size_t n, volatile float* r
     snrt_ssr_enable();
 
     // // i need my own loop
-    volatile register float my_sum = 0.0;
+    volatile register double my_sum = 0.0;
     asm volatile(
         "addi a1, zero, 0\n"
-        "fcvt.s.w ft1, a1\n"     // ft1 stores the cumulative sum. Set it to 0.0
+        "fcvt.d.w ft1, a1\n"     // ft1 stores the cumulative sum. Set it to 0.0
         "frep.o %[n], 2, 0, 0 \n"
-            "fadd.s ft1, ft0, ft1\n" // ft1 <- ft0 (streamed arr[i]) + ft1
-            "fmv.s ft2, ft1\n"
-        "fmv.s %[target], ft1\n"
+            "fadd.d ft1, ft0, ft1\n" // ft1 <- ft0 (streamed arr[i]) + ft1
+            "fmv.d ft2, ft1\n"
+        "fmv.d %[target], ft1\n"
         : [target] "=f"(my_sum)
         : [n] "r"(local_n - 1) 
         : "ft0", "ft1", "ft2", "a1"
@@ -366,8 +365,6 @@ int cumsum_ssr_frep_parallel(const float* arr, const size_t n, volatile float* r
             result[core_num * local_n + i] = my_sum;
         }
     }
-
-    return 0;
 
     return 0;
 }

@@ -11,14 +11,14 @@ int main() {
 
     for(size_t size=LMQ_START_SIZE; core_idx == 0 && size<=LMQ_SIZE;size*=2){
         // Initialize the input data
-        float* x = allocate(size, sizeof(float));
-        float* y = allocate(size, sizeof(float));
-        float* result_ref = allocate(size, sizeof(float));
-        float* result = allocate(size, sizeof(float));
+        double* x = allocate(size, sizeof(double));
+        double* y = allocate(size, sizeof(double));
+        double* result_ref = allocate(size, sizeof(double));
+        double* result = allocate(size, sizeof(double));
 
         for (int i = 0; i < size; i++) {
-            x[i] = (float)i;
-            y[i] = (float)size - i + 1;
+            x[i] = (double)i;
+            y[i] = (double)size - i + 1;
         }
         
         BENCH_VO(div_baseline, x, y, size, result_ref);

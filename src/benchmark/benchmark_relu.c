@@ -9,15 +9,15 @@ int main() {
     uint32_t core_idx = snrt_global_core_idx();
 
     for(size_t size=LMQ_START_SIZE; core_idx == 0 && size<=LMQ_SIZE;size*=2){
-        float* x = allocate(size, sizeof(float));
-        float* result_ref = allocate(size, sizeof(float));
-        float* result = allocate(size, sizeof(float));
+        double* x = allocate(size, sizeof(double));
+        double* result_ref = allocate(size, sizeof(double));
+        double* result = allocate(size, sizeof(double));
 
         for (size_t i = 0; i < size; i++) {
-            x[i] = (float)i - (float)size / 2;
+            x[i] = (double)i - (double)size / 2;
         }
 
-        float alpha = 0.1;
+        double alpha = 0.1;
 
         BENCH_VO(leakyrelu_baseline, x, size, alpha, result_ref);
 

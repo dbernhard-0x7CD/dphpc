@@ -6,7 +6,7 @@
 #include "cumsum.h"
 #include "benchmark.h"
 
-float *x, *result, *result_ref;
+double *x, *result, *result_ref;
 
 int main() {
     uint32_t core_idx = snrt_global_core_idx();
@@ -16,9 +16,9 @@ int main() {
         printf("Running benchmark_cumsum\n");
 
         // x is input; result is output of the optimized functions
-        x = allocate(size, sizeof(float));
-        result = allocate(size, sizeof(float));
-        result_ref = allocate(size, sizeof(float));
+        x = allocate(size, sizeof(double));
+        result = allocate(size, sizeof(double));
+        result_ref = allocate(size, sizeof(double));
 
         srandom(2);
         for (size_t i = 0; i < size; i++) {
@@ -49,9 +49,9 @@ int main() {
     /* Benchmark parallel */
     for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
         if (core_idx == 0) {
-            x = allocate(size, sizeof(float));
-            result = allocate(size, sizeof(float));
-            result_ref = allocate(size, sizeof(float));
+            x = allocate(size, sizeof(double));
+            result = allocate(size, sizeof(double));
+            result_ref = allocate(size, sizeof(double));
 
             for (size_t i = 0; core_idx == 0 && i < size; i++) {
                 x[i] = 1.0 * i;

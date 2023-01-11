@@ -5,11 +5,11 @@
 #include "benchmark.h"
 #include "lmq.h"
 
-__attribute__((noinline)) int unique_baseline(float* arr, const size_t n, float* result);
-__attribute__((noinline)) int unique_ssr(float* arr, const size_t n, float* result);
-__attribute__((noinline)) int unique_parallel(float* arr, const size_t n, float* result);
+__attribute__((noinline)) int unique_baseline(double* arr, const size_t n, double* result);
+__attribute__((noinline)) int unique_ssr(double* arr, const size_t n, double* result);
+__attribute__((noinline)) int unique_parallel(double* arr, const size_t n, double* result);
 
-float *x, *result, *result_ref;
+double *x, *result, *result_ref;
 
 int main() {
 
@@ -21,7 +21,7 @@ int main() {
     for (size_t size = LMQ_START_SIZE; core_idx == 0 && size <= LMQ_SIZE; size *= 2) {
 
         // Initialize the input data
-        x = allocate(size, sizeof(float));
+        x = allocate(size, sizeof(double));
         for (size_t i = 0; i < size; i++) {
             x[i] = random() % (size / 2);  // add every element multiple times
         }
@@ -40,11 +40,11 @@ int main() {
         // NO LONGER NEEDED
 
 
-        result = allocate(size, sizeof(float));
-        result_ref = allocate(size, sizeof(float));
+        result = allocate(size, sizeof(double));
+        result_ref = allocate(size, sizeof(double));
 
         // Prepare x for ssr:
-        float* x_for_ssr = allocate(size + (size * (size - 1) / 2), sizeof(float));
+        double* x_for_ssr = allocate(size + (size * (size - 1) / 2), sizeof(double));
         size_t index = 0;
         for (size_t i = 0; i < size; i++) {
             x_for_ssr[index++] = x[i];

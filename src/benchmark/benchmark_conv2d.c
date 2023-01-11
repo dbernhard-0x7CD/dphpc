@@ -6,14 +6,14 @@
 #include "benchmark.h"
 
 __attribute__((noinline))
-int conv2d_baseline(float *a, float* filter, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, size_t d0, size_t d1, float* result);
+int conv2d_baseline(double *a, double* filter, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, size_t d0, size_t d1, double* result);
 __attribute__((noinline))
-int conv2d_ssr(float *a, float* filter, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, size_t d0, size_t d1, float* result);
+int conv2d_ssr(double *a, double* filter, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, size_t d0, size_t d1, double* result);
 __attribute__((noinline))
-int conv2d_ssr_frep(float *a, float* filter, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, size_t d0, size_t d1, float* result);
+int conv2d_ssr_frep(double *a, double* filter, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, size_t d0, size_t d1, double* result);
 
 size_t conv_output_size(size_t n, size_t filter_size, size_t stride, size_t dilation);
-// void print_pattern(float *a, size_t n, size_t filter_size, size_t stride, float* result);
+// void print_pattern(double *a, size_t n, size_t filter_size, size_t stride, double* result);
 
 int main() {
     uint32_t core_idx = snrt_global_core_idx();
@@ -36,13 +36,13 @@ int main() {
         size_t n0 = (outn0 - 1) * s0 + (1 + (f0 - 1) * d0);
         size_t n1 = (outn1 - 1) * s1 + (1 + (f1 - 1) * d1);
 
-        float* x = allocate(n0 * n1, sizeof(float));
-        float* result_ref = allocate(outn0 * outn1, sizeof(float));
-        float* result = allocate(outn0 * outn1, sizeof(float));
-        float* filter = allocate(f0 * f1, sizeof(float));
+        double* x = allocate(n0 * n1, sizeof(double));
+        double* result_ref = allocate(outn0 * outn1, sizeof(double));
+        double* result = allocate(outn0 * outn1, sizeof(double));
+        double* filter = allocate(f0 * f1, sizeof(double));
 
         for (size_t i = 0; i < n0 * n1; i++) {
-            x[i] = (float)i;
+            x[i] = (double)i;
         }
 
         for (size_t i = 0; i < f0 * f1; ++i) {

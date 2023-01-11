@@ -8,7 +8,7 @@
  * Naive implementation of acos. Calculates the acos of n elements starting at arr.
  */
 __attribute__((noinline))
-int acos_baseline(float* arr, const size_t n, float* result) {
+int acos_baseline(double* arr, const size_t n, double* result) {
     for (size_t i = 0; i < n; i++) {
         result[i] = acosf(arr[i]);
     }
@@ -17,9 +17,9 @@ int acos_baseline(float* arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline))
-int acos_ssr(float* arr, const size_t n, float* result) {
-    register volatile float ft0 asm("ft0");
-    register volatile float ft1 asm("ft1");
+int acos_ssr(double* arr, const size_t n, double* result) {
+    register volatile double ft0 asm("ft0");
+    register volatile double ft1 asm("ft1");
 
     asm volatile("" : "=f"(ft0));
 
@@ -37,7 +37,7 @@ int acos_ssr(float* arr, const size_t n, float* result) {
 
     for (size_t i = 0; i < n; i++) {
         asm volatile(
-            "fmv.s fa0, ft0\n" // fa0 <- ft0
+            "fmv.d fa0, ft0\n" // fa0 <- ft0
             ::: "fa0", "ft0"
         );
 
@@ -68,7 +68,7 @@ int acos_ssr(float* arr, const size_t n, float* result) {
         __builtin_ssr_enable();
         
         asm volatile(
-            "fmv.s ft1, fa0" // ft1 <- fa0
+            "fmv.d ft1, fa0" // ft1 <- fa0
             ::: "ft1", "fa0"
         );
     }
@@ -80,7 +80,7 @@ int acos_ssr(float* arr, const size_t n, float* result) {
 }
 
 __attribute__((noinline))
-int acos_ssr_frep(float* arr, const size_t n, float* result) {
+int acos_ssr_frep(double* arr, const size_t n, double* result) {
     /*
      * I do not think we can optimize anything with FREP.
      * As we have a call to another function which consists of many more

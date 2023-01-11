@@ -5,7 +5,7 @@
 #include "abs.h"
 #include "benchmark.h"
 
-float *x, *result, *result_ref;
+double *x, *result, *result_ref;
 
 int main() {
     uint32_t core_idx = snrt_global_core_idx();
@@ -15,9 +15,9 @@ int main() {
         // benchmark ssr+frep on a single core
         printf("Running benchmark_abs\n");
 
-        x = allocate(size, sizeof(float));
-        result_ref = allocate(size, sizeof(float));
-        result = allocate(size, sizeof(float));
+        x = allocate(size, sizeof(double));
+        result_ref = allocate(size, sizeof(double));
+        result = allocate(size, sizeof(double));
 
         BENCH_VO(fabs_baseline, x, size, result_ref);
 

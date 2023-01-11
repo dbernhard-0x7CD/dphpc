@@ -5,7 +5,7 @@
 #include "copy.h"
 #include "benchmark.h"
 
-float *x, *result, *result_ref;
+double *x, *result, *result_ref;
 
 int main() {
     uint32_t core_idx = snrt_cluster_core_idx();
@@ -14,11 +14,11 @@ int main() {
     for(size_t size=LMQ_START_SIZE; core_idx == 0 && size<=LMQ_SIZE;size*=2){
         printf("Running benchmark_copy\n");
 
-        x = allocate(size, sizeof(float));
-        result_ref = allocate(size, sizeof(float));
-        result = allocate(size, sizeof(float));
-        // float *x_l1cache = snrt_l1alloc(size * sizeof(float));
-        // float *result_l1cache = snrt_l1alloc(size * sizeof(float));
+        x = allocate(size, sizeof(double));
+        result_ref = allocate(size, sizeof(double));
+        result = allocate(size, sizeof(double));
+        // double *x_l1cache = snrt_l1alloc(size * sizeof(double));
+        // double *result_l1cache = snrt_l1alloc(size * sizeof(double));
 
         // Random initialized array
         for (size_t i = 0; i < size; i++) {

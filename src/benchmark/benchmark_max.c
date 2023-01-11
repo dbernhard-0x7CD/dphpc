@@ -13,9 +13,9 @@ int main() {
         printf("Running benchmark_max\n");
 
         // x is input; result is output of the optimized functions
-        float *x = allocate(size, sizeof(float));
-        float result_ref;
-        float result;
+        double *x = allocate(size, sizeof(double));
+        double result_ref;
+        double result;
 
         srandom(2);
         for (size_t i = 0; i < size; i++) {

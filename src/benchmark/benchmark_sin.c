@@ -10,7 +10,7 @@
 #   define M_PI 3.14159265358979323846
 #endif
 
-float *x, *result_ref, *result;
+double *x, *result_ref, *result;
 
 int main() {
     uint32_t core_idx = snrt_cluster_core_idx();
@@ -18,9 +18,9 @@ int main() {
     for(size_t size=LMQ_START_SIZE; core_idx == 0 && size<=LMQ_SIZE;size*=2){
         printf("Running benchmark_sin\n");
 
-        x = allocate(size, sizeof(float)); // input
-        result_ref = allocate(size, sizeof(float)); // reference output (ground truth)
-        result = allocate(size, sizeof(float)); // output of optimized functions
+        x = allocate(size, sizeof(double)); // input
+        result_ref = allocate(size, sizeof(double)); // reference output (ground truth)
+        result = allocate(size, sizeof(double)); // output of optimized functions
 
         srandom(2); // setting seed 2
         x[0] = 0.0; // sin(0.0) is 0.0

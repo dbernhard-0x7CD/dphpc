@@ -6,7 +6,7 @@
 #include "argmax.h"
 #include "benchmark.h"
 
-float *x;
+double *x;
 int result, result_ref;
 
 int main() {
@@ -16,7 +16,7 @@ int main() {
         printf("Running benchmark_argmax\n");
 
         // x is input; result is output of the optimized functions
-        x = allocate(size, sizeof(float));
+        x = allocate(size, sizeof(double));
 
         srandom(2);
         for (size_t i = 0; core_idx == 0 && i < size; i++) {

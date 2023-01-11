@@ -3,16 +3,16 @@
 
 #include <snrt.h>
 
-int fabs_baseline(float *arr, const size_t n, float *result);
-int fabs_ssr(float *arr, const size_t n, float *result);
-int fabs_ssr_frep(float *arr, const size_t n, float *result);
+int fabs_baseline(double *arr, const size_t n, double *result);
+int fabs_ssr(double *arr, const size_t n, double *result);
+int fabs_ssr_frep(double *arr, const size_t n, double *result);
 
-int fabs_parallel(float *arr, const size_t n, float *result);
-int fabs_ssr_parallel(float *arr, const size_t n, float *result);
-int fabs_ssr_frep_parallel(float *arr, const size_t n, float *result);
+int fabs_parallel(double *arr, const size_t n, double *result);
+int fabs_ssr_parallel(double *arr, const size_t n, double *result);
+int fabs_ssr_frep_parallel(double *arr, const size_t n, double *result);
 
-int fabs_omp(float *arr, const size_t n, float *result);
-int fabs_ssr_omp(float *arr, const size_t n, float *result);
-int fabs_ssr_frep_omp(float *arr, const size_t n, float *result);
+int fabs_omp(double *arr, const size_t n, double *result);
+int fabs_ssr_omp(double *arr, const size_t n, double *result);
+int fabs_ssr_frep_omp(double *arr, const size_t n, double *result);
 
 #endif

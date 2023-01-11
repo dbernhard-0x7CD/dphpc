@@ -5,19 +5,19 @@
 #include "sum.h"
 #include "benchmark.h"
 
-float *x;
+double *x;
 int main() {
     uint32_t core_idx = snrt_cluster_core_idx();
     uint32_t core_num = snrt_cluster_core_num() - 1;
 
     // sum from 1 to size (inclusive)
-    float result_ref = -1.0;
-    float result = -1.0;
+    double result_ref = -1.0;
+    double result = -1.0;
 
     for(size_t size=LMQ_START_SIZE; core_idx == 0 && size<=LMQ_SIZE;size*=2){
         printf("Running benchmark_sum\n");
 
-        x = allocate(size, sizeof(float));
+        x = allocate(size, sizeof(double));
         for (size_t i = 0; i < size; i++) {
             x[i] = 1.0 * random() / __LONG_MAX__;
             // x[i] = i;

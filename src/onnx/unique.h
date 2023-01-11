@@ -14,9 +14,9 @@
  * not change the work while directly allowing parallelization).
  * The other (optional) outputs are omitted.
  */
-int unique_baseline(float* arr, const size_t n, float* result);
-int unique_ssr(float* arr, const size_t n, float* result);
-int unique_frep(float* arr, const size_t n, float* result);
-int unique_parallel(float* arr, const size_t n, float* result);
+int unique_baseline(double* arr, const size_t n, double* result);
+int unique_ssr(double* arr, const size_t n, double* result);
+int unique_frep(double* arr, const size_t n, double* result);
+int unique_parallel(double* arr, const size_t n, double* result);
 
 #endif

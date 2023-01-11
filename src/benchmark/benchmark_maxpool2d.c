@@ -6,11 +6,11 @@
 #include "benchmark.h"
 
 __attribute__((noinline))
-int maxpool2d_baseline(float *a, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, float* result);
+int maxpool2d_baseline(double *a, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, double* result);
 __attribute__((noinline))
-int maxpool2d_ssr(float *a, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, float* result);
+int maxpool2d_ssr(double *a, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, double* result);
 __attribute__((noinline))
-int maxpool2d_ssr_frep(float *a, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, float* result);
+int maxpool2d_ssr_frep(double *a, size_t n0, size_t n1, size_t f0, size_t f1, size_t s0, size_t s1, double* result);
 
 size_t pool_output_size(size_t n, size_t filter_size, size_t stride);
 
@@ -33,12 +33,12 @@ int main() {
         size_t n0 = (outn0 - 1) * s0 + f0;
         size_t n1 = (outn1 - 1) * s1 + f1;
 
-        float* x = allocate(n0 * n1, sizeof(float));
-        float* result_ref = allocate(outn0 * outn1, sizeof(float));
-        float* result = allocate(outn0 * outn1, sizeof(float));
+        double* x = allocate(n0 * n1, sizeof(double));
+        double* result_ref = allocate(outn0 * outn1, sizeof(double));
+        double* result = allocate(outn0 * outn1, sizeof(double));
 
         for (size_t i = 0; i < n0 * n1; i++) {
-            x[i] = (float)i;
+            x[i] = (double)i;
         }
 
         BENCH_VO(maxpool2d_baseline, x, n0, n1, f0, f1, s0, s1, result_ref);

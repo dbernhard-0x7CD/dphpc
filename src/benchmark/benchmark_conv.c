@@ -6,23 +6,23 @@
 #include "benchmark.h"
 
 __attribute__((noinline))
-int conv_baseline(float *a, float* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, float* result);
+int conv_baseline(double *a, double* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, double* result);
 __attribute__((noinline))
-int conv_ssr(float *a, float* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, float* result);
+int conv_ssr(double *a, double* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, double* result);
 __attribute__((noinline))
-int conv_ssr_frep(float *a, float* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, float* result);
+int conv_ssr_frep(double *a, double* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, double* result);
 
 __attribute__((noinline))
-int conv_parallel(float *a, float* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, float* result);
+int conv_parallel(double *a, double* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, double* result);
 __attribute__((noinline))
-int conv_ssr_parallel(float *a, float* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, float* result);
+int conv_ssr_parallel(double *a, double* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, double* result);
 __attribute__((noinline))
-int conv_ssr_frep_parallel(float *a, float* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, float* result);
+int conv_ssr_frep_parallel(double *a, double* filter, size_t n, size_t filter_size, size_t stride, size_t dilation, double* result);
 
 size_t conv_output_size(size_t n, size_t filter_size, size_t stride, size_t dilation);
-// void print_pattern(float *a, size_t n, size_t filter_size, size_t stride, float* result);
+// void print_pattern(double *a, size_t n, size_t filter_size, size_t stride, double* result);
 
-float *x, *result, *result_ref, *filter;
+double *x, *result, *result_ref, *filter;
 
 int main() {
     uint32_t core_idx = snrt_global_core_idx();
@@ -36,14 +36,14 @@ int main() {
         size_t input_size = (size - 1) * stride + (1 + (filter_size - 1) * dilation);
 
         // Initialize the input data
-        x = allocate(input_size, sizeof(float));
-        result_ref = allocate(size, sizeof(float));
-        result = allocate(size, sizeof(float));
+        x = allocate(input_size, sizeof(double));
+        result_ref = allocate(size, sizeof(double));
+        result = allocate(size, sizeof(double));
 
-        filter = allocate(filter_size, sizeof(float));
+        filter = allocate(filter_size, sizeof(double));
 
         for (size_t i = 0; i < input_size; i++) {
-            x[i] = (float)i;
+            x[i] = (double)i;
         }
 
         for (size_t i = 0; i < filter_size; ++i) {

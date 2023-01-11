@@ -5,10 +5,10 @@
 #include "benchmark.h"
 #include "gemm.h"
 
-int print_gemm_pattern(const float* a, size_t m, size_t n, size_t k, float* result, size_t result_len);
-int print_other_gemm_pattern(const float* a, size_t m, size_t n, size_t k, float* result, size_t result_len);
+int print_gemm_pattern(const double* a, size_t m, size_t n, size_t k, double* result, size_t result_len);
+int print_other_gemm_pattern(const double* a, size_t m, size_t n, size_t k, double* result, size_t result_len);
 
-float *x, *y, *result_ref, *result;
+double *x, *y, *result_ref, *result;
 
 int main() {
     uint32_t core_idx = snrt_cluster_core_idx();
@@ -20,18 +20,18 @@ int main() {
         size_t N = sqrt * 2;
         size_t K = sqrt / 2;
                             // sqrt / 2 * sqrt * 2 --> size
-        x = allocate(M * N, sizeof(float));
+        x = allocate(M * N, sizeof(double));
                             // sqrt * 2 * sqrt / 2 --> size
-        y = allocate(N * K, sizeof(float));
-        result_ref = allocate(M * K, sizeof(float));
-        result = allocate(M * K, sizeof(float));
+        y = allocate(N * K, sizeof(double));
+        result_ref = allocate(M * K, sizeof(double));
+        result = allocate(M * K, sizeof(double));
 
         for (size_t i = 0; i < M * N; i++) {
-            x[i] = (float)i;
+            x[i] = (double)i;
         }
 
         for (size_t i = 0; i < N * K; i++) {
-            y[i] = (float)i;
+            y[i] = (double)i;
         }
 
         BENCH_VO(gemm_baseline, x, y, M, N, K, result_ref);
@@ -53,11 +53,11 @@ int main() {
 
         if (core_idx == 0) {
             for (size_t i = 0; i < M * N; i++) {
-                x[i] = (float)i;
+                x[i] = (double)i;
             }
 
             for (size_t i = 0; i < N * K; i++) {
-                y[i] = (float)i;
+                y[i] = (double)i;
             }
             gemm_baseline(x, y, M, N, K, result_ref);
         }
@@ -103,11 +103,11 @@ int main() {
 
         if (core_idx == 0) {
             for (size_t i = 0; i < M * N; i++) {
-                x[i] = (float)i;
+                x[i] = (double)i;
             }
 
             for (size_t i = 0; i < N * K; i++) {
-                y[i] = (float)i;
+                y[i] = (double)i;
             }
             gemm_baseline(x, y, M, N, K, result_ref);
         }
