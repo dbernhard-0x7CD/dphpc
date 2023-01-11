@@ -62,7 +62,7 @@ volatile size_t runs = LMQ_RUNS;
  */
 #define BENCH_VO_PARALLEL(func_name, ...)               \
     do {                                                \
-        for(int cur_run=0;cur_run<runs;cur_run++){      \
+        for(size_t cur_run=0;cur_run<runs;cur_run++){      \
             size_t core_num = snrt_cluster_core_num() - 1;  \
             size_t core_idx = snrt_cluster_core_idx();      \
             size_t _start_ = read_csr(mcycle);              \
@@ -81,7 +81,7 @@ volatile size_t runs = LMQ_RUNS;
             if (snrt_cluster_core_idx() == 0) {             \
                 printf(#func_name", size: %d: %lu cycles. Return code: %d\n", \
                         size, cycles, _result_code_);       \
-            }                                               \   
+            }                                               \
         }                                               \
     } while(0);
 
