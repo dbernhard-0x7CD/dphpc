@@ -16,7 +16,7 @@ if ".git" not in os.listdir(os.getcwd()):
     print("please run this script from the project root")
     sys.exit()
 
-include, exclude, savepath, _, _ = arg_parse()
+include, exclude, savepath, _, _, _ = arg_parse()
 functions, data = load_plot_dataframe(fullpath, include=include, exclude=exclude)
 
 def compute_mean(xs):

@@ -46,7 +46,7 @@ def load_plot_data(abspath, include=[], exclude=[]):
     print("[    DATA LOADER]     loaded data for the plots {}".format(list(data.keys())))
     return functions, data
 
-def load_plot_dataframe(abspath, include=[], exclude=[]):
+def load_plot_dataframe(abspath, include=[], exclude=[], group=True):
     files = list()
     data = dict()
 
@@ -96,7 +96,10 @@ def load_plot_dataframe(abspath, include=[], exclude=[]):
         else:
             return "sequential"
 
-    data["parallelism"] = data["implementation name"].apply(impl_to_parallelism)
+    if group:
+        data["parallelism"] = data["implementation name"].apply(impl_to_parallelism)
+    else:
+        data["name"] = data["implementation name"]
 
     def impl_to_optimization(x):
         if "frep" in x: return "ssr+frep"
@@ -153,6 +156,8 @@ def arg_parse():
                         help="Only function names containing a string from this list will be included, eg. sin")
     parser.add_argument("-exclude", type=str, nargs="*", dest="exclude",
                         help="Exclude all function names that contain a string from this list, eg. cosh")
+    parser.add_argument("-no-group", action="store_true", dest="no_group",
+                        help="Do not group them according to parallelism")
     parser.add_argument("-save",
                         type=str,
                         nargs="?",
@@ -173,7 +178,7 @@ def arg_parse():
                         help="Which run commant to use (run, sim)")
     args = parser.parse_args()
 
-    return (args.include, args.exclude, args.save, args.builder, args.runner)
+    return (args.include, args.exclude, args.save, args.builder, args.runner, not args.no_group)
 
 def arg_filter(x, include, exclude):
     x_filter = [True] * len(x)

@@ -18,8 +18,8 @@ if ".git" not in os.listdir(os.getcwd()):
     print("please run this script from the project root")
     sys.exit()
 
-include, exclude, savepath, _, _ = arg_parse()
-functions, data = load_plot_dataframe(fullpath, include=include, exclude=exclude)
+include, exclude, savepath, _, _, group = arg_parse()
+functions, data = load_plot_dataframe(fullpath, include=include, exclude=exclude, group=group)
 
 plt.xscale('log', base=2)
 plt.yscale('log', base=2)
@@ -29,7 +29,7 @@ ax = sns.lineplot(data,
     x='n',
     y='cycles',
     hue="optimization", 
-    style="parallelism",
+    style= "parallelism" if group else "name",
     markers=True, 
     estimator=np.median, 
     errorbar=lambda x:(np.quantile(x, 0.05), np.quantile(x, 0.95)))

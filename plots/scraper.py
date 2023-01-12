@@ -13,7 +13,7 @@ if ".git" not in os.listdir(os.getcwd()):
     print("please run this script from the project root")
     sys.exit()
 
-include, exclude, save, builder, runner = arg_parse()
+include, exclude, save, builder, runner, _ = arg_parse()
 # add argparse to specify function names that should either be included or excluded
 
 # finds all relevant benchmark names
