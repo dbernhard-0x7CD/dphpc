@@ -4,6 +4,7 @@
 
 #include <snrt.h>
 #include "printf.h"
+#include <math.h>
 
 #ifndef LMQ_START_SIZE
 #define LMQ_START_SIZE 10
