@@ -83,11 +83,11 @@ int fabs_parallel(double *arr, const size_t n, double *result) {
     }
 
     for (unsigned i = 0; i < local_n; i++) {
-        result[core_idx * local_n + i] = fabsf(arr[core_idx * local_n + i]);
+        result[core_idx * local_n + i] = fabs(arr[core_idx * local_n + i]);
     }
 
     if (do_extra) {
-        result[core_num * local_n + core_idx] = fabsf(arr[core_num * local_n + core_idx]);
+        result[core_num * local_n + core_idx] = fabs(arr[core_num * local_n + core_idx]);
     }
 
     return 0;
@@ -122,7 +122,7 @@ int fabs_ssr_parallel(double *arr, const size_t n, double *result) {
     snrt_ssr_disable();
 
     if (do_extra) {
-        result[core_num * local_n + core_idx] = fabsf(arr[core_num * local_n + core_idx]);
+        result[core_num * local_n + core_idx] = fabs(arr[core_num * local_n + core_idx]);
     }
 
     return 0;
@@ -156,7 +156,7 @@ int fabs_ssr_frep_parallel(double *arr, const size_t n, double *result) {
     snrt_ssr_disable();
 
     if (do_extra) {
-        result[core_num * local_n + core_idx] = fabsf(arr[core_num * local_n + core_idx]);
+        result[core_num * local_n + core_idx] = fabs(arr[core_num * local_n + core_idx]);
     }
 
     return 0;
@@ -166,7 +166,7 @@ __attribute__((noinline))
 int fabs_omp(double *arr, const size_t n, double *result) {
 #pragma omp parallel for
     for (size_t i = 0; i < n; i++) {
-        result[i] = fabsf(arr[i]);
+        result[i] = fabs(arr[i]);
     }
 
     return 0;
@@ -209,7 +209,7 @@ int fabs_ssr_omp(double *arr, const size_t n, double *result) {
 
         // Could also be done in ssr, but this only adds O(number of threads) which we assume is low.
         if (do_extra) {
-            result[local_n * core_num + core_idx] = fabsf(arr[local_n * core_num + core_idx]);
+            result[local_n * core_num + core_idx] = fabs(arr[local_n * core_num + core_idx]);
         }
     }
 
