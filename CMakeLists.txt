@@ -49,6 +49,9 @@ add_snitch_executable(ssr_anomaly
                       ./src/lmq/lmq.c
                       ./src/bugs/ssr_anomaly.c)
 
+add_snitch_executable(ssr_spilling
+                      ./src/bugs/ssr_spilling.c)
+
 # Compile 'sum' library and its corresponding benchmark
 add_library(summation src/onnx/sum.c)
 add_snitch_executable(benchmark_sum
