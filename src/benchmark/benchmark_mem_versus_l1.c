@@ -15,7 +15,7 @@ int main() {
         double* l1_x = snrt_l1alloc(size * sizeof(double));
         double* l1_target = snrt_l1alloc(size * sizeof(double));
         
-        for (int i = 0; i < size; i++) {
+        for (size_t i = 0; i < size; i++) {
             memory_x[i] = (double)i - 20.0;
             l1_x[i] = (double)i - 20.0;
         }

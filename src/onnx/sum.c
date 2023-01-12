@@ -160,7 +160,7 @@ int sum_ssr_parallel(double *arr, const size_t n, double* result) {
     
     if (core_idx == 0) {
         double sum = 0.0;
-        for (int i = 0; i < core_num; i++) {
+        for (size_t i = 0; i < core_num; i++) {
             sum += result_arr[i];
             // printf("Core %d has sum: %f\n", i, result_arr[i]);
         }
@@ -219,7 +219,7 @@ int sum_ssr_frep_parallel(double *arr, const size_t n, double* result) {
     
     if (core_idx == 0) {
         double sum = 0.0;
-        for (int i = 0; i < core_num; i++) {
+        for (size_t i = 0; i < core_num; i++) {
             sum += result_arr[i];
             // printf("Core %d has sum: %f\n", i, result_arr[i]);
         }

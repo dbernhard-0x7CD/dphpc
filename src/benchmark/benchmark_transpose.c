@@ -11,9 +11,9 @@ int main() {
     for(size_t size=LMQ_START_SIZE; core_idx == 0 && size<=LMQ_SIZE;size*=2){
         printf("Running benchmark_transpose\n");
         
-        int ox = (int)sqrt_approx(size);
-        int rows = ox;
-        int cols = ox;
+        size_t ox = (size_t)sqrt_approx(size);
+        size_t rows = ox;
+        size_t cols = ox;
 
         // x is input; result is output of the optimized functions
         double* x = allocate(rows * cols, sizeof(double));

@@ -122,7 +122,7 @@ int add_ssr_parallel(double *a, double* b, const size_t n, double* result) {
 
     snrt_ssr_enable();
 
-    for (signed i = 0; i < local_n; i++) {
+    for (size_t i = 0; i < local_n; i++) {
         asm volatile(
             "fadd.d ft2, ft0, ft1 \n"
             ::: "ft0", "ft1", "ft2"
@@ -225,7 +225,7 @@ int add_ssr_omp(double *a, double *b, const size_t n, double *result) {
 
         snrt_ssr_enable();
 
-        for (signed i = 0; i < local_n; i++) {
+        for (size_t i = 0; i < local_n; i++) {
             asm volatile(
                 "fadd.d ft2, ft0, ft1 \n"
                 ::: "ft0", "ft1", "ft2"
