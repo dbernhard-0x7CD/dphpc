@@ -143,16 +143,11 @@ python3 plots/runtime_plot.py -include abs -exclude frep
 * [Register saves](https://web.eecs.utk.edu/~smarz1/courses/ece356/notes/assembly/)
 
 
-# Report notes
-* Publish repository and add link to it in the report
-* increase core count is not possible as it freezes and has 'branch to unpredicted address' errors (in banshee)
-
 # TODO
 * plot some theoretical lower bounds
 * calculate theoretical runtime
 * colors/plotstyle consistent
 * comparison of theoretical runtime of problem relative to runtime on x86
-* look into bug of spilling
 * parallelize
     * conv2d, maxpool, maxpool2d, transpose, max, unique
 * scatter/gather
