@@ -10,7 +10,7 @@
 __attribute__((noinline))
 int acosh_baseline(double* arr, const size_t n, double* result) {
     for (size_t i = 0; i < n; i++) {
-        result[i] = acoshf(arr[i]);
+        result[i] = acosh(arr[i]);
     }
 
     return 0;
@@ -36,40 +36,21 @@ int acosh_ssr(double* arr, const size_t n, double* result) {
     snrt_ssr_enable();
 
     for (size_t i = 0; i < n; i++) {
+        volatile register double d;
         asm volatile(
-            "fmv.d fa0, ft0\n" // fa0 <- ft0
-            ::: "fa0", "ft0"
+            "fmv.d %[var], ft0\n" // d <- ft0
+            : [var]"=f"(d)
+            :: "ft0", "memory"
         );
 
-        /*
-         * We disable SSR as every read to 'ft0' will fetch the
-         * next element from the defined stream. And any called function
-         * may use the ft0 register (as it is caller saved)
-         */
         __builtin_ssr_disable();
-
-        /*
-         * As this is a function call we MUST have "ra" in the clobber.
-         * Else the compiler does not know that this function needs to 
-         * store 'ra' on the stack (or in some caller saved register) as it
-         * may get modified in the call.
-         * Same for all other caller saved registers below (in the clobber).
-        */
-        asm volatile(
-            "call %[add_one]\n"
-            :: [add_one] "i"(acoshf)
-            : 
-            "fa0", "fa1", "fa2", "fa3", "fa4", "fa5", "fa6", "fa7",
-            "a0", "a1", "a2", "a3", "a4", "a5", "a6", "a7", 
-            "ft1", "ft2", "ft3", "ft4", "ft5", "ft6", "ft7",
-            "ra"
-        );
-
+        d = acosh(d);
         __builtin_ssr_enable();
         
         asm volatile(
-            "fmv.d ft1, fa0" // ft1 <- fa0
-            ::: "ft1", "fa0"
+            "fmv.d ft1, %[var]" // ft1 <- d
+            :: [var]"f"(d)
+            : "ft1", "memory"
         );
     }
 
