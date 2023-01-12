@@ -49,18 +49,15 @@ int main() {
     for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
         uint32_t core_num = snrt_cluster_compute_core_num();
 
-        size_t chunk_size = size / core_num;
-        // printf("chunk_size: %d\n", chunk_size);
-
         BENCH_VO_PARALLEL(sin_parallel, x, size, result);
         if (core_idx == 0) {
-            verify_vector_omp(result, result_ref, size, chunk_size);
+            verify_vector(result, result_ref, size);
             clear_vector(result, size);
         }
         
         BENCH_VO_PARALLEL(sin_ssr_parallel, x, size, result);
         if (core_idx == 0) {
-            verify_vector_omp(result, result_ref, size, chunk_size);
+            verify_vector(result, result_ref, size);
             clear_vector(result, size);
         }
     }
@@ -77,14 +74,14 @@ int main() {
         // for(unsigned i = 0; i < size; i++) {
         //     printf("Value of result at %d is %f\n", i, result[i]);
         // }
-        verify_vector_omp(result, result_ref, size, chunk_size);
+        verify_vector(result, result_ref, size);
         clear_vector(result, size);
 
         BENCH_VO_OMP(sin_ssr_omp, x, size, result);
         // for(unsigned i = 0; i < size; i++) {
         //     printf("Value of result at %d is %f\n", i, result[i]);
         // }
-        verify_vector_omp(result, result_ref, size, chunk_size);
+        verify_vector(result, result_ref, size);
         clear_vector(result, size);
     }
 

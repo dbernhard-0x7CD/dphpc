@@ -65,8 +65,6 @@ int main() {
 
     /* Benchmark parallel */
     for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
-        size_t chunk_size = size / core_num;
-        
         size_t input_size = (size - 1) * stride + (1 + (filter_size - 1) * dilation);
         conv_baseline(x, filter, input_size, filter_size, stride, dilation, result_ref);
 
@@ -85,7 +83,7 @@ int main() {
         //     printf("conv_ssr_parallel res at %d is %f\n", i, result[i]);
         // }
         if (core_idx == 0) {
-            verify_vector_omp(result, result_ref, size, chunk_size);
+            verify_vector(result, result_ref, size);
             clear_vector(result, size);
         }
 
@@ -94,7 +92,7 @@ int main() {
         //     printf("conv_ssr_frep_parallel res at %d is %f\n", i, result[i]);
         // }
         if (core_idx == 0) {
-            verify_vector_omp(result, result_ref, size, chunk_size);
+            verify_vector(result, result_ref, size);
             clear_vector(result, size);
         }
     }

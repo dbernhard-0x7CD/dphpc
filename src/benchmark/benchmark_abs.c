@@ -33,24 +33,23 @@ int main() {
     snrt_cluster_hw_barrier();
     /* Benchmark parallel */
     for(size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2){
-        size_t chunk_size = size / core_num;
         fabs_baseline(x, size, result_ref);
 
         BENCH_VO_PARALLEL(fabs_parallel, x, size, result);
         if (core_idx == 0) {
-            verify_vector_omp(result, result_ref, size, chunk_size);
+            verify_vector(result, result_ref, size);
             clear_vector(result, size);
         }
         
         BENCH_VO_PARALLEL(fabs_ssr_parallel, x, size, result);
         if (core_idx == 0) {
-            verify_vector_omp(result, result_ref, size, chunk_size);
+            verify_vector(result, result_ref, size);
             clear_vector(result, size);
         }
 
         BENCH_VO_PARALLEL(fabs_ssr_frep_parallel, x, size, result);
         if (core_idx == 0) {
-            verify_vector_omp(result, result_ref, size, chunk_size);
+            verify_vector(result, result_ref, size);
             clear_vector(result, size);
         }
     }
@@ -63,28 +62,24 @@ int main() {
         size_t chunk_size = size / core_num;
         
         BENCH_VO_OMP(fabs_omp, x, size, result);
-        /* This applies to all OMP functions:
-        * Due to the (probably unintentional) behaviour of SSR each SSR stream ends with an extra element at position n which is '-inf' Thus we ignore those values when validating.
-        */
-        verify_vector_omp(result, result_ref, size, chunk_size);
+        verify_vector(result, result_ref, size);
         // for(unsigned i = 0; i < size; i++) {
         //     printf("Value of result at %d is %f\n", i, result[i]);
         // }
         clear_vector(result, size);
         
         BENCH_VO_OMP(fabs_ssr_omp, x, size, result);
-        verify_vector_omp(result, result_ref, size, chunk_size);
+        verify_vector(result, result_ref, size);
         // for(unsigned i = 0; i < size; i++) {
         //     printf("Value of result at %d is %f\n", i, result[i]);
         // }
         clear_vector(result, size);
 
         BENCH_VO_OMP(fabs_ssr_frep_omp, x, size, result);
-        verify_vector_omp(result, result_ref, size, chunk_size);
+        verify_vector(result, result_ref, size);
         clear_vector(result, size);
     }
     
     __snrt_omp_destroy(core_idx);
     return 0;
 }
-

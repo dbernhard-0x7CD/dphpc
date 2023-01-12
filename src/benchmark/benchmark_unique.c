@@ -66,8 +66,6 @@ int main() {
     snrt_cluster_hw_barrier();
     
     for (size_t size=LMQ_START_SIZE;size<=LMQ_SIZE;size*=2) {
-
-        size_t chunk_size = size / core_num;
         
         if(core_idx == 0) {
             
@@ -86,7 +84,7 @@ int main() {
         
         if(core_idx == 0) {
 
-            verify_vector_omp(result, result_ref, size, chunk_size);
+            verify_vector(result, result_ref, size);
             clear_vector(result, size);
 
         }

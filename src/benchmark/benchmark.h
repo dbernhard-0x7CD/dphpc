@@ -121,21 +121,6 @@ static inline void verify_vector_approx(const double* value, const double* refer
 };
 
 /*
- * Compares the vector starting at value element wise with the vector at reference. This ignores values that are multiples of the chunk size + 1.
-  This comes from the SSR anomaly that they write -inf after the last element.
- */
-static inline void verify_vector_omp(const double* value, const double* reference, const size_t n, const size_t chunk_size) {
-    printf("Verifying and ignoring every %d value\n", chunk_size);
-    for (size_t i = 0; i < n; ++i) {
-        if (value[i] != reference[i] && (chunk_size == 0 || i % chunk_size != 0) ) {
-            printf("MISMATCH at i=%d: expected %.10f, but got %.10f\n", i, reference[i], value[i]);
-
-            // return;
-        }
-    }
-};
-
-/*
  * Compares the vector starting at value element wise with the vector at reference.
     Prints if they do not match.
  */

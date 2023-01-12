@@ -79,15 +79,13 @@ int main() {
 
         BENCH_VO_PARALLEL(gemm_ssr_parallel, x, y, M, N, K, result);
         if (core_idx == 0) {
-            // as every 'cores' does M/core_num rows we have at every index which is a multiple of (M/core_num) * K a potential '-inf' value
-            verify_vector_omp(result, result_ref, M * K, M/core_num * K);
+            verify_vector(result, result_ref, M * K);
             clear_vector(result, M * K);
         }
 
         BENCH_VO_PARALLEL(gemm_ssr_frep_parallel, x, y, M, N, K, result);
         if (core_idx == 0) {
-            // as every 'cores' does M/core_num rows we have at every index which is a multiple of (M/core_num) * K a potential '-inf' value
-            verify_vector_omp(result, result_ref, M * K, M/core_num * K);
+            verify_vector(result, result_ref, M * K);
             clear_vector(result, M * K);
         }
     }
@@ -113,9 +111,6 @@ int main() {
         }
 
         BENCH_VO_OMP(gemm_omp, x, y, M, N, K, result);
-        /* This applies to all OMP functions:
-        * Due to the (probably unintentional) behaviour of SSR each SSR stream ends with an extra element at position n which is '-inf' Thus we ignore those values when validating.
-        */
         verify_vector(result, result_ref, M * K);
         // for(unsigned i = 0; i < size; i++) {
         //     printf("Value of result at %d is %f\n", i, result[i]);
@@ -123,14 +118,14 @@ int main() {
         clear_vector(result, M * K);
         
         BENCH_VO_OMP(gemm_ssr_omp, x, y, M, N, K, result);
-        verify_vector_omp(result, result_ref, M * K, M/core_num * K);
+        verify_vector(result, result_ref, M * K);
         // for(unsigned i = 0; i < size; i++) {
         //     printf("Value of result at %d is %f\n", i, result[i]);
         // }
         clear_vector(result, M * K);
 
         BENCH_VO_OMP(gemm_ssr_frep_omp, x, y, M, N, K, result);
-        verify_vector_omp(result, result_ref, M * K, M/core_num * K);
+        verify_vector(result, result_ref, M * K);
         clear_vector(result, M * K);
     }
     
