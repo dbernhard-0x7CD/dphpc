@@ -60,30 +60,30 @@ volatile size_t runs = LMQ_RUNS;
 
 /*
  * Benchmarks a vector operation which has no single result.
+ * Is deterministic as long as no software barriers are used.
  */
 #define BENCH_VO_PARALLEL(func_name, ...)               \
     do {                                                \
-        for(size_t cur_run=0;cur_run<runs;cur_run++){      \
-            size_t core_num = snrt_cluster_core_num() - 1;  \
-            size_t core_idx = snrt_cluster_core_idx();      \
-            size_t _start_ = read_csr(mcycle);              \
-            snrt_cluster_hw_barrier();                      \
-            size_t _start2_ = read_csr(mcycle);             \
-            int _result_code_ = func_name(__VA_ARGS__);     \
-            size_t _end2_ = read_csr(mcycle);               \
-            snrt_cluster_hw_barrier();                      \
-            size_t _end_ = read_csr(mcycle);                \
-            size_t cycles = _end_ - _start_;                \
-            size_t cycles2 = _end2_ - _start2_;             \
-            /* printf("core %d inner: %d\n", core_idx, cycles2);*/ \
-            /* printf("core %d outer: %d\n", core_idx, cycles); */ \
-            /* for debugging purposes */                    \
-            /* printf("(%d): %d\n ", snrt_cluster_core_idx(), cycles);                                      */  \
-            if (snrt_cluster_core_idx() == 0) {             \
-                printf(#func_name", size: %d: %lu cycles. Return code: %d\n", \
-                        size, cycles, _result_code_);       \
-            }                                               \
+        size_t core_num = snrt_cluster_core_num() - 1;  \
+        size_t core_idx = snrt_cluster_core_idx();      \
+        size_t _start_ = read_csr(mcycle);              \
+        snrt_cluster_hw_barrier();                      \
+        size_t _start2_ = read_csr(mcycle);             \
+        int _result_code_ = func_name(__VA_ARGS__);     \
+        size_t _end2_ = read_csr(mcycle);               \
+        snrt_cluster_hw_barrier();                      \
+        size_t _end_ = read_csr(mcycle);                \
+        size_t cycles = _end_ - _start_;                \
+        size_t cycles2 = _end2_ - _start2_;             \
+        /* printf("core %d inner: %d\n", core_idx, cycles2);*/ \
+        /* printf("core %d outer: %d\n", core_idx, cycles); */ \
+        /* for debugging purposes */                    \
+        /* printf("(%d): %d\n ", snrt_cluster_core_idx(), cycles);                                      */  \
+        if (snrt_cluster_core_idx() == 0) {             \
+            printf(#func_name", size: %d: %lu cycles. Return code: %d\n", \
+                    size, cycles, _result_code_);       \
         }                                               \
+                                                    \
     } while(0);
 
 #define VERIFY_INT(value, reference, ...)           \
