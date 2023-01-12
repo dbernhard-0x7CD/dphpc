@@ -48,7 +48,7 @@ volatile size_t runs = LMQ_RUNS;
  */
 #define BENCH_VO_OMP(func_name, ...)                        \
     do {                                                \
-        for(int cur_run=0;cur_run<runs;cur_run++){      \
+        for(size_t cur_run=0;cur_run<runs;cur_run++){      \
             size_t _start_ = read_csr(mcycle);              \
             int _result_code_ = func_name(__VA_ARGS__);     \
             size_t _end_ = read_csr(mcycle);                \
