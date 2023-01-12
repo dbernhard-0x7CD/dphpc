@@ -55,7 +55,7 @@ int leakyrelu_ssr(double *x, const size_t n, double alpha, double* result) {
 
 __attribute__((noinline))
 int leakyrelu_ssr_frep(double *x, const size_t n, double alpha, double* result) {
-
+    (void)x, (void)n, (void) alpha, (void) result;
     // Not possible with frep
 
     return 0;

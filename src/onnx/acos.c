@@ -81,6 +81,7 @@ int acos_ssr(double* arr, const size_t n, double* result) {
 
 __attribute__((noinline))
 int acos_ssr_frep(double* arr, const size_t n, double* result) {
+    (void) arr, (void) n, (void) result;
     /*
      * I do not think we can optimize anything with FREP.
      * As we have a call to another function which consists of many more
