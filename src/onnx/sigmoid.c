@@ -9,8 +9,7 @@
 __attribute__((noinline))
 int sigmoid_baseline(const double* arr, const size_t n, double* result) {
     for (size_t i = 0; i < n; i++) {
-        result[i] = 1 / (1 + expf(-arr[i]));
-        // result[i] = 1 + expf(-arr[i]);
+        result[i] = 1 / (1 + exp(-arr[i]));
     }
 
     return 0;
@@ -46,7 +45,7 @@ int sigmoid_ssr(const double* arr, const size_t n, double* result) {
          * next element from the defined stream. And any called function
          * may use the ft0 register (as it is caller saved)
          */
-        __builtin_ssr_disable();
+        snrt_ssr_disable();
 
         /*
          * As this is a function call we MUST have "ra" in the clobber.
@@ -57,7 +56,7 @@ int sigmoid_ssr(const double* arr, const size_t n, double* result) {
         */
         asm volatile(
             "call %[add_one]\n"
-            :: [add_one] "i"(expf)
+            :: [add_one] "i"(exp)
             : 
             "fa0", "fa1", "fa2", "fa3", "fa4", "fa5", "fa6", "fa7",
             "a0", "a1", "a2", "a3", "a4", "a5", "a6", "a7", 
@@ -65,7 +64,7 @@ int sigmoid_ssr(const double* arr, const size_t n, double* result) {
             "ra"
         );
 
-        __builtin_ssr_enable();
+        snrt_ssr_enable();
         
         asm volatile(
             "fdiv.d ft2, fa0, fa0\n" // ft2 <- 1. TODO change it
