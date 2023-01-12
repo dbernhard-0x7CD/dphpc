@@ -90,7 +90,8 @@ int gemm_ssr(double* a, double* b, const size_t m, const size_t n, const size_t 
 
     for (size_t i = 0; i < m * k; ++i) {
         asm volatile(
-            "fmv.w.x ft3, zero \n"
+            "fmv.w.x ft4, zero \n"
+            "fcvt.d.s ft3, ft4 \n"
             :
             :
             : "ft0", "ft1", "ft2", "ft3"
@@ -133,7 +134,8 @@ int gemm_ssr_frep(double* a, double* b, const size_t m, const size_t n, const si
 
     for (size_t i = 0; i < m * k; ++i) {
         asm volatile(
-            "fmv.w.x ft3, zero \n"
+            "fmv.w.x ft4, zero \n"
+            "fcvt.d.s ft3, ft4 \n"
             "frep.o %[n_frep], 1, 0, 0 \n"
             "fmadd.d ft3, ft0, ft1, ft3 \n"
             "fmv.d ft2, ft3 \n"

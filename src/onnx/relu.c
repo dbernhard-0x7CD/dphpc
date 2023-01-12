@@ -33,7 +33,8 @@ int leakyrelu_ssr(double *x, const size_t n, double alpha, double* result) {
 
     asm volatile(
         "beqz %[n_rep], 3f \n"
-        "fmv.w.x ft3, zero \n"
+        "fmv.w.x ft4, zero \n"
+        "fcvt.d.s ft3, ft4 \n"
         "2: \n"
         "fmv.d ft2, ft0 \n"
         "flt.d t0, ft2, ft3 \n"

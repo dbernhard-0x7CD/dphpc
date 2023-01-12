@@ -42,7 +42,8 @@ int conv_ssr(double *a, double* filter, size_t n, size_t filter_size, size_t str
 
     for (size_t i = 0; i < out_size; ++i) {
         asm volatile(
-            "fmv.w.x ft3, zero \n"
+            "fmv.w.x ft4, zero \n"
+            "fcvt.d.s ft3, ft4 \n"
             :
             :
             : "ft0", "ft1", "ft2", "ft3"
@@ -87,7 +88,8 @@ int conv_ssr_frep(double *a, double* filter, size_t n, size_t filter_size, size_
 
     for (size_t i = 0; i < out_size; ++i) {
         asm volatile(
-            "fmv.w.x ft3, zero \n"
+            "fmv.w.x ft4, zero \n"
+            "fcvt.d.s ft3, ft4 \n"
             "frep.o %[n_frep], 1, 0, 0 \n"
             "fmadd.d ft3, ft0, ft1, ft3 \n"
             "fmv.d ft2, ft3 \n"
@@ -142,7 +144,8 @@ int conv2d_ssr(double *a, double* filter, size_t n0, size_t n1, size_t f0, size_
 
     for (size_t i = 0; i < outn0 * outn1; ++i) {
         asm volatile(
-            "fmv.w.x ft3, zero \n"
+            "fmv.w.x ft4, zero \n"
+            "fcvt.d.s ft3, ft4 \n"
             :
             :
             : "ft0", "ft1", "ft2", "ft3"
@@ -188,7 +191,8 @@ int conv2d_ssr_frep(double *a, double* filter, size_t n0, size_t n1, size_t f0, 
 
     for (size_t i = 0; i < outn0 * outn1; ++i) {
         asm volatile(
-            "fmv.w.x ft3, zero \n"
+            "fmv.w.x ft4, zero \n"
+            "fcvt.d.s ft3, ft4 \n"
             "frep.o %[n_frep], 1, 0, 0 \n"
             "fmadd.d ft3, ft0, ft1, ft3 \n"
             "fmv.d ft2, ft3 \n"
