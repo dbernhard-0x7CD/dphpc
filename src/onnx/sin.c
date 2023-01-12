@@ -14,7 +14,7 @@
 __attribute__((noinline)) 
 int sin_baseline(double* arr, const size_t n, double* result) {
     for (size_t i = 0; i < n; i++) {
-        result[i] = sinf(arr[i]);
+        result[i] = sin(arr[i]);
     }
     return 0;
 }
@@ -68,7 +68,7 @@ int sin_ssr(double* arr, const size_t n, double* result) {
         */
         asm volatile(
             "call %[add_one]\n"
-            :: [add_one] "i"(sinf)
+            :: [add_one] "i"(sin)
             : 
             "fa0", "fa1", "fa2", "fa3", "fa4", "fa5", "fa6", "fa7",
             "a0", "a1", "a2", "a3", "a4", "a5", "a6", "a7", 
@@ -92,13 +92,12 @@ int sin_ssr(double* arr, const size_t n, double* result) {
 
 __attribute__((noinline)) 
 int sin_ssr_frep(double* arr, const size_t n, double* result) {
-
+    (void) arr, (void) n, (void) result;
     /*
-     * I do not think we can optimize anything with FREP.
+     * We cannot optimize anything with FREP.
      * As we have a call to another function which consists of many more
      * assembly instructions.
      */
-    sin_ssr(arr, n, result);
 
     return 0;
 }
@@ -115,11 +114,11 @@ int sin_parallel(double* arr, const size_t n, double* result) {
     }
 
     for (unsigned i = 0; i < local_n; i++) {
-        result[core_idx * local_n + i] = sinf(arr[core_idx * local_n + i]);
+        result[core_idx * local_n + i] = sin(arr[core_idx * local_n + i]);
     }
 
     if (do_extra) {
-        result[core_num * local_n + core_idx] = sinf(arr[core_num * local_n + core_idx]);
+        result[core_num * local_n + core_idx] = sin(arr[core_num * local_n + core_idx]);
     }
 
     return 0;
@@ -166,7 +165,7 @@ int sin_ssr_parallel(double* arr, const size_t n, double* result) {
         */
         asm volatile(
             "call %[sin]\n"
-            :: [sin] "i"(sinf)
+            :: [sin] "i"(sin)
             : 
             "fa0", "fa1", "fa2", "fa3", "fa4", "fa5", "fa6", "fa7",
             "a0", "a1", "a2", "a3", "a4", "a5", "a6", "a7", 
@@ -186,7 +185,7 @@ int sin_ssr_parallel(double* arr, const size_t n, double* result) {
     snrt_ssr_disable();
 
     if (do_extra) {
-        result[core_num * local_n + core_idx] = sinf(arr[core_num * local_n + core_idx]);
+        result[core_num * local_n + core_idx] = sin(arr[core_num * local_n + core_idx]);
     }
 
     return 0;
@@ -262,8 +261,8 @@ int sin_approx_ssr(double* arr, const size_t n, double* result) {
 __attribute__((noinline)) 
 int sin_omp(double* arr, const size_t n, double* result) {
     #pragma omp parallel for schedule(static) // in the following line it's necessary to use 'signed'
-    for (unsigned i = 0; i < n; i++) {
-        result[i] = sinf(arr[i]);
+    for (signed i = 0; i < n; i++) {
+        result[i] = sin(arr[i]);
     }
     return 0;
 }
@@ -323,7 +322,7 @@ int sin_ssr_omp(double* arr, const size_t n, double* result) {
             */
             asm volatile(
                 "call %[sin]\n"
-                :: [sin] "i"(sinf)
+                :: [sin] "i"(sin)
                 : 
                 "fa0", "fa1", "fa2", "fa3", "fa4", "fa5", "fa6", "fa7",
                 "a0", "a1", "a2", "a3", "a4", "a5", "a6", "a7", 
@@ -344,7 +343,7 @@ int sin_ssr_omp(double* arr, const size_t n, double* result) {
         
         // Could also be done in ssr, but this only adds O(number of threads) which we assume is low.
         if (do_extra) {
-            result[local_n * core_num + core_idx] = sinf(arr[local_n * core_num + core_idx]);
+            result[local_n * core_num + core_idx] = sin(arr[local_n * core_num + core_idx]);
         }
     }
 
