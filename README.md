@@ -146,15 +146,12 @@ python3 plots/runtime_plot.py -include abs -exclude frep
 # TODO
 * plot some theoretical lower bounds
 * calculate theoretical runtime
-* colors/plotstyle consistent
-* comparison of theoretical runtime of problem relative to runtime on x86
 * parallelize
     * conv2d, maxpool, maxpool2d, transpose, max, unique
-* scatter/gather
-    * here we should not use powers of 2 (they are optimal for trees)
-* rnn?
 
 # DONE
+* colors/plotstyle consistent
+* comparison of theoretical runtime of problem relative to runtime on x86
 * look into bug of multiple SSR configurations
     * previous SSR configuration for writing was still active
 * TEST core count configuration of SIMULATOR
