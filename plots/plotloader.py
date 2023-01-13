@@ -72,7 +72,7 @@ def load_plot_dataframe(abspath, include=[], exclude=[], group=True):
     
     # filter keys according to include/exclude
     func_names = list(data.keys())
-    func_names = arg_filter(func_names, include, exclude)
+    # func_names = arg_filter(func_names, include, exclude)
     baseline_names = list(filter(lambda x: x.endswith("baseline"), func_names))
     tmp = []
     # tmp["n"] = data["n"]
@@ -110,6 +110,18 @@ def load_plot_dataframe(abspath, include=[], exclude=[], group=True):
     
     def impl_to_baseline_name(x):
         # return min(baseline_names, key=lambda y:distance(x, y))
+        if "_parallel" in x:
+            if "ssr" not in x:
+                return x.replace("_pararllel", "_baseline")
+            else:
+                return x.replace("_parallel", "")
+        
+        if "_omp" in x:
+            if "ssr" not in x:
+                return x.replace("_omp", "_baseline")
+            else:
+                return x.replace("_omp", "")
+
         return max(baseline_names, key = lambda y: \
             (1 if x.startswith(y.replace("_baseline", "")) else 0) \
             * len(y)
@@ -129,6 +141,7 @@ def load_plot_dataframe(abspath, include=[], exclude=[], group=True):
     # queries are expensive, so I use a simple cache to reduce the number of queries
     baseline_cache = {}
     def compute_speedup(row):
+        # print(row["implementation name"], row["baseline"])
         k = str(row["baseline"])+str(row["n"]) 
         n = row["n"]
         if k not in baseline_cache.keys():
@@ -145,6 +158,9 @@ def load_plot_dataframe(abspath, include=[], exclude=[], group=True):
 
     # print(data.to_string())
     data["speedup"] = data.apply(compute_speedup, axis=1)
+
+    func_names = arg_filter(func_names, include, exclude)
+    data = data[data.apply(lambda x: x["implementation name"] in func_names, axis=1)]
 
     print("[    DATA LOADER]     loaded data for the plots {}".format(func_names))
     return func_names, data

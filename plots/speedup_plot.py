@@ -19,7 +19,7 @@ if ".git" not in os.listdir(os.getcwd()):
 include, exclude, savepath, _, _, _ = arg_parse()
 functions, data = load_plot_dataframe(fullpath, include=include, exclude=exclude)
 
-data = data[data.apply(lambda x: "baseline" not in x["implementation name"], axis=1)]
+# data = data[data.apply(lambda x: "baseline" not in x["implementation name"], axis=1)]
 # computes a weighted quantile
 def wquantile(values, weights, p):
     x = sum(weights) * p
@@ -74,10 +74,6 @@ sns.barplot(data,
     errorbar=compute_err
 )
 ax.grid()
-
-for x in ax._children:
-    print(x)
-    print(x.__dict__) 
 
 plt.xticks(rotation = 45, ha='right', fontsize=11)
 
