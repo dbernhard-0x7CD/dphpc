@@ -81,10 +81,7 @@ for x in ax._children:
 
 plt.xticks(rotation = 45, ha='right', fontsize=11)
 
-if include is not None and len(include) > 0:
-    ax.set(title=include[0] + ' Speedup Plot')
-else:
-    ax.set(title='Speedup Plot')
+ax.set(title='Speedup Plot')
 
 ax.set(xlabel='operator', ylabel='median speedup')
 
