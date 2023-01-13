@@ -75,11 +75,12 @@ sns.barplot(data,
 )
 ax.grid()
 
-plt.xticks(rotation = 45, ha='right', fontsize=11)
+plt.xticks(rotation = 65, ha='right', fontsize=11)
+plt.legend(loc='upper right')
 
 ax.set(title='Speedup Plot')
 
-ax.set(xlabel='operator', ylabel='median speedup')
+ax.set(xlabel='operator', ylabel='median weighted speedup')
 
 plt.tight_layout()
 
