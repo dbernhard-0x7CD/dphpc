@@ -112,7 +112,7 @@ def load_plot_dataframe(abspath, include=[], exclude=[], group=True):
         # return min(baseline_names, key=lambda y:distance(x, y))
         if "_parallel" in x:
             if "ssr" not in x:
-                return x.replace("_pararllel", "_baseline")
+                return x.replace("_parallel", "_baseline")
             else:
                 return x.replace("_parallel", "")
         
