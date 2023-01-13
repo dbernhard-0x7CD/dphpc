@@ -19,10 +19,9 @@ if ".git" not in os.listdir(os.getcwd()):
 include, exclude, savepath, _, _, _ = arg_parse()
 functions, data = load_plot_dataframe(fullpath, include=include, exclude=exclude)
 
-def quantile(values, weights, p):
-    min_x = 0
-    max_x = sum(weights)
-    x = min_x + (max_x - min_x) * p
+# computes a weighted quantile
+def wquantile(values, weights, p):
+    x = sum(weights) * p
     i = 0
     while x > 0:
         x -= weights[i]
@@ -42,7 +41,7 @@ def compute_mean(xs):
     
     speedups = [npquantile(y, 0.5) for y in aux.values()]
 
-    return quantile(speedups, list(aux.keys()), 0.5)
+    return wquantile(speedups, list(aux.keys()), 0.5)
 
 def compute_err(xs):
     if len(xs) == 0:
@@ -56,7 +55,7 @@ def compute_err(xs):
     
     speedups = [(npquantile(y, 0.05), npquantile(y, 0.95)) for y in aux.values()]
     l1, l2 = zip(*speedups)
-    return (quantile(l1, list(aux.keys()), 0.5), quantile(l2, list(aux.keys()), 0.5))
+    return (wquantile(l1, list(aux.keys()), 0.5), wquantile(l2, list(aux.keys()), 0.5))
 
 sns.set_style("dark")
 fig_len = len(data["implementation name"].unique()) / 2
