@@ -19,6 +19,7 @@ if ".git" not in os.listdir(os.getcwd()):
 include, exclude, savepath, _, _, _ = arg_parse()
 functions, data = load_plot_dataframe(fullpath, include=include, exclude=exclude)
 
+data = data[data.apply(lambda x: "baseline" not in x["implementation name"], axis=1)]
 # computes a weighted quantile
 def wquantile(values, weights, p):
     x = sum(weights) * p
@@ -67,6 +68,7 @@ sns.barplot(data,
     x="category",
     y="speedup",
     hue="optimization",
+    hue_order=["none", "ssr", "ssr+frep"],
     capsize=.1,
     estimator=compute_mean,
     errorbar=compute_err
