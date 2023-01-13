@@ -49,6 +49,12 @@ add_snitch_executable(ssr_anomaly
                       ./src/lmq/lmq.c
                       ./src/bugs/ssr_anomaly.c)
 
+# x86 gemm
+# execute_process is needed as cmake does not support different compilers within one project.
+execute_process(
+    COMMAND bash "-c" "gcc ${CMAKE_CURRENT_SOURCE_DIR}/src/x86/main.c -O3 -Wall -Wextra -lm -fopenmp -o x86_gemm" 
+)
+
 
 # Compile 'sum' library and its corresponding benchmark
 add_library(summation src/onnx/sum.c)
