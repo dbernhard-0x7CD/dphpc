@@ -4,3 +4,4 @@ matplotlib_label_lines==0.5.1
 pwn==1.0
 Levenshtein==0.20.8
 seaborn
+pandas

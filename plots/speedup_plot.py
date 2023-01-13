@@ -7,7 +7,7 @@ from plotloader import load_plot_dataframe, arg_parse
 import matplotlib.pyplot as plt
 import seaborn as sns
 from collections import defaultdict
-from numpy import quantile
+from numpy import quantile as npquantile
 
 relpath = "data/"
 fullpath = os.path.dirname(__file__) + "/" + relpath
@@ -19,6 +19,17 @@ if ".git" not in os.listdir(os.getcwd()):
 include, exclude, savepath, _, _, _ = arg_parse()
 functions, data = load_plot_dataframe(fullpath, include=include, exclude=exclude)
 
+def quantile(values, weights, p):
+    min_x = 0
+    max_x = sum(weights)
+    x = min_x + (max_x - min_x) * p
+    i = 0
+    while x > 0:
+        x -= weights[i]
+        i += 1
+    i -= 1
+    return values[i]
+
 def compute_mean(xs):
     if len(xs) == 0:
         return 0
@@ -29,9 +40,9 @@ def compute_mean(xs):
         n = (x-speedup) * (10**-5)
         aux[n].append(speedup)
     
-    speedups = [quantile(y, 0.5) for y in aux.values()]
+    speedups = [npquantile(y, 0.5) for y in aux.values()]
 
-    return quantile(speedups, 0.5)
+    return quantile(speedups, list(aux.keys()), 0.5)
 
 def compute_err(xs):
     if len(xs) == 0:
@@ -43,9 +54,9 @@ def compute_err(xs):
         n = (x-speedup) * (10**-5)
         aux[n].append(speedup)
     
-    speedups = [(quantile(y, 0.05), quantile(y, 0.95)) for y in aux.values()]
+    speedups = [(npquantile(y, 0.05), npquantile(y, 0.95)) for y in aux.values()]
     l1, l2 = zip(*speedups)
-    return (quantile(l1, 0.5), quantile(l2, 0.5))
+    return (quantile(l1, list(aux.keys()), 0.5), quantile(l2, list(aux.keys()), 0.5))
 
 sns.set_style("dark")
 fig_len = len(data["implementation name"].unique()) / 2
@@ -62,6 +73,10 @@ sns.barplot(data,
     errorbar=compute_err
 )
 ax.grid()
+
+for x in ax._children:
+    print(x)
+    print(x.__dict__) 
 
 plt.xticks(rotation = 45, ha='right', fontsize=11)
 
