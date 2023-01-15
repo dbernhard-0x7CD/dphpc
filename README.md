@@ -131,6 +131,11 @@ If you want to exclude a plot line from the runtime plot, use the "-exclude" fla
 python3 plots/runtime_plot.py -include abs -exclude frep
 ```
 
+If you want to generate speedup plots for the different implementations, you can run:
+```
+python3 plots/speedup_plot.py -include abs -exclude frep
+```
+
 # Helpful Links
 * [gcc inline assembly](https://www.felixcloutier.com/documents/gcc-asm.html)
 * [onnx operators](https://github.com/onnx/onnx/blob/main/docs/Operators.md#aionnx-default)
